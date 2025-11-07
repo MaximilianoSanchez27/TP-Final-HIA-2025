@@ -23,6 +23,7 @@ export interface ClubFilter {
   providedIn: 'root'
 })
 export class ClubService {
+  // Esta URL base es '/api/clubs' y ahora la usaremos en TODAS partes
   private readonly API_URL = `${environment.apiUrl}/clubs`;
 
   constructor(private http: HttpClient) { }
@@ -34,7 +35,8 @@ export class ClubService {
 
   // Obtener un club por ID
   getClub(id: number): Observable<Club> {
-    return this.http.get<Club>(`/api/${id}`);
+    // ARREGLADO: Usamos this.API_URL
+    return this.http.get<Club>(`${this.API_URL}/${id}`);
   }
 
   // Crear un nuevo club
@@ -75,7 +77,8 @@ export class ClubService {
 
   // Actualizar un club existente
   updateClub(id: number, club: Club): Observable<ClubResponse> {
-    return this.http.put<ClubResponse>(`/api/${id}`, club);
+    // ARREGLADO: Usamos this.API_URL
+    return this.http.put<ClubResponse>(`${this.API_URL}/${id}`, club);
   }
 
   // Actualizar un club existente con logo
@@ -93,7 +96,8 @@ export class ClubService {
       // Agregar el archivo de logo
       formData.append('logo', logoFile);
 
-      return this.http.put<any>(`/api/${idClub}`, formData).pipe(
+      // ARREGLADO: Usamos this.API_URL
+      return this.http.put<any>(`${this.API_URL}/${idClub}`, formData).pipe(
         map((response) => {
           return response.club || response.data || response;
         }),
@@ -111,7 +115,8 @@ export class ClubService {
 
   // Eliminar un club
   deleteClub(id: number): Observable<ClubResponse> {
-    return this.http.delete<ClubResponse>(`/api/${id}`);
+    // ARREGLADO: Usamos this.API_URL
+    return this.http.delete<ClubResponse>(`${this.API_URL}/${id}`);
   }
 
   // Filtrar clubes
@@ -124,7 +129,8 @@ export class ClubService {
     if (filters.fechaAfiliacionDesde) params = params.set('fechaAfiliacionDesde', filters.fechaAfiliacionDesde);
     if (filters.fechaAfiliacionHasta) params = params.set('fechaAfiliacionHasta', filters.fechaAfiliacionHasta);
 
-    return this.http.get<Club[]>(`/api/filter`, { params });
+    // ARREGLADO: Usamos this.API_URL y /filter
+    return this.http.get<Club[]>(`${this.API_URL}/filter`, { params });
   }
 
   // Obtener la URL del logo de un club
@@ -145,4 +151,3 @@ export class ClubService {
     return '';
   }
 }
-
