@@ -1,0 +1,36 @@
+.buscador-container {
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  margin-bottom: 1.5rem;
+}
+
+.buscador-container h5 {
+  color: #2c3e50;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+}
+
+.buscador-container .form-control {
+  border: 1px solid #ced4da;
+  transition: all 0.3s ease;
+}
+
+.buscador-container .form-control:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+.buscador-container .form-label {
+  font-weight: 500;
+  color: #495057;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .buscador-container .col-md-4,
+  .buscador-container .col-md-6 {
+    margin-bottom: 1rem;
+  }
+}

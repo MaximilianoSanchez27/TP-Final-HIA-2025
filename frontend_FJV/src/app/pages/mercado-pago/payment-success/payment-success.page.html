@@ -1,0 +1,70 @@
+<div class="payment-result-container">
+  <div class="result-card success">
+    <!-- Icono de éxito -->
+    <div class="icon-container">
+      <i class="fas fa-check-circle success-icon"></i>
+    </div>
+
+    <!-- Mensaje principal -->
+    <h1 class="result-title">¡Pago Exitoso!</h1>
+    <p class="result-message">
+      Tu pago ha sido procesado correctamente por Mercado Pago.
+    </p>
+
+    <!-- Detalles del pago -->
+    <div class="payment-details" *ngIf="paymentId || merchantOrderId">
+      <h3>Detalles de la Transacción</h3>
+      <div class="detail-item" *ngIf="paymentId">
+        <span class="label">ID de Pago:</span>
+        <span class="value">{{ paymentId }}</span>
+      </div>
+      <div class="detail-item" *ngIf="merchantOrderId">
+        <span class="label">Orden:</span>
+        <span class="value">{{ merchantOrderId }}</span>
+      </div>
+      <div class="detail-item" *ngIf="preferenceId">
+        <span class="label">Referencia:</span>
+        <span class="value">{{ preferenceId }}</span>
+      </div>
+    </div>
+
+    <!-- Información adicional -->
+    <div class="info-box">
+      <i class="fas fa-info-circle"></i>
+      <div class="info-content">
+        <p><strong>¿Qué sigue?</strong></p>
+        <ul>
+          <li>Recibirás un email de confirmación de Mercado Pago</li>
+          <li>El cobro se actualizará como "Pagado" en nuestro sistema</li>
+          <li>Podrás ver el estado actualizado en tu panel de control</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="action-buttons">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="goToCobros()"
+      >
+        <i class="fas fa-list"></i>
+        Ver Mis Cobros
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="goToDashboard()"
+      >
+        <i class="fas fa-home"></i>
+        Ir al Dashboard
+      </button>
+    </div>
+
+    <!-- Mensaje de auto-redirección -->
+    <p class="auto-redirect-message">
+      <i class="fas fa-clock"></i>
+      Serás redirigido automáticamente al dashboard en 10 segundos...
+    </p>
+  </div>
+</div>

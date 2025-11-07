@@ -1,0 +1,45 @@
+.section-divider {
+  height: 3px;
+  width: 60px;
+  background-color: var(--blue-medium);
+  margin-bottom: 1.5rem;
+}
+
+.noticias-section {
+  background-color: var(--neutral-100);
+  min-height: calc(100vh - 200px);
+}
+
+/* Estilos para el filtro */
+.filtros-panel {
+  background-color: #fff;
+  border-radius: 10px;
+}
+
+/* Aumentar el espaciado en la vista lista */
+.noticias-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Personalización de paginación */
+:host ::ng-deep .page-item.active .page-link {
+  background-color: var(--blue-medium);
+  border-color: var(--blue-medium);
+}
+
+:host ::ng-deep .page-link {
+  color: var(--blue-dark);
+}
+
+:host ::ng-deep .page-link:hover {
+  color: var(--blue-medium);
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+  .section-divider {
+    width: 40px;
+  }
+}

@@ -1,0 +1,164 @@
+<div class="login-container">
+  <div class="auth-card">
+    <!-- Logo y encabezado -->
+    <div class="auth-header text-center mb-4">
+      <div class="logo-container mb-3">
+        <img
+          src="assets/images/LogoFJVletraazul.png"
+          alt="FJV Logo"
+          class="auth-logo"
+        />
+      </div>
+      <h2 class="auth-title">Iniciar Sesión</h2>
+      <p class="auth-subtitle">Bienvenido de nuevo a la plataforma de FJV</p>
+    </div>
+
+    <!-- Formulario de login -->
+    <form
+      [formGroup]="loginForm"
+      (ngSubmit)="onSubmit()"
+      class="auth-form"
+      novalidate
+    >
+      <!-- Campo de Email -->
+      <div class="mb-3">
+        <label for="email" class="form-label">Correo electrónico</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+          <input
+            type="email"
+            formControlName="email"
+            class="form-control"
+            id="email"
+            placeholder="usuario@ejemplo.com"
+            [class.is-invalid]="emailControl?.invalid && emailControl?.touched"
+          />
+        </div>
+        @if (emailControl?.invalid && emailControl?.touched) {
+        <div class="invalid-feedback d-block">
+          @if (emailControl?.errors?.['required']) {
+          <span>El correo es obligatorio</span>
+          } @else if (emailControl?.errors?.['email']) {
+          <span>Ingrese un correo válido</span>
+          }
+        </div>
+        }
+      </div>
+
+      <!-- Campo de Contraseña -->
+      <div class="mb-3">
+        <div class="d-flex justify-content-between">
+          <label for="password" class="form-label">Contraseña</label>
+          <a routerLink="/auth/recuperar" class="forgot-password"
+            >¿Olvidaste tu contraseña?</a
+          >
+        </div>
+        <div class="input-group">
+          <span class="input-group-text"><i class="fas fa-lock"></i></span>
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            class="form-control"
+            id="password"
+            placeholder="Ingresa tu contraseña"
+            [class.is-invalid]="passwordControl?.invalid && passwordControl?.touched"
+          />
+          <button
+            class="btn btn-outline-secondary"
+            type="button"
+            (click)="togglePasswordVisibility()"
+          >
+            <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+          </button>
+        </div>
+        @if (passwordControl?.invalid && passwordControl?.touched) {
+        <div class="invalid-feedback d-block">
+          @if (passwordControl?.errors?.['required']) {
+          <span>La contraseña es obligatoria</span>
+          } @else if (passwordControl?.errors?.['minlength']) {
+          <span>La contraseña debe tener al menos 6 caracteres</span>
+          }
+        </div>
+        }
+      </div>
+
+      <!-- Recordarme -->
+      <div class="mb-4 form-check">
+        <input
+          type="checkbox"
+          class="form-check-input"
+          id="remember"
+          formControlName="remember"
+        />
+        <label class="form-check-label" for="remember"
+          >Mantener la sesión iniciada</label
+        >
+      </div>
+
+      <!-- Mensaje de autenticación social en progreso -->
+      @if (isSocialAuthInProgress) {
+      <div class="alert alert-info text-center mb-4">
+        <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+        Procesando autenticación...
+      </div>
+      }
+
+      <!-- Mensaje de error con estilo mejorado -->
+      @if (errorMessage) {
+      <div class="alert alert-danger mb-4" role="alert">
+        <div class="d-flex align-items-center">
+          <i class="fas fa-exclamation-circle fa-lg me-3"></i>
+          <div>
+            <strong>Error de autenticación</strong><br />
+            {{ errorMessage }}
+          </div>
+          <button
+            type="button"
+            class="btn-close ms-auto"
+            (click)="clearError()"
+          ></button>
+        </div>
+      </div>
+      }
+
+      <!-- Submit button -->
+      <button
+        type="submit"
+        class="btn btn-primary w-100"
+        [disabled]="isSubmitting || loginForm.invalid"
+      >
+        @if (isSubmitting) {
+        <span
+          class="spinner-border spinner-border-sm me-2"
+          role="status"
+          aria-hidden="true"
+        ></span>
+        Iniciando sesión... } @else { Iniciar Sesión }
+      </button>
+
+      <!-- Opciones alternativas de inicio de sesión -->
+      <div class="separator my-4">
+        <span>O inicia sesión con</span>
+      </div>
+
+      <div class="social-logins mb-4 d-flex justify-content-center gap-3">
+        <button
+          type="button"
+          class="btn social-btn"
+          (click)="loginWithGoogle()"
+          [disabled]="isSubmitting || isSocialAuthInProgress"
+        >
+          <i class="fab fa-google"></i>
+        </button>
+        <button
+          type="button"
+          class="btn social-btn"
+          (click)="loginWithLinkedIn()"
+          [disabled]="isSubmitting || isSocialAuthInProgress"
+        >
+          <i class="fab fa-linkedin-in"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

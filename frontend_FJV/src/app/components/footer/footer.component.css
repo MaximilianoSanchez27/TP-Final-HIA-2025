@@ -1,0 +1,600 @@
+/* =================================================
+   FOOTER - DISEÑO MODERNO Y ELEGANTE 2024
+   ================================================= */
+
+.site-footer {
+  background: linear-gradient(135deg, #1a365d 0%, #2d3748 50%, #1a202c 100%);
+  color: var(--white-soft);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Efecto de partículas de fondo */
+.site-footer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 100px 100px, 80px 80px, 120px 120px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.footer-top {
+  padding: 4rem 0 2.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* Logo mejorado */
+.footer-logo {
+  max-width: 180px;
+  transition: transform 0.3s ease;
+}
+
+.footer-logo:hover {
+  transform: scale(1.05);
+}
+
+.footer-logo img {
+  max-width: 100%;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 20px;
+  padding: 15px;
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.footer-logo img:hover {
+  box-shadow:
+    0 15px 35px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+/* Descripción mejorada */
+.footer-desc {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Redes sociales mejoradas */
+.social-links {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.social-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 15px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  color: white;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.social-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.social-link:hover::before {
+  left: 100%;
+}
+
+.social-link:hover {
+  transform: translateY(-5px) scale(1.1);
+  background: linear-gradient(135deg, #4267B2 0%, #5890FF 100%);
+  box-shadow:
+    0 10px 25px rgba(66, 103, 178, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.social-link[href*="instagram"]:hover {
+  background: linear-gradient(135deg, #E4405F 0%, #FCAF45 50%, #833AB4 100%);
+  box-shadow: 0 10px 25px rgba(228, 64, 95, 0.4);
+}
+
+.social-link i {
+  font-size: 1.2rem;
+  z-index: 1;
+}
+
+/* Encabezados mejorados */
+.footer-heading {
+  color: white;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  font-size: 1.25rem;
+  position: relative;
+  padding-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.footer-heading::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #4299e1, #63b3ed);
+  border-radius: 2px;
+  box-shadow: 0 2px 4px rgba(66, 153, 225, 0.3);
+}
+
+/* Enlaces del footer mejorados */
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 12px;
+  transform: translateX(0);
+  transition: transform 0.3s ease;
+}
+
+.footer-links li:hover {
+  transform: translateX(8px);
+}
+
+.footer-links a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 0;
+  position: relative;
+  font-weight: 500;
+}
+
+.footer-links a::before {
+  content: '\f105';
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  margin-right: 12px;
+  color: #4299e1;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.footer-links a:hover {
+  color: white;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+.footer-links a:hover::before {
+  color: #63b3ed;
+  transform: translateX(3px);
+}
+
+/* Información de contacto mejorada */
+.footer-contact {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-contact li {
+  margin-bottom: 18px;
+  display: flex;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.footer-contact li:last-child {
+  border-bottom: none;
+}
+
+.footer-contact li:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding-left: 12px;
+  margin-left: -12px;
+  margin-right: -12px;
+}
+
+.footer-contact i {
+  margin-right: 15px;
+  color: #4299e1;
+  margin-top: 2px;
+  font-size: 1.1rem;
+  width: 20px;
+  text-align: center;
+}
+
+.footer-contact span,
+.footer-contact a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.footer-contact a:hover {
+  color: white;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+/* Estados de carga mejorados */
+.contact-loading {
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+.loading-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.footer-contact .mb-3 {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-contact .fa-spinner {
+  color: #4299e1;
+  font-size: 1.2rem;
+}
+
+/* Mejorar elementos de contacto */
+.contact-item {
+  margin-bottom: 18px;
+  display: flex;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.contact-item:last-child {
+  border-bottom: none;
+}
+
+.contact-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding-left: 12px;
+  margin-left: -12px;
+  margin-right: -12px;
+}
+
+.contact-item i {
+  margin-right: 15px;
+  color: #4299e1;
+  margin-top: 2px;
+  font-size: 1.1rem;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.contact-item div {
+  flex: 1;
+}
+
+.contact-label {
+  display: block;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+  font-weight: 600;
+}
+
+.contact-value {
+  display: block;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  line-height: 1.4;
+  transition: all 0.3s ease;
+}
+
+.contact-value:hover {
+  color: white;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+/* Placeholder de redes sociales */
+.social-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.social-placeholder .social-link {
+  margin-bottom: 10px;
+  opacity: 0.5;
+  cursor: default;
+}
+
+.social-placeholder .social-link:hover {
+  transform: none;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  box-shadow: none;
+}
+
+/* Loading states para redes sociales */
+.social-link.loading {
+  animation: pulse 2s ease-in-out infinite;
+  opacity: 0.6;
+}
+
+.social-link.loading:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+/* Botón de WhatsApp mejorado */
+.btn-whatsapp {
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  border: none;
+  border-radius: 25px;
+  padding: 12px 20px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+}
+
+.btn-whatsapp:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+  background: linear-gradient(135deg, #128C7E 0%, #25D366 100%);
+}
+
+/* Mejoras para elementos con iconos */
+.footer-heading i {
+  color: #4299e1;
+  margin-right: 8px;
+  font-size: 1.1rem;
+}
+
+/* Efectos de hover mejorados para enlaces */
+.privacy-links a {
+  position: relative;
+  overflow: hidden;
+}
+
+.privacy-links a i {
+  transition: transform 0.3s ease;
+}
+
+.privacy-links a:hover i {
+  transform: scale(1.1);
+}
+
+/* Footer Bottom mejorado */
+.footer-bottom {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.5) 100%);
+  padding: 2rem 0;
+  font-size: 0.9rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 2;
+}
+
+.copyright {
+  margin-bottom: 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.privacy-links {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  justify-content: flex-end;
+  gap: 25px;
+  flex-wrap: wrap;
+}
+
+.privacy-links a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  position: relative;
+  padding: 5px 0;
+  overflow: hidden;
+}
+
+.privacy-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #4299e1, #63b3ed);
+  transition: width 0.3s ease;
+}
+
+.privacy-links a:hover {
+  color: white;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+.privacy-links a:hover::after {
+  width: 100%;
+}
+
+.privacy-links a i {
+  transition: transform 0.3s ease;
+}
+
+.privacy-links a:hover i {
+  transform: scale(1.1);
+}
+
+/* Responsive mejorado */
+@media (max-width: 992px) {
+  .footer-top {
+    padding: 3rem 0 2rem;
+  }
+
+  .footer-heading {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .social-links {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer-top {
+    padding: 2.5rem 0 1.5rem;
+  }
+
+  .footer-logo {
+    max-width: 150px;
+    margin: 0 auto 1.5rem;
+  }
+
+  .footer-desc {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .social-links {
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+
+  .privacy-links {
+    justify-content: center;
+    margin-top: 1rem;
+    gap: 15px;
+  }
+
+  .footer-contact li {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .footer-contact i {
+    margin-bottom: 5px;
+  }
+
+  .contact-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .contact-item i {
+    margin-bottom: 5px;
+    margin-right: 8px;
+  }
+
+  .contact-label {
+    font-size: 0.75rem;
+  }
+
+  .footer-heading {
+    text-align: center;
+  }
+
+  .footer-heading::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 576px) {
+  .footer-top {
+    padding: 2rem 0 1rem;
+  }
+
+  .footer-heading::after {
+    width: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .social-link {
+    width: 45px;
+    height: 45px;
+  }
+
+  .social-link i {
+    font-size: 1.1rem;
+  }
+
+  .privacy-links {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .contact-loading {
+    padding: 15px;
+  }
+
+  .loading-item {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .social-placeholder {
+    margin-top: 10px;
+  }
+}

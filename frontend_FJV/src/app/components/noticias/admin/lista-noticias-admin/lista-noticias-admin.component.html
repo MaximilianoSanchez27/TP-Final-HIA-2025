@@ -1,0 +1,193 @@
+<div class="admin-noticias-container">
+  <div class="container py-4">
+    <!-- Encabezado -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h1 class="h3 mb-0">Administración de Noticias</h1>
+            <p class="text-muted small mb-0">Gestione el contenido informativo del sitio</p>
+          </div>
+          <div class="btn-group">
+            <a [routerLink]="['/admin/noticias']" class="btn btn-outline-primary">
+              <i class="fas fa-chart-pie me-1"></i>Dashboard
+            </a>
+            <a [routerLink]="['/admin/noticias/nueva']" class="btn btn-primary">
+              <i class="fas fa-plus me-1"></i>Nueva Noticia
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-light">
+        <h2 class="h5 mb-0"><i class="fas fa-filter me-2"></i>Filtros</h2>
+      </div>
+      <div class="card-body">
+        <div class="row align-items-end">
+          <div class="col-md-3 mb-3 mb-md-0">
+            <label for="categoria" class="form-label fw-bold">Categoría</label>
+            <select
+              id="categoria"
+              class="form-select"
+              [(ngModel)]="filtros.categoria"
+              (change)="aplicarFiltros()">
+              <option *ngFor="let cat of categorias" [value]="cat.valor">
+                {{cat.etiqueta}}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-3 mb-3 mb-md-0">
+            <label for="estado" class="form-label fw-bold">Estado</label>
+            <select
+              id="estado"
+              class="form-select"
+              [(ngModel)]="filtros.estado"
+              (change)="aplicarFiltros()">
+              <option *ngFor="let est of estados" [value]="est.valor">
+                {{est.etiqueta}}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-4 mb-3 mb-md-0">
+            <label for="buscar" class="form-label fw-bold">Buscar</label>
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                id="buscar"
+                placeholder="Buscar noticias..."
+                [(ngModel)]="filtros.buscar">
+              <button
+                class="btn btn-primary"
+                (click)="aplicarFiltros()">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="col-md-2">
+            <button
+              class="btn btn-outline-secondary w-100"
+              (click)="limpiarFiltros()">
+              <i class="fas fa-times me-1"></i>Limpiar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado de carga -->
+    <div *ngIf="isLoading" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <p class="mt-2">Cargando noticias...</p>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="error" class="alert alert-danger">
+      <i class="fas fa-exclamation-triangle me-2"></i> {{error}}
+    </div>
+
+    <!-- Sin resultados -->
+    <div *ngIf="!isLoading && !error && noticias.length === 0" class="text-center py-5">
+      <i class="fas fa-newspaper fa-3x text-muted mb-3"></i>
+      <h3 class="h4">No hay noticias disponibles</h3>
+      <p class="text-muted">No se encontraron noticias que coincidan con los criterios de búsqueda.</p>
+    </div>
+
+    <!-- Tabla de noticias -->
+    <div *ngIf="!isLoading && noticias.length > 0" class="card shadow-sm">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Título</th>
+              <th>Categoría</th>
+              <th>Fecha</th>
+              <th>Estado</th>
+              <th>Vistas</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let noticia of noticias">
+              <td>{{noticia.idNoticia}}</td>
+              <td>
+                <div class="fw-bold">{{truncarTexto(noticia.titulo, 40)}}</div>
+                <small class="text-muted">{{truncarTexto(noticia.resumen || '', 60)}}</small>
+              </td>
+              <td>
+                <span class="badge bg-primary">{{noticia.categoria}}</span>
+                <span *ngIf="noticia.destacado" class="badge bg-warning text-dark ms-1">
+                  <i class="fas fa-star"></i>
+                </span>
+              </td>
+              <td>{{formatearFecha(noticia.fechaPublicacion)}}</td>
+              <td>
+                <span class="badge" [ngClass]="getEstadoBadgeClass(noticia.estado)">
+                  {{noticia.estado}}
+                </span>
+              </td>
+              <td>{{noticia.vistas || 0}}</td>
+              <td>
+                <div class="btn-group">
+                  <a [routerLink]="['/noticias/ver', noticia.idNoticia]" class="btn btn-sm btn-outline-secondary" title="Ver">
+                    <i class="fas fa-eye"></i>
+                  </a>
+                  <a [routerLink]="['/admin/noticias/editar', noticia.idNoticia]" class="btn btn-sm btn-outline-primary" title="Editar">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <button class="btn btn-sm btn-outline-danger" (click)="eliminarNoticia(noticia)" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                  <div class="btn-group">
+                    <button class="btn btn-sm btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                      Estado
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                      <li><button class="dropdown-item" [class.active]="noticia.estado === 'ACTIVO'"
+                                 (click)="cambiarEstado(noticia, 'ACTIVO')">
+                          <i class="fas fa-check-circle text-success me-2"></i>Activo
+                      </button></li>
+                      <li><button class="dropdown-item" [class.active]="noticia.estado === 'INACTIVO'"
+                                 (click)="cambiarEstado(noticia, 'INACTIVO')">
+                          <i class="fas fa-times-circle text-danger me-2"></i>Inactivo
+                      </button></li>
+                      <li><button class="dropdown-item" [class.active]="noticia.estado === 'BORRADOR'"
+                                 (click)="cambiarEstado(noticia, 'BORRADOR')">
+                          <i class="fas fa-file text-secondary me-2"></i>Borrador
+                      </button></li>
+                    </ul>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Paginación -->
+      <div *ngIf="totalPages > 1" class="d-flex justify-content-between align-items-center p-3 border-top">
+        <div class="text-muted">
+          Mostrando {{ noticias.length }} de {{ totalItems }} noticias
+        </div>
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [(page)]="filtros.page!"
+          [pageSize]="filtros.limit!"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="cambiarPagina($event)">
+        </ngb-pagination>
+      </div>
+    </div>
+  </div>
+</div>

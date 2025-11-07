@@ -1,0 +1,132 @@
+<form [formGroup]="cobroForm" (ngSubmit)="onSubmit()">
+  @if (errorMessage) {
+    <div class="alert alert-danger mb-3">
+      <i class="fas fa-exclamation-triangle me-2"></i> {{errorMessage}}
+    </div>
+  }
+
+  <div class="mb-3">
+    <label for="monto" class="form-label">Monto <span class="text-danger">*</span></label>
+    <div class="input-group">
+      <span class="input-group-text">$</span>
+      <input
+        type="number"
+        id="monto"
+        formControlName="monto"
+        class="form-control"
+        placeholder="0.00"
+        step="0.01"
+        min="1"
+        [ngClass]="{'is-invalid': montoControl?.invalid && montoControl?.touched}"
+      >
+      <div class="invalid-feedback">
+        @if (montoControl?.errors?.['required']) {
+          El monto es requerido
+        } @else if (montoControl?.errors?.['min']) {
+          El monto debe ser mayor a cero
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label for="concepto" class="form-label">Concepto <span class="text-danger">*</span></label>
+    <textarea
+      id="concepto"
+      formControlName="concepto"
+      class="form-control"
+      placeholder="Ej: Cuota de afiliación mensual"
+      [ngClass]="{'is-invalid': conceptoControl?.invalid && conceptoControl?.touched}"
+      rows="3"
+    ></textarea>
+    <div class="invalid-feedback">
+      @if (conceptoControl?.errors?.['required']) {
+        El concepto es requerido
+      } @else if (conceptoControl?.errors?.['minlength']) {
+        El concepto debe tener al menos 5 caracteres
+      }
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label for="fechaCobro" class="form-label">Fecha de emisión <span class="text-danger">*</span></label>
+      <input
+        type="date"
+        id="fechaCobro"
+        formControlName="fechaCobro"
+        class="form-control"
+        [ngClass]="{'is-invalid': fechaCobroControl?.invalid && fechaCobroControl?.touched}"
+      >
+      <div class="invalid-feedback">
+        La fecha de emisión es requerida
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <label for="fechaVencimiento" class="form-label">Fecha de vencimiento <span class="text-danger">*</span></label>
+      <input
+        type="date"
+        id="fechaVencimiento"
+        formControlName="fechaVencimiento"
+        class="form-control"
+        [ngClass]="{'is-invalid': fechaVencimientoControl?.invalid && fechaVencimientoControl?.touched}"
+      >
+      <div class="invalid-feedback">
+        La fecha de vencimiento es requerida
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label for="tipoComprobante" class="form-label">Tipo de comprobante <span class="text-danger">*</span></label>
+      <select
+        id="tipoComprobante"
+        formControlName="tipoComprobante"
+        class="form-select"
+        [ngClass]="{'is-invalid': tipoComprobanteControl?.invalid && tipoComprobanteControl?.touched}"
+      >
+        <option value="" disabled selected>Seleccione un tipo</option>
+        @for (tipo of tiposComprobante; track tipo.id) {
+          <option [value]="tipo.id">{{tipo.nombre}}</option>
+        }
+      </select>
+      <div class="invalid-feedback">
+        El tipo de comprobante es requerido
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <label for="estado" class="form-label">Estado <span class="text-danger">*</span></label>
+      <select
+        id="estado"
+        formControlName="estado"
+        class="form-select"
+        [ngClass]="{'is-invalid': estadoControl?.invalid && estadoControl?.touched}"
+      >
+        @for (estado of estadosCobroDisponibles; track estado) {
+          <option [value]="estado">{{estado}}</option>
+        }
+      </select>
+      <div class="invalid-feedback">
+        El estado es requerido
+      </div>
+    </div>
+  </div>
+
+  <div class="d-grid">
+    <button
+      type="submit"
+      class="btn btn-success"
+      [disabled]="cobroForm.invalid || isSubmitting"
+    >
+      @if (isSubmitting) {
+        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        Generando...
+      } @else {
+        <i class="fas fa-check-circle me-2"></i> Generar Cobro
+      }
+    </button>
+  </div>
+</form>

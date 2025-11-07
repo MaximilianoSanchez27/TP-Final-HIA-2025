@@ -1,0 +1,135 @@
+<div class="container mt-5 mb-5">
+  <!-- Estado de Carga -->
+  <div *ngIf="isLoading" class="text-center p-5">
+    <div class="spinner-border text-secondary" style="width: 3rem; height: 3rem;" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="mt-3 text-muted">Cargando tu perfil...</p>
+  </div>
+
+  <!-- Estado de Error -->
+  <div *ngIf="error" class="alert alert-danger shadow-sm" role="alert">
+    <i class="fas fa-exclamation-triangle me-2"></i> {{ error }}
+  </div>
+
+  <div *ngIf="successMessage && !isEditing" class="alert alert-success shadow-sm" role="alert">
+    <i class="fas fa-check-circle me-2"></i> {{ successMessage }}
+  </div>
+
+  <!-- Contenido del Perfil -->
+  <div *ngIf="!isLoading && userProfile && !isEditing" class="card shadow-sm profile-card">
+    <div class="card-body">
+      <div class="row align-items-center">
+        <!-- Columna de la Imagen y Nombre -->
+        <div class="col-md-4 text-center">
+          <img [src]="userProfile.fotoPerfil || 'https://via.placeholder.com/150?text=User'"
+               alt="Foto de perfil"
+               class="img-fluid rounded-circle mb-3 profile-image">
+          <h3 class="mb-1">{{ userProfile.nombre }} {{ userProfile.apellido }}</h3>
+          <p class="text-muted text-capitalize">{{ userProfile.rol.nombre }}</p>
+        </div>
+        <!-- Columna de Detalles -->
+        <div class="col-md-8">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="mb-0 text-secondary"><i class="fas fa-id-card-alt me-2"></i>Mi Perfil</h2>
+            <button class="btn btn-primary" (click)="toggleEdit()"><i class="fas fa-edit me-2"></i>Editar Perfil</button>
+          </div>
+          <hr>
+
+          <h5 class="mt-4">Información de Contacto</h5>
+          <dl class="row mt-3">
+            <dt class="col-sm-3"><i class="fas fa-envelope text-muted me-2"></i>Email:</dt>
+            <dd class="col-sm-9">{{ userProfile.email }}</dd>
+
+            <dt class="col-sm-3"><i class="fas fa-phone text-muted me-2"></i>Teléfono:</dt>
+            <dd class="col-sm-9">{{ userProfile.phone || 'No especificado' }}</dd>
+          </dl>
+
+          <h5 class="mt-4">Dirección</h5>
+          <dl class="row mt-3">
+            <dt class="col-sm-3"><i class="fas fa-map-marker-alt text-muted me-2"></i>Dirección:</dt>
+            <dd class="col-sm-9">{{ userProfile.address?.street || 'No especificado' }}</dd>
+
+            <dt class="col-sm-3"><i class="fas fa-city text-muted me-2"></i>Ciudad:</dt>
+            <dd class="col-sm-9">{{ userProfile.address?.city || 'No especificado' }}</dd>
+
+            <dt class="col-sm-3"><i class="fas fa-flag text-muted me-2"></i>País:</dt>
+            <dd class="col-sm-9">{{ userProfile.address?.country || 'No especificado' }}</dd>
+          </dl>
+          <hr>
+          <div class="text-end text-muted">
+            <small>Miembro desde: {{ userProfile.createdAt | date:'longDate':'':'es' }}</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulario de Edición -->
+  <div *ngIf="isEditing && userProfile" class="card shadow-sm profile-card">
+    <div class="card-body">
+      <h2 class="mb-3 text-secondary"><i class="fas fa-user-edit me-2"></i>Editar Perfil</h2>
+      <hr>
+      <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+        <div class="row">
+          <div class="col-12 mb-3">
+            <label for="fotoPerfil" class="form-label">Foto de Perfil</label>
+            <input type="file" id="fotoPerfil" class="form-control" (change)="onFileSelected($event)" accept="image/png, image/jpeg, image/gif, image/webp">
+            <div class="form-text">Selecciona una nueva imagen para actualizar tu foto de perfil (máx. 4MB).</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="nombre" class="form-label">Nombre</label>
+            <input type="text" id="nombre" class="form-control" formControlName="nombre">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="apellido" class="form-label">Apellido</label>
+            <input type="text" id="apellido" class="form-control" formControlName="apellido">
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="phone" class="form-label">Teléfono</label>
+          <input type="tel" id="phone" class="form-control" formControlName="phone">
+        </div>
+
+        <div formGroupName="address">
+          <h5 class="mt-4">Dirección</h5>
+          <div class="mb-3">
+            <label for="street" class="form-label">Calle y Número</label>
+            <input type="text" id="street" class="form-control" formControlName="street">
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="city" class="form-label">Ciudad</label>
+              <input type="text" id="city" class="form-control" formControlName="city">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="country" class="form-label">País</label>
+              <input type="text" id="country" class="form-control" formControlName="country">
+            </div>
+          </div>
+        </div>
+
+        <hr>
+
+        <div *ngIf="error" class="alert alert-danger mt-3">
+          {{ error }}
+        </div>
+
+        <div class="d-flex justify-content-end">
+          <button type="button" class="btn btn-secondary me-2" (click)="toggleEdit()">
+            <i class="fas fa-times me-2"></i>Cancelar
+          </button>
+          <button type="submit" class="btn btn-success" [disabled]="profileForm.invalid || isLoading">
+            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <i *ngIf="!isLoading" class="fas fa-save me-2"></i>
+            {{ isLoading ? 'Guardando...' : 'Guardar Cambios' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>

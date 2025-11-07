@@ -1,0 +1,52 @@
+.detalle-club-container {
+  background-color: var(--neutral-200);
+  min-height: calc(100vh - 130px);
+}
+
+.card {
+  border: none;
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+}
+
+.card-header {
+  border-bottom: none;
+  padding: 1rem 1.5rem;
+}
+
+/* Estilos para los botones */
+.btn {
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para las acciones */
+.list-group-item {
+  transition: all 0.3s ease;
+  border-left: none;
+  border-right: none;
+}
+
+.list-group-item:first-child {
+  border-top: none;
+}
+
+.list-group-item:last-child {
+  border-bottom: none;
+}
+
+.list-group-item:hover {
+  background-color: var(--neutral-200);
+  transform: translateX(5px);
+}
+
+/* Estilos para insignias de estado */
+.badge {
+  font-weight: 500;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.8rem;
+}

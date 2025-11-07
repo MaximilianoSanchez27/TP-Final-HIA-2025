@@ -1,0 +1,65 @@
+<div class="dashboard-noticias">
+  <div class="container-fluid px-4 py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h1 class="mb-1">Panel de Noticias</h1>
+        <p class="text-muted">Estadísticas y métricas del sistema de noticias</p>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button class="btn btn-outline-primary" (click)="cargarEstadisticas()">
+          <i class="fas fa-sync-alt me-2"></i>Actualizar
+        </button>
+        <a routerLink="/dashboard/noticias/nueva" class="btn btn-primary">
+          <i class="fas fa-plus me-2"></i>Nueva Noticia
+        </a>
+      </div>
+    </div>
+
+    <!-- Estado de carga -->
+    <div *ngIf="isLoading" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <p class="mt-2">Cargando estadísticas...</p>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="error && !isLoading" class="alert alert-danger">
+      <i class="fas fa-exclamation-triangle me-2"></i> {{error}}
+    </div>
+
+    <!-- Contenido del dashboard -->
+    <div *ngIf="!isLoading && !error" class="dashboard-content">
+      <!-- ... contenido existente sin cambios ... -->
+
+      <!-- Actualizar las rutas en los enlaces -->
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title mb-3">Acciones rápidas</h5>
+            <div class="d-grid gap-2">
+              <a routerLink="/dashboard/noticias/nueva" class="btn btn-outline-primary">
+                <i class="fas fa-plus me-2"></i>Nueva noticia
+              </a>
+              <a routerLink="/dashboard/noticias/listado" class="btn btn-outline-secondary">
+                <i class="fas fa-list me-2"></i>Listar todas
+              </a>
+              <a routerLink="/noticias" class="btn btn-outline-info">
+                <i class="fas fa-eye me-2"></i>Ver frontend
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actualizar todas las referencias similares en el template -->
+      <h2 class="mt-2 mb-0 display-5 fw-bold">{{formatNumero(estadisticas?.totalNoticias)}}</h2>
+      <h2 class="mt-2 mb-0 display-5 fw-bold">{{formatNumero(estadisticas?.activas)}}</h2>
+      <h2 class="mt-2 mb-0 display-5 fw-bold">{{formatNumero(estadisticas?.vistasTotal)}}</h2>
+      <h2 class="mt-2 mb-0 display-5 fw-bold">{{formatNumero(estadisticas?.destacadas)}}</h2>
+
+      <!-- ... resto del contenido existente sin cambios ... -->
+    </div>
+  </div>
+</div>

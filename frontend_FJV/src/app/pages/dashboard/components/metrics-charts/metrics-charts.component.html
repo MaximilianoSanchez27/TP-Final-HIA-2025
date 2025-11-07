@@ -1,0 +1,234 @@
+<!-- Componente de filtros de pagos -->
+<app-payment-filters
+  (filtersChanged)="onFiltersChanged($event)"
+  (exportRequested)="onExportRequested($event)">
+</app-payment-filters>
+
+<div class="metrics-container" id="payment-metrics-content">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary mb-3" role="status">
+      <span class="visually-hidden">Cargando métricas...</span>
+    </div>
+    <p class="text-muted">Cargando métricas avanzadas...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="alert alert-danger" role="alert">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    {{ error }}
+    <button class="btn btn-sm btn-outline-danger ms-3" (click)="refresh()">
+      <i class="fas fa-redo"></i> Reintentar
+    </button>
+  </div>
+
+  <!-- Charts Container -->
+  <div *ngIf="!loading && !error && metricas && estadisticasRecaudacion" class="charts-container">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h4 class="mb-1">
+          <i class="fas fa-chart-bar text-primary me-2"></i>
+          Métricas Avanzadas de Cobros
+        </h4>
+        <p class="text-muted mb-0 small">
+          Última actualización: {{ metricas.fechaActualizacion | date:'short' }}
+        </p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-outline-primary btn-sm me-2" (click)="refresh()">
+          <i class="fas fa-sync-alt me-1"></i>
+          Actualizar
+        </button>
+
+        <!-- Botones de exportación adicionales -->
+        <button
+          class="btn btn-outline-secondary btn-sm me-2"
+          (click)="onExportRequested('pdf')"
+          [disabled]="exportingPDF || !metricas"
+          title="Exportar métricas de cobros a PDF">
+          <i class="fas fa-file-pdf me-1"></i>
+          <span *ngIf="!exportingPDF">PDF</span>
+          <span *ngIf="exportingPDF">
+            <i class="fas fa-spinner fa-spin"></i>
+          </span>
+        </button>
+
+        <button
+          class="btn btn-outline-success btn-sm"
+          (click)="onExportRequested('excel')"
+          [disabled]="exportingExcel || !metricas"
+          title="Exportar métricas de cobros a Excel">
+          <i class="fas fa-file-excel me-1"></i>
+          <span *ngIf="!exportingExcel">Excel</span>
+          <span *ngIf="exportingExcel">
+            <i class="fas fa-spinner fa-spin"></i>
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Resumen Numérico -->
+    <div class="row mb-4">
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="metric-card bg-primary text-white">
+          <div class="metric-icon">
+            <i class="fas fa-file-invoice-dollar"></i>
+          </div>
+          <div class="metric-content">
+            <h3 class="metric-value">{{ metricas.resumen.totalCobros }}</h3>
+            <p class="metric-label">Total Cobros</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="metric-card bg-success text-white">
+          <div class="metric-icon">
+            <i class="fas fa-dollar-sign"></i>
+          </div>
+          <div class="metric-content">
+            <h3 class="metric-value">${{ metricas.resumen.totalRecaudado | number:'1.2-2' }}</h3>
+            <p class="metric-label">Total Recaudado</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="metric-card bg-warning text-white">
+          <div class="metric-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="metric-content">
+            <h3 class="metric-value">${{ metricas.resumen.totalPendiente | number:'1.2-2' }}</h3>
+            <p class="metric-label">Total Pendiente</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="metric-card bg-info text-white">
+          <div class="metric-icon">
+            <i class="fas fa-percentage"></i>
+          </div>
+          <div class="metric-content">
+            <h3 class="metric-value">{{ metricas.resumen.tasaCobro | number:'1.1-1' }}%</h3>
+            <p class="metric-label">Tasa de Cobro</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="row">
+      <!-- Distribución por Estado -->
+      <div class="col-lg-6 col-xl-4 mb-4">
+        <div class="card chart-card">
+          <div class="card-body">
+            <div class="chart-container">
+              <canvas #estadosChart></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Evolución Mensual -->
+      <div class="col-lg-12 col-xl-8 mb-4">
+        <div class="card chart-card">
+          <div class="card-body">
+            <div class="chart-container">
+              <canvas #mensualChart></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recaudación por Club -->
+      <div class="col-lg-12 mb-4">
+        <div class="card chart-card">
+          <div class="card-body">
+            <div class="chart-container">
+              <canvas #clubesChart></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Distribución por Concepto -->
+      <div class="col-lg-6 mb-4">
+        <div class="card chart-card">
+          <div class="card-body">
+            <div class="chart-container">
+              <canvas #conceptosChart></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estadísticas de Recaudación -->
+      <div class="col-lg-6 mb-4">
+        <div class="card chart-card">
+          <div class="card-body">
+            <div class="chart-container">
+              <canvas #recaudacionChart></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla de detalles por club -->
+    <div class="row mt-4" *ngIf="metricas.porClub.length > 0">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <i class="fas fa-table me-2"></i>
+              Detalle por Club
+            </h5>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>Club</th>
+                    <th class="text-end">Cantidad</th>
+                    <th class="text-end">Total</th>
+                    <th class="text-end">Recaudado</th>
+                    <th class="text-end">Pendiente</th>
+                    <th class="text-end">% Cobrado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let club of metricas.porClub">
+                    <td>
+                      <strong>{{ club.nombre }}</strong>
+                    </td>
+                    <td class="text-end">{{ club.cantidad }}</td>
+                    <td class="text-end">${{ club.total | number:'1.2-2' }}</td>
+                    <td class="text-end text-success">
+                      <strong>${{ club.recaudado | number:'1.2-2' }}</strong>
+                    </td>
+                    <td class="text-end text-warning">
+                      ${{ club.pendiente | number:'1.2-2' }}
+                    </td>
+                    <td class="text-end">
+                      <span class="badge"
+                            [ngClass]="{
+                              'bg-success': (club.recaudado / club.total * 100) >= 80,
+                              'bg-warning': (club.recaudado / club.total * 100) >= 50 && (club.recaudado / club.total * 100) < 80,
+                              'bg-danger': (club.recaudado / club.total * 100) < 50
+                            }">
+                        {{ (club.recaudado / club.total * 100) | number:'1.1-1' }}%
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

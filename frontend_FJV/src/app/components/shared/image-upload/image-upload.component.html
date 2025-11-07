@@ -1,0 +1,48 @@
+<div class="image-upload-container">
+  <!-- Vista previa de imagen -->
+  <div class="image-preview" *ngIf="imagePreviewUrl">
+    <img [src]="imagePreviewUrl" alt="Vista previa" class="preview-image img-fluid rounded">
+    <button type="button" class="btn btn-sm btn-danger remove-image" (click)="removeImage()" [disabled]="isUploading">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Estado de carga -->
+  <div class="upload-status" *ngIf="isUploading">
+    <div class="progress mb-2">
+      <div class="progress-bar" role="progressbar" [style.width.%]="uploadProgress">
+        {{ uploadProgress }}%
+      </div>
+    </div>
+    <small class="text-muted">Subiendo imagen, por favor espere...</small>
+  </div>
+
+  <!-- Formulario de carga -->
+  <div class="upload-form" *ngIf="!isUploading">
+    <!-- Si no hay imagen, mostrar el selector de archivos -->
+    <div class="mb-3" *ngIf="!imagePreviewUrl">
+      <div class="upload-area">
+        <input type="file" class="form-control" id="image-upload" accept="image/*" (change)="onFileSelected($event)">
+        <div class="upload-placeholder">
+          <i class="fas fa-cloud-upload-alt fa-2x mb-2"></i>
+          <p class="mb-0">Haga clic para seleccionar una imagen</p>
+          <small class="text-muted">o arrastre y suelte aquí</small>
+        </div>
+      </div>
+      <small class="text-muted d-block mt-1">Formatos permitidos: JPG, PNG, GIF, WebP. Máximo 5MB.</small>
+    </div>
+
+    <!-- Si ya hay una imagen pero queremos cambiarla -->
+    <div class="mb-3" *ngIf="imagePreviewUrl && !isUploading">
+      <button type="button" class="btn btn-sm btn-outline-primary" (click)="openFileSelector()">
+        <i class="fas fa-exchange-alt me-1"></i> Cambiar imagen
+      </button>
+      <input #fileInput type="file" id="image-change" class="d-none" accept="image/*" (change)="onFileSelected($event)">
+    </div>
+  </div>
+
+  <!-- Mensaje de error -->
+  <div class="alert alert-danger mt-2" *ngIf="errorMessage">
+    <i class="fas fa-exclamation-triangle me-2"></i> {{ errorMessage }}
+  </div>
+</div>

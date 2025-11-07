@@ -1,0 +1,381 @@
+/* === CONTENEDOR PRINCIPAL === */
+.payment-filters-container {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* === HEADER === */
+.filters-header {
+  background: #f8f9fa;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 16px 20px;
+  border-radius: 8px 8px 0 0;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.title-section {
+  flex: 1;
+}
+
+.filters-title {
+  color: #374151;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filters-title i {
+  color: #6b7280;
+  font-size: 16px;
+}
+
+.filters-description {
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+/* === BOTONES DE EXPORTACIÓN === */
+.export-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.export-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.export-btn:hover:not(:disabled) {
+  background: #f9fafb;
+  border-color: #9ca3af;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.export-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.export-pdf {
+  color: #6b7280;
+  border-color: #6b7280;
+}
+
+.export-pdf:hover:not(:disabled) {
+  background: #6b7280;
+  color: #ffffff;
+}
+
+.export-excel {
+  color: #374151;
+  border-color: #374151;
+}
+
+.export-excel:hover:not(:disabled) {
+  background: #374151;
+  color: #ffffff;
+}
+
+.export-btn i {
+  font-size: 12px;
+}
+
+/* === FORMULARIO DE FILTROS === */
+.filters-form {
+  padding: 20px;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-group.span-2 {
+  grid-column: span 2;
+}
+
+.filter-label {
+  color: #374151;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* === CONTROLES DE ENTRADA === */
+.filter-select,
+.date-input,
+.amount-input {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #374151;
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.filter-select:focus,
+.date-input:focus,
+.amount-input:focus {
+  outline: none;
+  border-color: #6b7280;
+  box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.1);
+}
+
+.filter-select:hover,
+.date-input:hover,
+.amount-input:hover {
+  border-color: #9ca3af;
+}
+
+/* === RANGOS DE FECHA Y MONTO === */
+.date-range,
+.amount-range {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.date-separator,
+.amount-separator {
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.date-input,
+.amount-input {
+  flex: 1;
+  min-width: 120px;
+}
+
+/* === ACCIONES === */
+.filters-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: 1px solid;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btn-apply {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+  color: #374151;
+}
+
+.btn-apply:hover {
+  background: #6b7280;
+  border-color: #6b7280;
+  color: #ffffff;
+}
+
+.btn-apply.active {
+  background: #374151;
+  border-color: #374151;
+  color: #ffffff;
+}
+
+.btn-clear {
+  background: #ffffff;
+  border-color: #d1d5db;
+  color: #6b7280;
+}
+
+.btn-clear:hover:not(:disabled) {
+  background: #f9fafb;
+  border-color: #9ca3af;
+  color: #374151;
+}
+
+.btn-clear:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn i {
+  font-size: 12px;
+}
+
+/* === RESUMEN DE FILTROS === */
+.filters-summary {
+  background: #f8f9fa;
+  border-top: 1px solid #e5e7eb;
+  padding: 12px 20px;
+  border-radius: 0 0 8px 8px;
+}
+
+.summary-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.summary-label {
+  color: #374151;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.summary-text {
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+/* === RESPONSIVE DESIGN === */
+@media (max-width: 768px) {
+  .filters-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-group.span-2 {
+    grid-column: span 1;
+  }
+
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .export-buttons {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .filters-actions {
+    justify-content: center;
+  }
+
+  .btn {
+    flex: 1;
+    justify-content: center;
+    min-width: 120px;
+  }
+
+  .date-range,
+  .amount-range {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .date-separator,
+  .amount-separator {
+    text-align: center;
+    padding: 4px 0;
+  }
+
+  .summary-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .payment-filters-container {
+    margin-left: -16px;
+    margin-right: -16px;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+
+  .filters-header,
+  .filters-form,
+  .filters-summary {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .export-btn,
+  .btn {
+    font-size: 13px;
+    padding: 10px 14px;
+  }
+}
+
+/* === ESTADOS ADICIONALES === */
+.filter-select:invalid,
+.date-input:invalid,
+.amount-input:invalid {
+  border-color: #ef4444;
+}
+
+.filter-select:disabled,
+.date-input:disabled,
+.amount-input:disabled {
+  background: #f9fafb;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* === MEJORAS DE ACCESIBILIDAD === */
+.btn:focus,
+.export-btn:focus {
+  outline: 2px solid #6b7280;
+  outline-offset: 2px;
+}
+
+.filter-select:focus,
+.date-input:focus,
+.amount-input:focus {
+  outline: 2px solid #6b7280;
+  outline-offset: 2px;
+}

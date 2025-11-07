@@ -1,0 +1,231 @@
+<div class="lista-clubes-container">
+  <div class="container py-4">
+    <div class="row">
+      <div class="col-12">
+        <!-- Encabezado -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h2 class="mb-1">Gestión de Clubes</h2>
+            <p class="text-muted">Administración de clubes afiliados a la Federación</p>
+          </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="card shadow-sm mb-4">
+          <div class="card-body p-3">
+            <h5 class="mb-3">Filtros de búsqueda</h5>
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label for="nombreFilter" class="form-label">Nombre</label>
+                <input type="text" id="nombreFilter" class="form-control" [(ngModel)]="filterParams.nombre" placeholder="Buscar por nombre...">
+              </div>
+              <div class="col-md-4">
+                <label for="cuitFilter" class="form-label">CUIT</label>
+                <input type="text" id="cuitFilter" class="form-control" [(ngModel)]="filterParams.cuit" placeholder="Ej: 30-71234567-8">
+              </div>
+              <div class="col-md-4">
+                <label for="estadoFilter" class="form-label">Estado de Afiliación</label>
+                <select id="estadoFilter" class="form-select" [(ngModel)]="filterParams.estadoAfiliacion">
+                  <option value="">Todos los estados</option>
+                  @for (estado of estadosAfiliacion; track estado) {
+                    <option [value]="estado">{{estado}}</option>
+                  }
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="fechaDesdeFilter" class="form-label">Fecha Afiliación Desde</label>
+                <input type="date" id="fechaDesdeFilter" class="form-control" [(ngModel)]="filterParams.fechaAfiliacionDesde">
+              </div>
+              <div class="col-md-6">
+                <label for="fechaHastaFilter" class="form-label">Fecha Afiliación Hasta</label>
+                <input type="date" id="fechaHastaFilter" class="form-control" [(ngModel)]="filterParams.fechaAfiliacionHasta">
+              </div>
+              <div class="col-12 d-flex justify-content-end gap-2">
+                <button class="btn btn-outline-secondary" (click)="limpiarFiltros()">
+                  <i class="fas fa-times me-2"></i>Limpiar Filtros
+                </button>
+                <button class="btn btn-primary" (click)="aplicarFiltros()">
+                  <i class="fas fa-search me-2"></i>Buscar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Estado de carga o error -->
+        @if (isLoading) {
+          <div class="card shadow-sm text-center p-5">
+            <div class="spinner-border text-primary mx-auto mb-3" role="status">
+              <span class="visually-hidden">Cargando clubes...</span>
+            </div>
+            <p class="mb-0">Cargando lista de clubes...</p>
+          </div>
+        } @else if (errorMessage) {
+          <div class="alert alert-danger">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            {{errorMessage}}
+          </div>
+        } @else if (filteredClubes.length === 0) {
+          <div class="card shadow-sm text-center p-5">
+            <i class="fas fa-building fa-3x text-muted mb-3"></i>
+            <h4>No se encontraron clubes</h4>
+            <p class="mb-4">No hay clubes registrados que coincidan con los criterios de búsqueda.</p>
+          </div>
+        } @else {
+          <!-- Vista Desktop -->
+          <div class="table-responsive d-none d-lg-block">
+            <h3 class="mb-3">Listado de Clubes</h3>
+            <table class="table table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Club</th>
+                  <th>Email</th>
+                  <th>CUIT</th>
+                  <th>Estado</th>
+                  <th>Fecha Afiliación</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (club of filteredClubes; track club.idClub) {
+                  <tr>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <div class="me-3">
+                          <div *ngIf="club.logo; else clubIcon" class="avatar-container">
+                            <img [src]="getLogoUrl(club)"
+                                 class="rounded border"
+                                 width="40"
+                                 height="40"
+                                 style="object-fit: cover;"
+                                 [alt]="club.nombre">
+                          </div>
+                          <ng-template #clubIcon>
+                            <div class="avatar-icon-simple d-flex align-items-center justify-content-center"
+                                 style="width: 40px; height: 40px;">
+                              <i class="fas fa-building text-primary" style="font-size: 1.5rem;"></i>
+                            </div>
+                          </ng-template>
+                        </div>
+                        <div>
+                          <div class="fw-bold">{{ club.nombre }}</div>
+                          <small class="text-muted">ID: {{ club.idClub }}</small>
+                        </div>
+                      </div>
+                    </td>
+                    <td>{{ club.email }}</td>
+                    <td>{{ club.cuit }}</td>
+                    <td>
+                      <span class="badge" [class]="getEstadoBadgeClass(club.estadoAfiliacion)">
+                        {{ club.estadoAfiliacion }}
+                      </span>
+                    </td>
+                    <td>
+                      {{ club.fechaAfiliacion | date:'dd/MM/yyyy' }}
+                    </td>
+                    <td>
+                      <div class="btn-group btn-group-sm">
+                        <a [routerLink]="['/dashboard/clubes/detalle', club.idClub]"
+                           class="btn btn-outline-info"
+                           title="Ver Detalles">
+                          <i class="fas fa-eye me-1"></i>Ver
+                        </a>
+                        <a [routerLink]="['/dashboard/clubes/editar', club.idClub]"
+                           class="btn btn-outline-primary"
+                           title="Editar">
+                          <i class="fas fa-edit me-1"></i>Editar
+                        </a>
+                        <button class="btn btn-outline-danger"
+                                (click)="eliminarClub(club.idClub || 0)"
+                                title="Eliminar">
+                          <i class="fas fa-trash me-1"></i>Eliminar
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Vista Mobile/Tablet (Cards) -->
+          <div class="d-lg-none">
+            <div class="row row-cols-1 row-cols-md-2 g-3">
+              @for (club of filteredClubes; track club.idClub) {
+                <div class="col">
+                  <div class="card club-card h-100">
+                    <div class="card-body">
+                      <!-- Header con logo y nombre -->
+                      <div class="d-flex align-items-center mb-3">
+                        <div class="me-3">
+                          <div *ngIf="club.logo; else mobileClubIcon" class="avatar-container">
+                            <img [src]="getLogoUrl(club)"
+                                 class="rounded border"
+                                 width="50"
+                                 height="50"
+                                 style="object-fit: cover;"
+                                 [alt]="club.nombre">
+                          </div>
+                          <ng-template #mobileClubIcon>
+                            <div class="avatar-icon-simple d-flex align-items-center justify-content-center"
+                                 style="width: 50px; height: 50px;">
+                              <i class="fas fa-building text-primary" style="font-size: 1.8rem;"></i>
+                            </div>
+                          </ng-template>
+                        </div>
+                        <div class="flex-grow-1">
+                          <h6 class="mb-1 fw-bold">{{ club.nombre }}</h6>
+                          <small class="text-muted">ID: {{ club.idClub }}</small>
+                        </div>
+                      </div>
+
+                      <!-- Información principal -->
+                      <div class="row g-2 mb-3">
+                        <div class="col-12">
+                          <small class="text-muted d-block">Email</small>
+                          <span class="fw-bold">{{ club.email }}</span>
+                        </div>
+                        <div class="col-6">
+                          <small class="text-muted d-block">CUIT</small>
+                          <span>{{ club.cuit }}</span>
+                        </div>
+                        <div class="col-6">
+                          <small class="text-muted d-block">Estado</small>
+                          <span class="badge" [class]="getEstadoBadgeClass(club.estadoAfiliacion)">
+                            {{ club.estadoAfiliacion }}
+                          </span>
+                        </div>
+                        <div class="col-12">
+                          <small class="text-muted d-block">Fecha Afiliación</small>
+                          <span>{{ club.fechaAfiliacion | date:'dd/MM/yyyy' }}</span>
+                        </div>
+                      </div>
+
+                      <!-- Acciones -->
+                      <div class="d-grid gap-2">
+                        <div class="btn-group" role="group">
+                          <a [routerLink]="['/dashboard/clubes/detalle', club.idClub]"
+                             class="btn btn-outline-info btn-sm">
+                            <i class="fas fa-eye me-1"></i>Ver
+                          </a>
+                          <a [routerLink]="['/dashboard/clubes/editar', club.idClub]"
+                             class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-edit me-1"></i>Editar
+                          </a>
+                          <button class="btn btn-outline-danger btn-sm"
+                                  (click)="eliminarClub(club.idClub || 0)">
+                            <i class="fas fa-trash me-1"></i>Eliminar
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

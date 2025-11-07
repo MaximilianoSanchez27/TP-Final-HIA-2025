@@ -1,0 +1,52 @@
+/* Mantener los mismos estilos que tenía antes */
+.dashboard-noticias {
+  min-height: 100vh;
+}
+
+.chart-container {
+  position: relative;
+  height: 300px;
+  width: 100%;
+}
+
+/* Estilo para tarjetas con borde colorido */
+.border-left-primary {
+  border-left: 4px solid var(--blue-medium) !important;
+}
+
+.border-left-success {
+  border-left: 4px solid #28a745 !important;
+}
+
+.border-left-warning {
+  border-left: 4px solid #ffc107 !important;
+}
+
+.border-left-info {
+  border-left: 4px solid #17a2b8 !important;
+}
+
+/* Estilo para los círculos de íconos */
+.icon-circle {
+  height: 60px;
+  width: 60px;
+  border-radius: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-circle i {
+  font-size: 1.8rem;
+}
+
+.bg-primary {
+  background-color: var(--blue-medium) !important;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .chart-container {
+    height: 200px;
+  }
+}

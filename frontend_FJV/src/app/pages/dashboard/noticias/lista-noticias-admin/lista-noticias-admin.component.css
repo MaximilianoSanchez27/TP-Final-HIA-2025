@@ -1,0 +1,27 @@
+/* Mantener los mismos estilos que tenía antes */
+.admin-noticias-container {
+  min-height: 100vh;
+}
+
+/* Personalización de paginación */
+:host ::ng-deep .page-item.active .page-link {
+  background-color: var(--blue-medium);
+  border-color: var(--blue-medium);
+}
+
+:host ::ng-deep .page-link {
+  color: var(--blue-dark);
+}
+
+:host ::ng-deep .page-link:hover {
+  color: var(--blue-medium);
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+/* Asegurarse que los botones de acción quepan en una fila */
+.btn-group .btn {
+  padding: 0.25rem 0.5rem;
+}

@@ -1,0 +1,75 @@
+<div class="container my-4">
+  <h2 class="mb-4 text-center">
+    <i class="fas fa-address-book me-2"></i> Información de Contacto
+  </h2>
+
+  <!-- Vista editable para Admin -->
+  <form *ngIf="isAdmin && contacto" (ngSubmit)="guardarCambios()" class="card p-4 shadow-sm border-primary">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label"><i class="fas fa-envelope me-1"></i> Email</label>
+        <input [(ngModel)]="contacto.email" name="email" type="email" class="form-control" required />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label"><i class="fas fa-phone me-1"></i> Teléfono</label>
+        <input [(ngModel)]="contacto.telefono" name="telefono" type="text" class="form-control" required />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label"><i class="fas fa-map-marker-alt me-1"></i> Dirección</label>
+        <input [(ngModel)]="contacto.direccion" name="direccion" type="text" class="form-control" required />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label"><i class="fas fa-clock me-1"></i> Horarios</label>
+        <input [(ngModel)]="contacto.horarios" name="horarios" type="text" class="form-control" required />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label"><i class="fab fa-facebook me-1"></i> Facebook</label>
+        <input [(ngModel)]="contacto.facebook" name="facebook" type="text" class="form-control" placeholder="URL o usuario" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label"><i class="fab fa-instagram me-1"></i> Instagram</label>
+        <input [(ngModel)]="contacto.instagram" name="instagram" type="text" class="form-control" placeholder="URL o usuario" />
+      </div>
+    </div>
+    <div class="text-end mt-4">
+      <button type="submit" class="btn btn-success">
+        <i class="fas fa-save me-1"></i> Guardar Cambios
+      </button>
+    </div>
+  </form>
+
+  <!-- Vista solo lectura para usuarios comunes -->
+  <div *ngIf="!isAdmin && contacto" class="card shadow-sm p-4 border-0 bg-light">
+    <ul class="list-unstyled mb-0">
+      <li class="mb-2">
+        <i class="fas fa-envelope me-1"></i>
+        <strong>Email:</strong>
+        <a [href]="'mailto:' + contacto.email">{{ contacto.email }}</a>
+      </li>
+      <li class="mb-2">
+        <i class="fas fa-phone me-1"></i>
+        <strong>Teléfono:</strong>
+        <a [href]="'tel:' + contacto.telefono">{{ contacto.telefono }}</a>
+      </li>
+      <li class="mb-2">
+        <i class="fas fa-map-marker-alt me-1"></i>
+        <strong>Dirección:</strong> {{ contacto.direccion }}
+      </li>
+      <li class="mb-2">
+        <i class="fas fa-clock me-1"></i>
+        <strong>Horarios:</strong> {{ contacto.horarios }}
+      </li>
+      <li class="mb-2" *ngIf="contacto.facebook">
+        <i class="fab fa-facebook me-1"></i>
+        <strong>Facebook:</strong>
+        <a [href]="getFacebookUrl(contacto.facebook)" target="_blank" rel="noopener">
+          {{ contacto.facebook }}
+        </a>
+      </li>
+      <li class="mb-2" *ngIf="contacto.instagram">
+        <i class="fab fa-instagram me-1"></i>
+        <strong>Instagram:</strong>
+        <a [href]="getInstagramUrl(contacto.instagram)" target="_blank" rel="noopener">
+          {{ contacto.instagram }}
+        </a>
+      </li>

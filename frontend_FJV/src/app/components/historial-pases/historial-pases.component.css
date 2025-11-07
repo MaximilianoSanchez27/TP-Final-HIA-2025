@@ -1,0 +1,243 @@
+/* Estilos para el historial de pases */
+.historial-pases {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin-bottom: 1rem;
+}
+
+.timeline {
+  position: relative;
+  padding: 0;
+  margin: 0;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 20px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #e9ecef;
+}
+
+.timeline-item {
+  position: relative;
+  padding: 0 0 1.5rem 3rem;
+  margin: 0;
+  border-left: 2px solid #e9ecef;
+}
+
+.timeline-item:last-child {
+  border-left: 2px solid transparent;
+  padding-bottom: 0;
+}
+
+.timeline-marker {
+  position: absolute;
+  left: -8px;
+  top: 0;
+  width: 16px;
+  height: 16px;
+  background: #007bff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 8px;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.timeline-content {
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.timeline-content:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Estilos para el intercambio de clubes */
+.d-flex.align-items-center {
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.club-origen, .club-destino {
+  display: flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  transition: all 0.3s ease;
+}
+
+.club-origen {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+}
+
+.club-destino {
+  background-color: #e7f3ff;
+  border: 1px solid #007bff;
+}
+
+.flecha-pase {
+  display: flex;
+  align-items: center;
+  margin: 0 0.5rem;
+}
+
+.text-muted {
+  color: #6c757d !important;
+  font-weight: 500;
+}
+
+.text-primary {
+  color: #007bff !important;
+  font-weight: 600;
+}
+
+.fas.fa-arrow-right {
+  color: #007bff;
+  font-size: 1rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Badges de estado */
+.badge {
+  font-size: 0.75rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge.bg-success {
+  background-color: #28a745 !important;
+  color: white !important;
+}
+
+.badge.bg-warning {
+  background-color: #ffc107 !important;
+  color: #212529 !important;
+}
+
+.badge.bg-danger {
+  background-color: #dc3545 !important;
+  color: white !important;
+}
+
+.badge.bg-secondary {
+  background-color: #6c757d !important;
+  color: white !important;
+}
+
+/* Información adicional */
+.text-muted small {
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.text-muted small strong {
+  color: #495057;
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .timeline::before {
+    left: 15px;
+  }
+
+  .timeline-item {
+    padding-left: 2rem;
+  }
+
+  .timeline-marker {
+    left: -6px;
+    width: 12px;
+    height: 12px;
+    font-size: 6px;
+  }
+
+  .timeline-content {
+    padding: 0.75rem;
+  }
+
+  .d-flex.align-items-center {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+
+  .fas.fa-arrow-right {
+    transform: rotate(90deg);
+    margin: 0.25rem 0;
+  }
+}
+
+/* Sin pases */
+.text-center {
+  padding: 2rem 1rem;
+}
+
+.text-center .fas {
+  opacity: 0.5;
+}
+
+/* Loading */
+.spinner-border {
+  width: 2rem;
+  height: 2rem;
+}
+
+/* Card header */
+.card-header {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  border-bottom: none;
+}
+
+.card-header h6 {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.timeline-item {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.timeline-item:nth-child(2) { animation-delay: 0.1s; }
+.timeline-item:nth-child(3) { animation-delay: 0.2s; }
+.timeline-item:nth-child(4) { animation-delay: 0.3s; }
+.timeline-item:nth-child(5) { animation-delay: 0.4s; }

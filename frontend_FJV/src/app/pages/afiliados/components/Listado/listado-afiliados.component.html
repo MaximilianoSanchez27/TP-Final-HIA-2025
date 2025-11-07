@@ -1,0 +1,217 @@
+<!-- Vista Desktop -->
+<div class="table-responsive d-none d-lg-block">
+  <h3 class="mb-3">Listado de Afiliados</h3>
+<table class="table table-hover align-middle">
+    <thead class="table-light">
+      <tr>
+        <th>Afiliado</th>
+        <th>DNI</th>
+        <th>Tipo</th>
+        <th>Club</th>
+        <th>Estado Licencia</th>
+        <th>Vencimiento</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let afiliado of afiliados">
+        <td>
+          <div class="d-flex align-items-center">
+            <div class="me-3">
+              <div *ngIf="getAvatarUrl(afiliado); else avatarIcon" class="avatar-container">
+                <img [src]="getAvatarUrl(afiliado)"
+                     class="rounded border"
+                     width="40"
+                     height="40"
+                     style="object-fit: cover;"
+                     [alt]="afiliado.apellidoNombre">
+              </div>
+              <ng-template #avatarIcon>
+                <div class="avatar-icon-simple d-flex align-items-center justify-content-center"
+                     style="width: 40px; height: 40px;">
+                  <i [class]="getAvatarIcon(afiliado).icon"
+                     [style.color]="getAvatarIcon(afiliado).color"
+                     style="font-size: 1.5rem;"></i>
+                </div>
+              </ng-template>
+            </div>
+            <div>
+              <div class="fw-bold">{{ afiliado.apellidoNombre }}</div>
+              <small class="text-muted">
+                {{ afiliado.numeroAfiliacion ? 'N° ' + afiliado.numeroAfiliacion : 'ID: ' + afiliado.idPersona }}
+              </small>
+            </div>
+          </div>
+        </td>
+        <td>{{ afiliado.dni }}</td>
+       <td>
+          <span *ngFor="let t of afiliado.tipo" class="badge bg-info me-1 mb-1">
+            {{ t }}
+          </span>
+        </td>
+        <td>
+          <span *ngIf="afiliado.club; else sinClub" class="fw-bold">{{ afiliado.club }}</span>
+          <ng-template #sinClub>
+            <span class="text-muted fst-italic">Sin club asignado</span>
+          </ng-template>
+        </td>
+        <td>
+          <span class="badge" [class]="getEstadoLicenciaBadgeClass(afiliado.estadoLicencia)">
+            {{ afiliado.estadoLicencia || 'NO DEFINIDO' }}
+          </span>
+          <div *ngIf="esLicenciaProximaVencer(afiliado)" class="mt-1">
+            <small class="text-warning">
+              <i class="fas fa-exclamation-triangle me-1"></i>Próximo a vencer
+            </small>
+          </div>
+        </td>
+        <td>
+          <div *ngIf="afiliado.fechaLicenciaBaja; else sinFecha">
+            {{ formatearFecha(afiliado.fechaLicenciaBaja) }}
+            <div class="small text-muted">{{ calcularDiasRestantes(afiliado.fechaLicenciaBaja) }}</div>
+          </div>
+          <ng-template #sinFecha>
+            <span class="text-muted">Sin fecha</span>
+          </ng-template>
+        </td>
+        <td>
+          <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-info" (click)="onVerDetalle(afiliado)" title="Ver Detalles">
+              <i class="fas fa-eye me-1"></i>Ver
+            </button>
+            <button class="btn btn-outline-primary" (click)="onEditar(afiliado)" title="Editar">
+              <i class="fas fa-edit me-1"></i>Editar
+            </button>
+            <button class="btn btn-outline-danger" (click)="onEliminar(afiliado)" title="Eliminar">
+              <i class="fas fa-trash me-1"></i>Eliminar
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Vista Mobile/Tablet (Cards) -->
+<div class="d-lg-none">
+  <div class="row row-cols-1 row-cols-md-2 g-3">
+    <div class="col" *ngFor="let afiliado of afiliados">
+      <div class="card afiliado-card h-100">
+        <div class="card-body">
+          <!-- Header con foto y nombre -->
+          <div class="d-flex align-items-center mb-3">
+            <div class="me-3">
+              <div *ngIf="getAvatarUrl(afiliado); else mobileAvatarIcon" class="avatar-container">
+                <img [src]="getAvatarUrl(afiliado)"
+                     class="rounded border"
+                     width="50"
+                     height="50"
+                     style="object-fit: cover;"
+                     [alt]="afiliado.apellidoNombre">
+              </div>
+              <ng-template #mobileAvatarIcon>
+                <div class="avatar-icon-simple d-flex align-items-center justify-content-center"
+                     style="width: 50px; height: 50px;">
+                  <i [class]="getAvatarIcon(afiliado).icon"
+                     [style.color]="getAvatarIcon(afiliado).color"
+                     style="font-size: 1.8rem;"></i>
+                </div>
+              </ng-template>
+            </div>
+            <div class="flex-grow-1">
+              <h6 class="mb-1 fw-bold">{{ afiliado.apellidoNombre }}</h6>
+              <small class="text-muted">DNI: {{ afiliado.dni }}</small>
+            </div>
+          </div>
+
+          <!-- Información principal -->
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <small class="text-muted d-block">Tipo</small>
+              <div>
+                <span *ngFor="let t of afiliado.tipo" class="badge bg-info me-1 mb-1">{{ t }}</span>
+              </div>
+            </div>
+            <div class="col-6">
+              <small class="text-muted d-block">Identificación</small>
+              <span class="fw-bold">
+                {{ afiliado.numeroAfiliacion ? 'N° ' + afiliado.numeroAfiliacion : 'ID: ' + afiliado.idPersona }}
+              </span>
+            </div>
+            <div class="col-12">
+              <small class="text-muted d-block">Club</small>
+              <span *ngIf="afiliado.club; else sinClubMobile" class="fw-bold">{{ afiliado.club }}</span>
+              <ng-template #sinClubMobile>
+                <span class="text-muted fst-italic">Sin club asignado</span>
+              </ng-template>
+            </div>
+          </div>
+
+          <!-- Estado de licencia -->
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <small class="text-muted">Estado Licencia</small>
+              <span class="badge" [class]="getEstadoLicenciaBadgeClass(afiliado.estadoLicencia)">
+                {{ afiliado.estadoLicencia || 'NO DEFINIDO' }}
+              </span>
+            </div>
+            <div *ngIf="afiliado.fechaLicenciaBaja" class="mt-1">
+              <small class="text-muted">Vence: {{ formatearFecha(afiliado.fechaLicenciaBaja) }}</small>
+              <div class="small text-muted">{{ calcularDiasRestantes(afiliado.fechaLicenciaBaja) }}</div>
+            </div>
+            <div *ngIf="esLicenciaProximaVencer(afiliado)" class="mt-1">
+              <small class="text-warning">
+                <i class="fas fa-exclamation-triangle me-1"></i>Próximo a vencer
+              </small>
+            </div>
+          </div>
+
+          <!-- Acciones -->
+          <div class="d-grid gap-2">
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-outline-info btn-sm" (click)="onVerDetalle(afiliado)">
+                <i class="fas fa-eye me-1"></i>Ver
+              </button>
+              <button type="button" class="btn btn-outline-primary btn-sm" (click)="onEditar(afiliado)">
+                <i class="fas fa-edit me-1"></i>Editar
+              </button>
+              <button type="button" class="btn btn-outline-danger btn-sm" (click)="onEliminar(afiliado)">
+                <i class="fas fa-trash me-1"></i>Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Estado vacío -->
+<div *ngIf="afiliados.length === 0" class="empty-state text-center py-5">
+  <i class="fas fa-users fa-3x text-muted mb-3"></i>
+  <h5 class="text-muted">No hay afiliados para mostrar</h5>
+  <p class="text-muted">Intenta ajustar los filtros de búsqueda o agrega un nuevo afiliado.</p>
+</div>
+
+<!-- Modal de confirmación de eliminación -->
+<div *ngIf="afiliadoAEliminar" class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h6 class="modal-title">Confirmar eliminación</h6>
+      </div>
+      <div class="modal-body text-center">
+        <i class="fas fa-exclamation-triangle fa-2x text-warning mb-3"></i>
+        <p class="mb-3">¿Eliminar a <strong>{{ afiliadoAEliminar.apellidoNombre }}</strong>?</p>
+        <div class="d-flex gap-2 justify-content-center">
+          <button class="btn btn-danger" (click)="confirmarEliminacion()">
+            <i class="fas fa-trash me-1"></i>Eliminar
+          </button>
+          <button class="btn btn-secondary" (click)="cancelarEliminacion()">
+            <i class="fas fa-times me-1"></i>Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

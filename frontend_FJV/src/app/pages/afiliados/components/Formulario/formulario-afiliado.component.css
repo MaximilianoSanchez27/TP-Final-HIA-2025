@@ -1,0 +1,160 @@
+.formulario-container {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.12);
+  margin-bottom: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #2c3e50;
+  transition: box-shadow 0.3s ease;
+}
+
+.formulario-container:hover {
+  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.15);
+}
+
+.formulario-container .form-label {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.3rem;
+  display: inline-block;
+  user-select: none;
+}
+
+.formulario-container .form-control,
+.formulario-container .form-select {
+  border-radius: 0.375rem;
+  border: 1px solid #ced4da;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.formulario-container .form-control:focus,
+.formulario-container .form-select:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+  outline: none;
+}
+
+.formulario-container .input-group {
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: stretch;
+}
+
+.formulario-container .input-group button {
+  border-radius: 0 0.375rem 0.375rem 0;
+  border: 1px solid #ced4da;
+  border-left: none;
+  background-color: #f8f9fa;
+  color: #495057;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.formulario-container .input-group button:hover {
+  background-color: #e2e6ea;
+}
+
+.formulario-container .btn-primary {
+  background-color: #3498db;
+  border: none;
+  padding: 0.625rem 1.5rem;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border-radius: 0.375rem;
+}
+
+.formulario-container .btn-primary:hover {
+  background-color: #2980b9;
+}
+
+.formulario-container .btn-secondary {
+  padding: 0.625rem 1.5rem;
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.formulario-container .btn-secondary:hover {
+  background-color: #e2e6ea;
+}
+
+.text-danger {
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  color: #dc3545;
+  user-select: none;
+}
+
+/* Animación para campos condicionales */
+.conditional-field {
+  animation: fadeIn 0.35s ease-in-out forwards;
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .formulario-container [class*="col-md"] {
+    margin-bottom: 1rem;
+  }
+}
+
+/* Estilo especial para el campo de estado readonly */
+.form-control[readonly] {
+  background-color: #f8f9fa;
+  opacity: 1;
+  border: 2px solid #dee2e6;
+  font-weight: 600;
+  text-align: center;
+  cursor: not-allowed;
+}
+
+.form-control[readonly]:focus {
+  box-shadow: none;
+  border-color: #dee2e6;
+}
+
+/* Estados de licencia con colores */
+.form-control[readonly].bg-success {
+  background-color: #d1e7dd !important;
+  border-color: #badbcc !important;
+  color: #0f5132 !important;
+}
+
+.form-control[readonly].bg-warning {
+  background-color: #fff3cd !important;
+  border-color: #ffecb5 !important;
+  color: #664d03 !important;
+}
+
+.form-control[readonly].bg-danger {
+  background-color: #f8d7da !important;
+  border-color: #f5c2c7 !important;
+  color: #842029 !important;
+}
+
+.form-control[readonly].bg-secondary {
+  background-color: #e2e3e5 !important;
+  border-color: #d3d3d4 !important;
+  color: #41464b !important;
+}
+
+/* Animación sutil para cambios de estado */
+.form-control[readonly] {
+  transition: all 0.3s ease;
+}

@@ -1,0 +1,446 @@
+<div class="editor-noticia">
+  <div class="container py-4">
+    <!-- Encabezado y acciones -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-white border-0">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h1 class="h3 mb-0">{{modoEdicion ? 'Editar' : 'Nueva'}} Noticia</h1>
+            <p class="text-muted small mb-0">{{modoEdicion ? 'Modifique' : 'Complete'}} la información requerida</p>
+          </div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-outline-secondary" (click)="cancelar()">
+              <i class="fas fa-times me-1"></i>Cancelar
+            </button>
+            <button
+              class="btn btn-primary"
+              [disabled]="isSaving || noticiaForm.invalid"
+              (click)="guardarNoticia()">
+              <i *ngIf="!isSaving" class="fas fa-save me-1"></i>
+              <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+              {{isSaving ? 'Guardando...' : 'Guardar'}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado de carga -->
+    <div *ngIf="isLoading" class="card mb-4">
+      <div class="card-body p-4 text-center">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mt-2 mb-0">Cargando información de la noticia...</p>
+      </div>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="error" class="alert alert-danger mb-4">
+      <i class="fas fa-exclamation-triangle me-2"></i>{{error}}
+    </div>
+
+    <div *ngIf="!isLoading" class="row g-4">
+      <!-- Formulario principal -->
+      <div class="col-lg-4">
+        <div class="card shadow-sm h-100">
+          <div class="card-header bg-light">
+            <h2 class="card-title h5 mb-0"><i class="fas fa-info-circle me-2"></i>Información Principal</h2>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="noticiaForm" class="formulario-profesional">
+              <!-- Título -->
+              <div class="mb-3">
+                <label for="titulo" class="form-label fw-bold">Título <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <input
+                    type="text"
+                    id="titulo"
+                    formControlName="titulo"
+                    class="form-control"
+                    [class.is-invalid]="tituloControl?.invalid && tituloControl?.touched">
+                  <span class="input-group-text" *ngIf="verificandoSlug">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  </span>
+                  <span class="input-group-text text-danger" *ngIf="slugExiste && !verificandoSlug">
+                    <i class="fas fa-exclamation-triangle"></i>
+                  </span>
+                  <span class="input-group-text text-success" *ngIf="!slugExiste && !verificandoSlug && tituloControl?.value">
+                    <i class="fas fa-check"></i>
+                  </span>
+                </div>
+                <div class="invalid-feedback" *ngIf="tituloControl?.invalid && tituloControl?.touched">
+                  {{ tituloErrorMsg }}
+                </div>
+                <small *ngIf="slugExiste" class="text-danger">
+                  Ya existe una noticia con un título similar.
+                </small>
+                <small *ngIf="!slugExiste && tituloControl?.valid && tituloControl?.value" class="text-muted">
+                  URL: /noticias/{{ noticiaForm.get('categoria')?.value?.toLowerCase() || 'categoria' }}/{{ getSlugPreview(tituloControl?.value) }}
+                </small>
+              </div>
+
+              <!-- Resumen -->
+              <div class="mb-3">
+                <label for="resumen" class="form-label fw-bold">Resumen</label>
+                <textarea
+                  id="resumen"
+                  formControlName="resumen"
+                  class="form-control"
+                  rows="3"
+                  [class.is-invalid]="resumenControl?.invalid && resumenControl?.touched"></textarea>
+                <div class="invalid-feedback">
+                  <span *ngIf="resumenControl?.errors?.['maxlength']">El resumen no debe exceder los 500 caracteres.</span>
+                </div>
+                <small class="form-text text-muted">Breve descripción (máx. 500 caracteres)</small>
+              </div>
+
+              <hr class="my-4">
+
+              <!-- Categoría -->
+              <div class="mb-3">
+                <label for="categoria" class="form-label fw-bold">Categoría <span class="text-danger">*</span></label>
+                <select
+                  id="categoria"
+                  formControlName="categoria"
+                  class="form-select"
+                  [class.is-invalid]="categoriaControl?.invalid && categoriaControl?.touched">
+                  <option *ngFor="let cat of categorias" [value]="cat.valor">{{cat.etiqueta}}</option>
+                </select>
+              </div>
+
+              <!-- Etiquetas -->
+              <div class="mb-3">
+                <label for="etiquetas" class="form-label fw-bold">Etiquetas</label>
+                <input
+                  type="text"
+                  id="etiquetas"
+                  formControlName="etiquetas"
+                  class="form-control"
+                  placeholder="voley,jujuy,torneo,etc">
+                <small class="form-text text-muted">Separadas por comas</small>
+              </div>
+
+              <!-- Estado -->
+              <div class="mb-3">
+                <label for="estado" class="form-label fw-bold">Estado <span class="text-danger">*</span></label>
+                <select
+                  id="estado"
+                  formControlName="estado"
+                  class="form-select"
+                  [class.is-invalid]="estadoControl?.invalid && estadoControl?.touched">
+                  <option *ngFor="let est of estados" [value]="est.valor">{{est.etiqueta}}</option>
+                </select>
+              </div>
+
+              <!-- Fecha programada -->
+              <div class="mb-3">
+                <label for="fechaProgramada" class="form-label fw-bold">Fecha Programada</label>
+                <input
+                  type="date"
+                  id="fechaProgramada"
+                  formControlName="fechaProgramada"
+                  class="form-control">
+                <small class="form-text text-muted">Opcional: programar publicación automática</small>
+              </div>
+
+              <!-- Destacado -->
+              <div class="form-check mb-0">
+                <input
+                  type="checkbox"
+                  id="destacado"
+                  formControlName="destacado"
+                  class="form-check-input">
+                <label for="destacado" class="form-check-label">Destacar noticia</label>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-8">
+        <!-- Imagen principal -->
+        <div class="card shadow-sm mb-4">
+          <div class="card-header bg-light">
+            <h2 class="card-title h5 mb-0"><i class="fas fa-image me-2"></i>Imagen Principal</h2>
+          </div>
+          <div class="card-body">
+            <app-image-upload
+              [currentImageUrl]="noticiaForm.get('imagenPrincipal')?.value"
+              (imageUploaded)="onMainImageUploaded($event)"
+              (imageRemoved)="onMainImageRemoved()">
+            </app-image-upload>
+            <div class="mt-3" [formGroup]="noticiaForm">
+              <label for="imagenPrincipalAlt" class="form-label fw-bold">Texto alternativo</label>
+              <input
+                type="text"
+                id="imagenPrincipalAlt"
+                formControlName="imagenPrincipalAlt"
+                class="form-control"
+                placeholder="Descripción de la imagen">
+              <small class="form-text text-muted">Para accesibilidad y SEO</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Editor de bloques -->
+        <div class="card shadow-sm">
+          <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <h2 class="card-title h5 mb-0"><i class="fas fa-edit me-2"></i>Contenido</h2>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-plus me-1"></i> Agregar Bloque
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                <li><button class="dropdown-item" (click)="crearBloque(tiposBloque.TEXTO)">
+                  <i class="fas fa-paragraph me-2"></i>Texto
+                </button></li>
+                <li><button class="dropdown-item" (click)="crearBloque(tiposBloque.IMAGEN)">
+                  <i class="fas fa-image me-2"></i>Imagen
+                </button></li>
+                <li><button class="dropdown-item" (click)="crearBloque(tiposBloque.GALERIA)">
+                  <i class="fas fa-images me-2"></i>Galería
+                </button></li>
+              </ul>
+            </div>
+          </div>
+          <div class="card-body">
+            <!-- Mensaje si no hay bloques -->
+            <div *ngIf="bloques.length === 0" class="text-center py-5 my-3 bg-light rounded">
+              <i class="fas fa-cubes fa-3x text-muted mb-3"></i>
+              <h5>Sin bloques de contenido</h5>
+              <p class="text-muted mb-4">Utilice el botón "Agregar Bloque" para comenzar a crear el contenido</p>
+              <div class="btn-group">
+                <button class="btn btn-outline-primary" (click)="crearBloque(tiposBloque.TEXTO)">
+                  <i class="fas fa-paragraph me-2"></i>Texto
+                </button>
+                <button class="btn btn-outline-primary" (click)="crearBloque(tiposBloque.IMAGEN)">
+                  <i class="fas fa-image me-2"></i>Imagen
+                </button>
+                <button class="btn btn-outline-primary" (click)="crearBloque(tiposBloque.GALERIA)">
+                  <i class="fas fa-images me-2"></i>Galería
+                </button>
+              </div>
+            </div>
+
+            <!-- Lista de bloques -->
+            <div #bloqueContainer class="bloques-container">
+              <div *ngFor="let bloque of bloques; let i = index" [id]="bloque.id"
+                   class="bloque-item mb-4"
+                   draggable="true"
+                   (dragstart)="onDragStart(bloque)"
+                   (dragover)="onDragOver($event)"
+                   (drop)="onDrop($event, i)">
+
+                <!-- Encabezado del bloque con acciones -->
+                <div class="bloque-header d-flex align-items-center justify-content-between p-2 rounded bg-light mb-2">
+                  <div class="d-flex align-items-center">
+                    <span class="bloque-drag-handle me-2"><i class="fas fa-grip-lines"></i></span>
+                    <span class="bloque-number badge bg-secondary me-2">{{i + 1}}</span>
+                    <span class="bloque-tipo fw-bold">
+                      <i class="me-1" [ngClass]="{
+                        'fas fa-paragraph': bloque.tipo === tiposBloque.TEXTO,
+                        'fas fa-image': bloque.tipo === tiposBloque.IMAGEN,
+                        'fas fa-images': bloque.tipo === tiposBloque.GALERIA
+                      }"></i>
+                      {{bloque.tipo.charAt(0).toUpperCase() + bloque.tipo.slice(1)}}
+                    </span>
+                  </div>
+                  <div class="bloque-actions">
+                    <button class="btn btn-sm btn-light" [disabled]="i === 0" (click)="moverBloque('arriba', i)" title="Mover arriba">
+                      <i class="fas fa-arrow-up"></i>
+                    </button>
+                    <button class="btn btn-sm btn-light" [disabled]="i === bloques.length - 1" (click)="moverBloque('abajo', i)" title="Mover abajo">
+                      <i class="fas fa-arrow-down"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" (click)="eliminarBloque(i)" title="Eliminar bloque">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Contenido del bloque según tipo -->
+                <div [formGroup]="bloque.form" class="bloque-content p-3 border rounded">
+                  <!-- Bloque tipo texto -->
+                  <ng-container *ngIf="bloque.tipo === tiposBloque.TEXTO">
+                    <div class="mb-2">
+                      <label [for]="'contenido-' + bloque.id" class="form-label">Contenido de texto <span class="text-danger">*</span></label>
+                      <textarea
+                        [id]="'contenido-' + bloque.id"
+                        formControlName="contenido"
+                        class="form-control"
+                        rows="5"
+                        placeholder="Escribe aquí el contenido..."></textarea>
+                      <small class="text-muted">Usa líneas en blanco para separar párrafos</small>
+                    </div>
+                  </ng-container>
+
+                  <!-- Bloque tipo imagen -->
+                  <ng-container *ngIf="bloque.tipo === tiposBloque.IMAGEN">
+                    <div class="row mb-3">
+                      <div class="col-md-12">
+                        <label [for]="'url-' + bloque.id" class="form-label">Imagen <span class="text-danger">*</span></label>
+                        <app-image-upload
+                          [currentImageUrl]="bloque.form.get('url')?.value"
+                          (imageUploaded)="onBloqueImageUploaded(bloque.id, $event)"
+                          (imageRemoved)="onBloqueImageRemoved(bloque.id)">
+                        </app-image-upload>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <div class="col-md-12">
+                        <label [for]="'caption-' + bloque.id" class="form-label">Pie de foto</label>
+                        <input
+                          type="text"
+                          [id]="'caption-' + bloque.id"
+                          formControlName="caption"
+                          class="form-control"
+                          placeholder="Texto descriptivo debajo de la imagen">
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-6">
+                        <label [for]="'ancho-' + bloque.id" class="form-label">Ancho</label>
+                        <select
+                          [id]="'ancho-' + bloque.id"
+                          formControlName="ancho"
+                          class="form-select">
+                          <option value="auto">Auto (100% responsive)</option>
+                          <option value="500px">Medio (500px)</option>
+                          <option value="300px">Pequeño (300px)</option>
+                        </select>
+                      </div>
+                      <div class="col-md-6">
+                        <label [for]="'alineacion-' + bloque.id" class="form-label">Alineación</label>
+                        <select
+                          [id]="'alineacion-' + bloque.id"
+                          formControlName="alineacion"
+                          class="form-select">
+                          <option value="center">Centro</option>
+                          <option value="left">Izquierda</option>
+                          <option value="right">Derecha</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <!-- Vista previa (opcional) -->
+                    <div *ngIf="bloque.form.get('url')?.value" class="mt-3 text-center">
+                      <img [src]="bloque.form.get('url')?.value" class="img-fluid rounded" style="max-height: 200px;" alt="Vista previa">
+                    </div>
+                  </ng-container>
+
+                  <!-- Bloque tipo galería -->
+                  <ng-container *ngIf="bloque.tipo === tiposBloque.GALERIA">
+                    <div class="mb-3">
+                      <label [for]="'columnas-' + bloque.id" class="form-label">Columnas</label>
+                      <select
+                        [id]="'columnas-' + bloque.id"
+                        formControlName="columnas"
+                        class="form-select">
+                        <option [value]="1">1 columna</option>
+                        <option [value]="2">2 columnas</option>
+                        <option [value]="3">3 columnas</option>
+                      </select>
+                    </div>
+
+                    <div formArrayName="imagenes">
+                      <h6>Imágenes de la galería <span class="text-danger">*</span></h6>
+                      <div *ngFor="let img of getImagenesFormArray(bloque).controls; let j = index" [formGroupName]="j" class="border p-3 mb-3 rounded">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                          <h6 class="mb-0">Imagen {{j + 1}}</h6>
+                          <button type="button" class="btn btn-sm btn-outline-danger" (click)="eliminarImagenGaleria(bloque, j)">
+                            <i class="fas fa-times"></i>
+                          </button>
+                        </div>
+
+                        <div class="mb-2">
+                          <label [for]="'img-url-' + bloque.id + '-' + j" class="form-label">Imagen <span class="text-danger">*</span></label>
+                          <app-image-upload
+                            [currentImageUrl]="img.get('url')?.value"
+                            (imageUploaded)="onGaleriaImageUploaded(bloque.id, j, $event)"
+                            (imageRemoved)="onGaleriaImageRemoved(bloque.id, j)">
+                          </app-image-upload>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-md-6">
+                            <label [for]="'img-alt-' + bloque.id + '-' + j" class="form-label">Texto alternativo</label>
+                            <input
+                              type="text"
+                              [id]="'img-alt-' + bloque.id + '-' + j"
+                              formControlName="alt"
+                              class="form-control"
+                              placeholder="Descripción">
+                          </div>
+                          <div class="col-md-6">
+                            <label [for]="'img-caption-' + bloque.id + '-' + j" class="form-label">Pie de foto</label>
+                            <input
+                              type="text"
+                              [id]="'img-caption-' + bloque.id + '-' + j"
+                              formControlName="caption"
+                              class="form-control"
+                              placeholder="Texto descriptivo">
+                          </div>
+                        </div>
+
+                        <!-- Vista previa (opcional) -->
+                        <div *ngIf="img.get('url')?.value" class="mt-2 text-center">
+                          <img [src]="img.get('url')?.value" class="img-fluid rounded" style="max-height: 100px;" alt="Vista previa">
+                        </div>
+                      </div>
+
+                      <button type="button" class="btn btn-outline-secondary btn-sm" (click)="agregarImagenGaleria(bloque)">
+                        <i class="fas fa-plus me-1"></i> Agregar otra imagen
+                      </button>
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+
+            <!-- Botón para agregar bloque al final -->
+            <div *ngIf="bloques.length > 0" class="mt-4 text-center">
+              <div class="dropdown d-inline-block">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="fas fa-plus me-1"></i> Agregar Bloque
+                </button>
+                <ul class="dropdown-menu">
+                  <li><button class="dropdown-item" (click)="crearBloque(tiposBloque.TEXTO)">
+                    <i class="fas fa-paragraph me-2"></i>Texto
+                  </button></li>
+                  <li><button class="dropdown-item" (click)="crearBloque(tiposBloque.IMAGEN)">
+                    <i class="fas fa-image me-2"></i>Imagen
+                  </button></li>
+                  <li><button class="dropdown-item" (click)="crearBloque(tiposBloque.GALERIA)">
+                    <i class="fas fa-images me-2"></i>Galería
+                  </button></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botones de acción fijos al final -->
+    <div class="action-bar-fixed d-md-none">
+      <div class="container">
+        <div class="d-flex gap-2 justify-content-between">
+          <button class="btn btn-outline-secondary flex-grow-1" (click)="cancelar()">
+            <i class="fas fa-times me-1"></i>Cancelar
+          </button>
+          <button
+            class="btn btn-primary flex-grow-1"
+            [disabled]="isSaving || noticiaForm.invalid"
+            (click)="guardarNoticia()">
+            <i *ngIf="!isSaving" class="fas fa-save me-1"></i>
+            <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+            {{isSaving ? 'Guardando...' : 'Guardar'}}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

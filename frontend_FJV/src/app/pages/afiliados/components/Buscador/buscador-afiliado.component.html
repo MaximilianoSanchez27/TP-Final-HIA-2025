@@ -1,0 +1,15 @@
+<h3 class="mb-3">Búsqueda de Afiliados</h3>
+<div class="row align-items-end g-3 mb-3">
+  <div class="col-md-4">
+    <label class="form-label">DNI</label>
+    <input
+      type="text"
+      [(ngModel)]="dni"
+      (input)="onBuscar()"
+      class="form-control"
+      placeholder="Ej: 30123456"
+      pattern="[0-9]*"
+    />
+  </div>
+
+</div>

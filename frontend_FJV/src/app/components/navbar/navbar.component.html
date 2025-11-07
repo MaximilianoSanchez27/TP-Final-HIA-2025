@@ -1,0 +1,454 @@
+<nav
+  class="navbar navbar-expand-lg navbar-dark bg-secondary shadow-sm sticky-top"
+>
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center" routerLink="/" title="Federación Jujeña de Vóley">
+      <!-- Logo para Escritorio (grande) -->
+      <div class="logo-wrapper-large d-none d-lg-flex">
+        <img src="assets/images/LogoFJVletraazul.png"
+             alt="Logo FJV"
+             class="logo-img-large"
+             onerror="this.onerror=null; this.src='https://via.placeholder.com/80?text=FJV';">
+      </div>
+      <!-- Logo para Móvil (pequeño) -->
+      <img src="assets/images/FJV_LOGO.png"
+           alt="Logo FJV"
+           class="logo-img d-lg-none"
+           onerror="this.onerror=null; this.src='https://via.placeholder.com/40?text=FJV';">
+
+      <span class="fw-bold fs-4 text-white">FJV</span>
+    </a>
+
+    <!-- Botón hamburguesa mejorado para móvil -->
+    <button
+      class="navbar-toggler border-0 mobile-menu-btn"
+      type="button"
+      (click)="toggleMenu()"
+      [attr.aria-expanded]="!isMenuCollapsed"
+      aria-controls="navbarNav"
+      aria-label="Toggle navigation"
+    >
+      <div class="hamburger-lines" [class.active]="!isMenuCollapsed">
+        <span class="line line1"></span>
+        <span class="line line2"></span>
+        <span class="line line3"></span>
+      </div>
+    </button>
+
+    <!-- Menú desktop normal -->
+    <div class="collapse navbar-collapse d-none d-lg-block" id="navbarNav">
+      <ul class="navbar-nav ms-auto me-auto">
+        <!-- Enlaces visibles para todos -->
+        <li class="nav-item">
+          <a
+            class="nav-link position-relative"
+            routerLink="/"
+            routerLinkActive="fw-bold active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <i class="fas fa-home me-1"></i> Inicio
+          </a>
+        </li>
+        <!-- Enlaces solo para usuarios autenticados -->
+        @if (isAuthenticated) {
+        <li class="nav-item dropdown" ngbDropdown>
+          <a
+            class="nav-link dropdown-toggle position-relative"
+            id="afiliadosDropdown"
+            role="button"
+            ngbDropdownToggle
+          >
+            <i class="fas fa-id-card me-1"></i> Afiliados
+          </a>
+          <div ngbDropdownMenu aria-labelledby="afiliadosDropdown">
+            <a
+              class="dropdown-item"
+              routerLink="/afiliados/nuevo"
+              routerLinkActive="active"
+              >Nuevo Afiliado</a
+            >
+            <a
+              class="dropdown-item"
+              routerLink="/afiliados/listado"
+              routerLinkActive="active"
+              >Listado de Afiliados</a
+            >
+          </div>
+        </li>
+        <li class="nav-item dropdown" ngbDropdown>
+          <a
+            class="nav-link dropdown-toggle position-relative"
+            id="clubsDropdown"
+            role="button"
+            ngbDropdownToggle
+          >
+            <i class="fas fa-shield-alt me-1"></i> Clubs
+          </a>
+          <div ngbDropdownMenu aria-labelledby="clubsDropdown">
+            <a
+              class="dropdown-item"
+              routerLink="/clubs/nuevo"
+              routerLinkActive="active"
+              >Nuevo Club</a
+            >
+            <a
+              class="dropdown-item"
+              routerLink="/clubs/listado"
+              routerLinkActive="active"
+              >Listado de Clubs</a
+            >
+          </div>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link position-relative"
+            routerLink="/categorias"
+            routerLinkActive="fw-bold active"
+          >
+            <i class="fas fa-tags me-1"></i> Categorías
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link position-relative"
+            routerLink="/pases"
+            routerLinkActive="fw-bold active"
+          >
+            <i class="fas fa-exchange-alt me-1"></i> Pases
+          </a>
+        </li>
+        }
+        <!-- Enlaces visibles para todos -->
+        <li class="nav-item">
+          <a
+            class="nav-link position-relative"
+            routerLink="/noticias"
+            routerLinkActive="fw-bold active"
+          >
+            <i class="fas fa-newspaper me-1"></i> Noticias
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link position-relative"
+            routerLink="/contacto"
+            routerLinkActive="fw-bold active"
+          >
+            <i class="fas fa-envelope me-1"></i> Contacto
+          </a>
+        </li>
+      </ul>
+
+      <!-- Opciones de autenticación desktop -->
+      <div class="auth-section">
+        @if (isAuthenticated) {
+        <div class="dropdown user-dropdown" ngbDropdown>
+          <button class="btn dropdown-toggle user-menu-btn" ngbDropdownToggle>
+            <div
+              class="user-avatar me-2"
+              [class.default-avatar]="imageLoadError"
+            >
+              @if (!imageLoadError) {
+              <img
+                [src]="userProfile.image"
+                alt="Foto de perfil"
+                (error)="handleImageError()"
+                onerror="this.onerror=null; this.src='https://via.placeholder.com/40?text=User'"
+              />
+              } @else {
+              <i class="fas fa-user"></i>
+              }
+            </div>
+            <span class="user-name d-none d-lg-block">{{
+              userProfile.name
+            }}</span>
+          </button>
+          <div ngbDropdownMenu class="dropdown-menu dropdown-menu-end">
+            <a routerLink="/dashboard" class="dropdown-item">
+              <i class="fas fa-tachometer-alt me-2"></i>
+              Panel Admin
+            </a>
+            <a routerLink="/perfil" class="dropdown-item">
+              <i class="fas fa-user me-2"></i>
+              Mi Perfil
+            </a>
+
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item text-danger" (click)="logout()">
+              <i class="fas fa-sign-out-alt me-2"></i>
+              Cerrar sesión
+            </button>
+          </div>
+        </div>
+        } @else {
+        <div class="auth-buttons">
+          <a routerLink="/auth/login" class="btn btn-outline-light btn-sm">
+            <i class="fas fa-sign-in-alt me-1"></i>
+            Iniciar Sesión
+          </a>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Overlay para el menú móvil -->
+<div
+  class="mobile-menu-overlay"
+  [class.active]="!isMenuCollapsed"
+  (click)="closeMenu()"
+></div>
+
+<!-- Menú lateral móvil deslizante -->
+<div class="mobile-side-menu" [class.active]="!isMenuCollapsed">
+  <!-- Header del menú móvil -->
+  <div class="mobile-menu-header">
+    <div class="mobile-logo">
+      <img
+        src="assets/images/FJV_LOGO.png"
+        alt="Logo FJV"
+        class="mobile-logo-img"
+      />
+      <span class="mobile-logo-text">FJV</span>
+    </div>
+    <button
+      class="mobile-menu-close"
+      (click)="closeMenu()"
+      aria-label="Cerrar menú"
+    >
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Contenido del menú móvil -->
+  <div class="mobile-menu-content">
+    <!-- Perfil de usuario en móvil (si está autenticado) -->
+    @if (isAuthenticated) {
+    <div class="mobile-user-profile">
+      <div class="mobile-user-avatar" [class.default-avatar]="imageLoadError">
+        @if (!imageLoadError) {
+        <img
+          [src]="userProfile.image"
+          alt="Foto de perfil"
+          (error)="handleImageError()"
+        />
+        } @else {
+        <i class="fas fa-user"></i>
+        }
+      </div>
+      <div class="mobile-user-info">
+        <h4 class="mobile-user-name">{{ userProfile.name }}</h4>
+        <p class="mobile-user-role">{{ userProfile.role }}</p>
+      </div>
+    </div>
+    }
+
+    <!-- Enlaces de navegación móvil -->
+    <nav class="mobile-nav">
+      <ul class="mobile-nav-list">
+        <li class="mobile-nav-item">
+          <a
+            class="mobile-nav-link"
+            routerLink="/"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            (click)="closeMenu()"
+          >
+            <i class="fas fa-home"></i>
+            <span>Inicio</span>
+          </a>
+        </li>
+
+        @if (isAuthenticated) {
+        <!-- Dropdown Afiliados en móvil -->
+        <li class="mobile-nav-item">
+          <button
+            class="mobile-nav-dropdown-btn"
+            (click)="toggleMobileDropdown('afiliados')"
+            [class.active]="activeDropdown === 'afiliados'"
+          >
+            <div class="mobile-nav-dropdown-header">
+              <i class="fas fa-id-card"></i>
+              <span>Afiliados</span>
+            </div>
+            <i
+              class="fas fa-chevron-down mobile-dropdown-arrow"
+              [class.rotated]="activeDropdown === 'afiliados'"
+            ></i>
+          </button>
+          <ul
+            class="mobile-nav-dropdown"
+            [class.show]="activeDropdown === 'afiliados'"
+          >
+            <li>
+              <a
+                class="mobile-nav-sublink"
+                routerLink="/afiliados/nuevo"
+                routerLinkActive="active"
+                (click)="closeMenu()"
+              >
+                <i class="fas fa-plus"></i>
+                <span>Nuevo Afiliado</span>
+              </a>
+            </li>
+            <li>
+              <a
+                class="mobile-nav-sublink"
+                routerLink="/afiliados/listado"
+                routerLinkActive="active"
+                (click)="closeMenu()"
+              >
+                <i class="fas fa-list"></i>
+                <span>Listado de Afiliados</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <!-- Dropdown Clubs en móvil -->
+        <li class="mobile-nav-item">
+          <button
+            class="mobile-nav-dropdown-btn"
+            (click)="toggleMobileDropdown('clubs')"
+            [class.active]="activeDropdown === 'clubs'"
+          >
+            <div class="mobile-nav-dropdown-header">
+              <i class="fas fa-shield-alt"></i>
+              <span>Clubs</span>
+            </div>
+            <i
+              class="fas fa-chevron-down mobile-dropdown-arrow"
+              [class.rotated]="activeDropdown === 'clubs'"
+            ></i>
+          </button>
+          <ul
+            class="mobile-nav-dropdown"
+            [class.show]="activeDropdown === 'clubs'"
+          >
+            <li>
+              <a
+                class="mobile-nav-sublink"
+                routerLink="/clubs/nuevo"
+                routerLinkActive="active"
+                (click)="closeMenu()"
+              >
+                <i class="fas fa-plus"></i>
+                <span>Nuevo Club</span>
+              </a>
+            </li>
+            <li>
+              <a
+                class="mobile-nav-sublink"
+                routerLink="/clubs/listado"
+                routerLinkActive="active"
+                (click)="closeMenu()"
+              >
+                <i class="fas fa-list"></i>
+                <span>Listado de Clubs</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="mobile-nav-item">
+          <a
+            class="mobile-nav-link"
+            routerLink="/categorias"
+            routerLinkActive="active"
+            (click)="closeMenu()"
+          >
+            <i class="fas fa-tags"></i>
+            <span>Categorías</span>
+          </a>
+        </li>
+
+        <li class="mobile-nav-item">
+          <a
+            class="mobile-nav-link"
+            routerLink="/pases"
+            routerLinkActive="active"
+            (click)="closeMenu()"
+          >
+            <i class="fas fa-exchange-alt"></i>
+            <span>Pases</span>
+          </a>
+        </li>
+        }
+
+        <li class="mobile-nav-item">
+          <a
+            class="mobile-nav-link"
+            routerLink="/noticias"
+            routerLinkActive="active"
+            (click)="closeMenu()"
+          >
+            <i class="fas fa-newspaper"></i>
+            <span>Noticias</span>
+          </a>
+        </li>
+
+        <li class="mobile-nav-item">
+          <a
+            class="mobile-nav-link"
+            routerLink="/contacto"
+            routerLinkActive="active"
+            (click)="closeMenu()"
+          >
+            <i class="fas fa-envelope"></i>
+            <span>Contacto</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Sección de administración en móvil (si está autenticado) -->
+    @if (isAuthenticated) {
+    <div class="mobile-admin-section">
+      <h5 class="mobile-section-title">Administración</h5>
+      <ul class="mobile-admin-list">
+        <li>
+          <a
+            class="mobile-admin-link"
+            routerLink="/dashboard"
+            (click)="closeMenu()"
+          >
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Panel Admin</span>
+          </a>
+        </li>
+        <li>
+          <a
+            class="mobile-admin-link"
+            routerLink="/perfil"
+            (click)="closeMenu()"
+          >
+            <i class="fas fa-user"></i>
+            <span>Mi Perfil</span>
+          </a>
+        </li>
+  
+      </ul>
+    </div>
+    }
+
+    <!-- Botón de autenticación en móvil -->
+    <div class="mobile-auth-section">
+      @if (isAuthenticated) {
+      <button class="mobile-logout-btn" (click)="logout(); closeMenu()">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Cerrar Sesión</span>
+      </button>
+      } @else {
+      <a
+        class="mobile-login-btn"
+        routerLink="/auth/login"
+        (click)="closeMenu()"
+      >
+        <i class="fas fa-sign-in-alt"></i>
+        <span>Iniciar Sesión</span>
+      </a>
+      }
+    </div>
+  </div>
+</div>

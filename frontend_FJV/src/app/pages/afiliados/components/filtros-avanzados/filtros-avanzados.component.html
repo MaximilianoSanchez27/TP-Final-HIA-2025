@@ -1,0 +1,379 @@
+<div class="filtros-avanzados-container">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center bg-light">
+      <h5 class="mb-0">Filtros Avanzados</h5>
+      <div>
+        <button class="btn btn-sm btn-outline-secondary me-2" (click)="limpiarFiltros()">
+          <i class="fas fa-broom me-1"></i>Limpiar
+        </button>
+        <button class="btn btn-sm btn-primary" (click)="aplicarFiltros()">
+          <i class="fas fa-filter me-1"></i>Aplicar Filtros
+        </button>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <ul class="nav nav-tabs mb-3">
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="tabActiva === 'basicos'" (click)="tabActiva = 'basicos'">
+            Datos Básicos
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="tabActiva === 'club'" (click)="tabActiva = 'club'">
+            Club <span class="badge bg-primary" *ngIf="filtrosForm.value.clubId || filtrosForm.value.clubNombre || filtrosForm.value.soloConClub">!</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="tabActiva === 'pases'" (click)="tabActiva = 'pases'">
+            Pases <span class="badge bg-primary" *ngIf="filtrosForm.value.clubOrigenId || filtrosForm.value.clubDestinoId || filtrosForm.value.tienePases">!</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="tabActiva === 'pagos'" (click)="tabActiva = 'pagos'">
+            Pagos/Cobros <span class="badge bg-primary" *ngIf="filtrosForm.value.estadoPago || filtrosForm.value.tienePagos">!</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="tabActiva === 'credenciales'" (click)="tabActiva = 'credenciales'">
+            Credenciales <span class="badge bg-primary" *ngIf="filtrosForm.value.estadoCredencial || filtrosForm.value.tieneCredencial">!</span>
+          </a>
+        </li>
+      </ul>
+
+      <!-- Formulario de filtros -->
+      <form [formGroup]="filtrosForm">
+        <!-- Tab Datos Básicos -->
+        <div class="tab-content" [class.d-none]="tabActiva !== 'basicos'">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">DNI</label>
+              <input type="text" class="form-control" formControlName="dni"
+                     placeholder="Buscar por DNI...">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Nombre y Apellido</label>
+              <input type="text" class="form-control" formControlName="apellidoNombre"
+                     placeholder="Buscar por nombre...">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Estado Licencia</label>
+              <select class="form-select" formControlName="estadoLicencia">
+                <option value="">Todos los estados</option>
+                <option *ngFor="let estado of opciones?.estadosLicencia || []" [value]="estado">
+                  {{estado}}
+                </option>
+              </select>
+            </div>
+
+            <div class="col-md-12">
+              <label class="form-label">Tipo de Afiliado</label>
+              <div class="checkbox-group" *ngIf="opciones && opciones.tipos && opciones.tipos.length > 0; else noTipos">
+                <div *ngFor="let tipo of opciones.tipos" class="form-check form-check-inline">
+                  <input type="checkbox" class="form-check-input"
+                         [id]="'tipo_' + tipo" [value]="tipo"
+                         [checked]="tiposSeleccionados.includes(tipo)"
+                         (change)="toggleTipo(tipo, $event)">
+                  <label class="form-check-label" [for]="'tipo_' + tipo">{{tipo}}</label>
+                </div>
+              </div>
+              <ng-template #noTipos>
+                <div class="text-muted">No hay tipos disponibles</div>
+              </ng-template>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Categoría</label>
+              <select class="form-select" formControlName="categoria">
+                <option value="">Todas las categorías</option>
+                <option *ngFor="let cat of opciones?.categorias || []" [value]="cat">{{cat}}</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Nivel Categoría</label>
+              <select class="form-select" formControlName="categoriaNivel">
+                <option value="">Todos los niveles</option>
+                <option *ngFor="let nivel of opciones?.categoriasNivel || []" [value]="nivel">{{nivel}}</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <div class="form-text mb-2">
+                <small *ngIf="opciones && opciones.rangoEdades && opciones.rangoEdades.edadMaxima > 0">
+                  <i class="fas fa-info-circle me-1"></i>
+                  Rango disponible: {{opciones.rangoEdades.edadMinima}} - {{opciones.rangoEdades.edadMaxima}} años
+                </small>
+              </div>
+            </div>
+
+            <!-- Filtros de edad -->
+            <div class="col-md-6">
+              <label class="form-label">
+                <i class="fas fa-birthday-cake me-1"></i>Filtro por Edad
+              </label>
+              <div class="row">
+                <div class="col-6">
+                  <input type="number" class="form-control" formControlName="edadDesde"
+                         placeholder="Edad desde"
+                         [min]="(opciones && opciones.rangoEdades) ? opciones.rangoEdades.edadMinima : 0"
+                         [max]="(opciones && opciones.rangoEdades) ? opciones.rangoEdades.edadMaxima : 100">
+                  <div class="form-text">Desde</div>
+                </div>
+                <div class="col-6">
+                  <input type="number" class="form-control" formControlName="edadHasta"
+                         placeholder="Edad hasta"
+                         [min]="(opciones && opciones.rangoEdades) ? opciones.rangoEdades.edadMinima : 0"
+                         [max]="(opciones && opciones.rangoEdades) ? opciones.rangoEdades.edadMaxima : 100">
+                  <div class="form-text">Hasta</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Filtros de fecha -->
+            <div class="col-md-6">
+              <label class="form-label">Fecha Nacimiento</label>
+              <div class="row">
+                <div class="col-6">
+                  <input type="date" class="form-control" formControlName="fechaNacimientoDesde"
+                         placeholder="Desde">
+                  <div class="form-text">Desde</div>
+                </div>
+                <div class="col-6">
+                  <input type="date" class="form-control" formControlName="fechaNacimientoHasta"
+                         placeholder="Hasta">
+                  <div class="form-text">Hasta</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Fecha Licencia</label>
+              <div class="row">
+                <div class="col-6">
+                  <input type="date" class="form-control" formControlName="fechaLicenciaDesde">
+                  <div class="form-text">Desde</div>
+                </div>
+                <div class="col-6">
+                  <input type="date" class="form-control" formControlName="fechaLicenciaHasta">
+                  <div class="form-text">Hasta</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Club -->
+        <div class="tab-content" [class.d-none]="tabActiva !== 'club'">
+          <div class="row g-3">
+            <div class="col-12">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" formControlName="soloConClub" id="soloConClub">
+                <label class="form-check-label" for="soloConClub">
+                  Mostrar solo afiliados con club asignado
+                </label>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="clubId" class="form-label">Club específico:</label>
+              <select class="form-select" formControlName="clubId" id="clubId">
+                <option value="">Seleccione un club</option>
+                <option *ngFor="let club of opciones.clubes" [value]="club.idClub">
+                  {{club.nombre}} <span *ngIf="club.cantidadAfiliados">({{club.cantidadAfiliados}})</span>
+                </option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label for="clubNombre" class="form-label">Nombre del club contiene:</label>
+              <input type="text" class="form-control" formControlName="clubNombre" id="clubNombre">
+            </div>
+
+            <div class="col-md-6">
+              <label for="estadoAfiliacionClub" class="form-label">Estado de afiliación al club:</label>
+              <select class="form-select" formControlName="estadoAfiliacionClub" id="estadoAfiliacionClub">
+                <option value="">Cualquier estado</option>
+                <option *ngFor="let estado of opciones.estadosAfiliacionClub" [value]="estado">
+                  {{estado}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Pases -->
+        <div class="tab-content" [class.d-none]="tabActiva !== 'pases'">
+          <div class="row g-3">
+            <div class="col-12">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" formControlName="tienePases" id="tienePases">
+                <label class="form-check-label" for="tienePases">
+                  Mostrar solo afiliados con pases
+                </label>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Estado del Pase</label>
+              <select class="form-select" formControlName="estadoPase">
+                <option value="">Todos los estados</option>
+                <option *ngFor="let estado of opciones?.estadosPase || []" [value]="estado">
+                  {{estado}}
+                </option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Club Origen</label>
+              <select class="form-select" formControlName="clubOrigenId">
+                <option value="">Todos los clubes</option>
+                <option *ngFor="let club of opciones?.clubesPases || []" [value]="club.idClub">
+                  {{club.nombre}}
+                </option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Club Destino</label>
+              <select class="form-select" formControlName="clubDestinoId">
+                <option value="">Todos los clubes</option>
+                <option *ngFor="let club of opciones?.clubesPases || []" [value]="club.idClub">
+                  {{club.nombre}}
+                </option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Fecha Pase Desde</label>
+              <input type="date" class="form-control" formControlName="fechaPaseDesde">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Fecha Pase Hasta</label>
+              <input type="date" class="form-control" formControlName="fechaPaseHasta">
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Pagos -->
+        <div class="tab-content" [class.d-none]="tabActiva !== 'pagos'">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" formControlName="tienePagos" id="tienePagos">
+                <label class="form-check-label" for="tienePagos">
+                  Solo afiliados con pagos
+                </label>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Estado Pago</label>
+              <select class="form-select" formControlName="estadoPago">
+                <option value="">Todos los estados</option>
+                <option *ngFor="let estado of opciones?.estadosPago || []" [value]="estado">
+                  {{estado}}
+                </option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Concepto de Cobro</label>
+              <select class="form-select" formControlName="conceptoCobro">
+                <option value="">Todos los conceptos</option>
+                <option *ngFor="let concepto of opcionesAvanzadas?.conceptosCobro || []" [value]="concepto">
+                  {{concepto}}
+                </option>
+              </select>
+            </div>
+
+            <div class="col-md-12" *ngIf="opcionesAvanzadas?.conceptosCobro && opcionesAvanzadas.conceptosCobro.length > 0">
+              <div class="alert alert-light mt-2">
+                <small class="text-muted">
+                  <i class="fas fa-info-circle me-1"></i>
+                  Conceptos disponibles: {{opcionesAvanzadas.conceptosCobro.length}} tipos diferentes
+                </small>
+              </div>
+            </div>
+
+            <div class="col-md-6" *ngIf="opcionesAvanzadas?.equiposActivos && opcionesAvanzadas.equiposActivos.length > 0">
+              <label class="form-label">Equipo</label>
+              <select class="form-select" formControlName="equipoId">
+                <option value="">Todos los equipos</option>
+                <option *ngFor="let equipo of opcionesAvanzadas.equiposActivos" [value]="equipo.id">
+                  {{equipo.nombre || equipo}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Credenciales -->
+        <div class="tab-content" [class.d-none]="tabActiva !== 'credenciales'">
+          <div class="row g-3">
+            <div class="col-12">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" formControlName="tieneCredencial" id="tieneCredencial">
+                <label class="form-check-label" for="tieneCredencial">
+                  Mostrar solo afiliados con credencial
+                </label>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Estado de Credencial</label>
+              <select class="form-select" formControlName="estadoCredencial">
+                <option value="">Todos los estados</option>
+                <option *ngFor="let estado of opcionesAvanzadas?.estadosCredencial || []" [value]="estado">
+                  {{estado}}
+                </option>
+              </select>
+            </div>
+
+            <div class="col-12 mt-3" *ngIf="(opcionesAvanzadas?.estadosCredencial || []).length > 0">
+              <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                El filtro por credenciales permite encontrar afiliados según el estado de sus credenciales.
+                <ul class="mt-2 mb-0">
+                  <li><strong>ACTIVO</strong>: Credenciales vigentes</li>
+                  <li><strong>PENDIENTE</strong>: Credenciales en proceso de emisión</li>
+                  <li><strong>VENCIDA</strong>: Credenciales que requieren renovación</li>
+                  <li><strong>ANULADA</strong>: Credenciales que han sido dadas de baja</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <!-- Filtros activos -->
+      <div class="mt-3" *ngIf="contarFiltrosActivos() > 0">
+        <h6>Filtros aplicados:</h6>
+        <div class="d-flex flex-wrap gap-2">
+          <span *ngFor="let filtro of obtenerFiltrosActivos()" class="badge bg-info text-dark">
+            {{filtro.nombre}}: {{filtro.valor}}
+            <button class="btn-close btn-close-white ms-1" (click)="eliminarFiltro(filtro.campo)"></button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resumen de filtros aplicados -->
+  <div *ngIf="filtrosAplicados && contarFiltrosActivos() > 0" class="mt-3">
+    <div class="card">
+      <div class="card-body">
+        <h6 class="card-title">Filtros Aplicados:</h6>
+        <div class="d-flex flex-wrap gap-2">
+          <span *ngFor="let filtro of obtenerFiltrosActivos()"
+                class="badge bg-primary">
+            {{filtro.nombre}}: {{filtro.valor}}
+            <button type="button" class="btn-close btn-close-white ms-1"
+                    (click)="eliminarFiltro(filtro.campo)"></button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  <div *ngIf="cargandoOpciones" class="mt-3">
+    <div class="alert alert-info">
+      <i class="fas fa-spinner fa-spin me-2"></i>
+      Cargando opciones de filtros...
+    </div>
+  </div>
+</div>

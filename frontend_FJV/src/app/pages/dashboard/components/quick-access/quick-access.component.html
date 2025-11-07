@@ -1,0 +1,16 @@
+<div class="bg-white rounded-3 shadow-sm p-4 h-100">
+  <h4 class="mb-3">Acceso Rápido</h4>
+  <div class="list-group">
+    @for (link of quickLinks; track link.title) {
+      <a [routerLink]="link.route" class="list-group-item list-group-item-action d-flex align-items-center">
+        <span class="quick-access-icon bg-{{link.color}} text-white rounded-circle me-3">
+          <i class="fas {{link.icon}}"></i>
+        </span>
+        <div>
+          <h6 class="mb-0">{{link.title}}</h6>
+          <small class="text-muted">{{link.description}}</small>
+        </div>
+      </a>
+    }
+  </div>
+</div>

@@ -1,0 +1,72 @@
+<!-- Sección de bienvenida (Hero section) -->
+<section class="hero-section">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <h1 class="display-4 fw-bold">Federación Jujeña de Voleibol</h1>
+        <p class="lead my-4">Promoviendo el deporte y la sana competencia en la provincia de Jujuy desde 1974.</p>
+        <div class="d-grid gap-2 d-md-flex">
+          <a href="#" class="btn btn-primary btn-lg px-4 me-md-2">Conocer más</a>
+          <a href="#" class="btn btn-outline-secondary btn-lg px-4">Eventos</a>
+        </div>
+      </div>
+      <div class="col-lg-6 d-none d-lg-block">
+        <img src="assets/images/hero-volleyball.jpg" class="img-fluid rounded shadow-lg" alt="Voleibol en Jujuy">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Sección de noticias recientes -->
+<app-noticias-recientes
+  [titulo]="'Últimas Noticias'"
+  [cantidadNoticias]="6"
+  [mostrarDestacadas]="true"
+  [mostrarTodas]="true">
+</app-noticias-recientes>
+
+<!-- Sección de clubes y equipos -->
+<section class="container py-5">
+  <div class="row mb-4">
+    <div class="col-12 text-center">
+      <h2 class="fw-bold">Nuestros Clubes</h2>
+      <div class="section-divider mx-auto mb-3"></div>
+      <p class="text-muted">Conoce los clubes asociados a nuestra federación</p>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Puedes reemplazar estos con contenido dinámico en el futuro -->
+    <div class="col-md-3 col-6">
+      <div class="club-card text-center">
+        <img src="assets/images/club-logo-1.png" class="img-fluid mb-3" alt="Club Logo">
+        <h5>Club Deportivo Jujuy</h5>
+      </div>
+    </div>
+
+    <div class="col-md-3 col-6">
+      <div class="club-card text-center">
+        <img src="assets/images/club-logo-2.png" class="img-fluid mb-3" alt="Club Logo">
+        <h5>Atlético Palpalá</h5>
+      </div>
+    </div>
+
+    <div class="col-md-3 col-6">
+      <div class="club-card text-center">
+        <img src="assets/images/club-logo-3.png" class="img-fluid mb-3" alt="Club Logo">
+        <h5>Olimpia Volley</h5>
+      </div>
+    </div>
+
+    <div class="col-md-3 col-6">
+      <div class="club-card text-center">
+        <img src="assets/images/club-logo-4.png" class="img-fluid mb-3" alt="Club Logo">
+        <h5>Humahuaca Deportivo</h5>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center mt-4">
+    <a href="#" class="btn btn-outline-primary">Ver todos los clubes</a>
+  </div>
+</section>

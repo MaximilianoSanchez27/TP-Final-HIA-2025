@@ -1,0 +1,150 @@
+<div class="payment-filters-container">
+  <!-- Header del componente -->
+  <div class="filters-header">
+    <div class="header-content">
+      <div class="title-section">
+        <h3 class="filters-title">
+          <i class="fas fa-filter"></i>
+          Filtros Avanzados - Métricas de Pagos
+        </h3>
+        <span class="filters-description">
+          Configure los filtros para personalizar el reporte financiero
+        </span>
+      </div>
+      <div class="export-buttons">
+        <button
+          class="export-btn export-pdf"
+          (click)="exportarPDF()"
+          [disabled]="exportando"
+          title="Exportar a PDF">
+          <i class="fas fa-file-pdf"></i>
+          PDF
+        </button>
+        <button
+          class="export-btn export-excel"
+          (click)="exportarExcel()"
+          [disabled]="exportando"
+          title="Exportar a Excel">
+          <i class="fas fa-file-excel"></i>
+          Excel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulario de filtros -->
+  <div class="filters-form">
+    <div class="filters-grid">
+
+      <!-- Período de Fechas -->
+      <div class="filter-group">
+        <label class="filter-label">Período</label>
+        <div class="date-range">
+          <input
+            type="date"
+            class="date-input"
+            [(ngModel)]="filtros.fechaDesde"
+            (change)="aplicarFiltros()"
+            placeholder="Fecha desde">
+          <span class="date-separator">hasta</span>
+          <input
+            type="date"
+            class="date-input"
+            [(ngModel)]="filtros.fechaHasta"
+            (change)="aplicarFiltros()"
+            placeholder="Fecha hasta">
+        </div>
+      </div>
+
+      <!-- Estado del Pago -->
+      <div class="filter-group">
+        <label class="filter-label">Estado del Pago</label>
+        <select
+          class="filter-select"
+          [(ngModel)]="filtros.estado"
+          (change)="aplicarFiltros()">
+          <option *ngFor="let opcion of opcionesEstado" [value]="opcion.valor">
+            {{ opcion.label }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Método de Pago -->
+      <div class="filter-group">
+        <label class="filter-label">Método de Pago</label>
+        <select
+          class="filter-select"
+          [(ngModel)]="filtros.metodoPago"
+          (change)="aplicarFiltros()">
+          <option *ngFor="let metodo of opcionesMetodoPago" [value]="metodo.valor">
+            {{ metodo.label }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Rango de Montos -->
+      <div class="filter-group">
+        <label class="filter-label">Rango de Montos</label>
+        <select
+          class="filter-select"
+          [(ngModel)]="rangoMontoSeleccionado"
+          (change)="onRangoMontoChange($event); aplicarFiltros()">
+          <option *ngFor="let rango of rangosMonto" [value]="rango.label">
+            {{ rango.label }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Montos Personalizados (si se necesita más granularidad) -->
+      <div class="filter-group span-2">
+        <label class="filter-label">Montos Personalizados (Opcional)</label>
+        <div class="amount-range">
+          <input
+            type="number"
+            class="amount-input"
+            [(ngModel)]="filtros.montoMinimo"
+            (change)="aplicarFiltros()"
+            placeholder="Monto mínimo"
+            min="0"
+            step="1000">
+          <span class="amount-separator">hasta</span>
+          <input
+            type="number"
+            class="amount-input"
+            [(ngModel)]="filtros.montoMaximo"
+            (change)="aplicarFiltros()"
+            placeholder="Monto máximo"
+            min="0"
+            step="1000">
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Acciones de filtros -->
+    <div class="filters-actions">
+      <button
+        class="btn btn-apply"
+        (click)="aplicarFiltros()"
+        [class.active]="filtrosActivos">
+        <i class="fas fa-filter"></i>
+        Aplicar Filtros
+      </button>
+      <button
+        class="btn btn-clear"
+        (click)="limpiarFiltros()"
+        [disabled]="!filtrosActivos">
+        <i class="fas fa-times"></i>
+        Limpiar
+      </button>
+    </div>
+  </div>
+
+  <!-- Resumen de filtros activos -->
+  <div class="filters-summary" *ngIf="filtrosActivos">
+    <div class="summary-content">
+      <span class="summary-label">Filtros Aplicados:</span>
+      <span class="summary-text">{{ resumenFiltros }}</span>
+    </div>
+  </div>
+</div>

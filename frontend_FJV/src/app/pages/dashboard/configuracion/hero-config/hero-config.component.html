@@ -1,0 +1,320 @@
+<div class="hero-config-container">
+  <div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h2 class="mb-1">
+              <i class="fas fa-image me-2 text-primary"></i>
+              Configuración del Hero
+            </h2>
+            <p class="text-muted mb-0">Personaliza la sección principal de tu sitio web</p>
+          </div>
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="goBack()"
+          >
+            <i class="fas fa-arrow-left me-2"></i>Volver al Dashboard
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <p class="mt-2">Cargando configuración...</p>
+    </div>
+
+    <!-- Main Content -->
+    <div *ngIf="!isLoading" class="row">
+      <!-- Form Section -->
+      <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+              <i class="fas fa-edit me-2"></i>
+              Configuración
+            </h5>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="heroForm" (ngSubmit)="onSubmit()">
+              <!-- Eslogan -->
+              <div class="mb-3">
+                <label for="eslogan" class="form-label fw-bold">
+                  <i class="fas fa-quote-left me-2 text-primary"></i>
+                  Eslogan Principal
+                </label>
+                <input
+                  type="text"
+                  id="eslogan"
+                  class="form-control form-control-lg"
+                  formControlName="eslogan"
+                  placeholder="Ej: Pasión por el Voleibol"
+                  maxlength="100"
+                >
+                <div class="form-text">
+                  <span class="float-end">{{heroForm.get('eslogan')?.value?.length || 0}}/100</span>
+                  Texto principal que aparecerá en grande
+                </div>
+              </div>
+
+              <!-- Sub Texto -->
+              <div class="mb-3">
+                <label for="subTexto" class="form-label fw-bold">
+                  <i class="fas fa-align-left me-2 text-primary"></i>
+                  Subtítulo
+                </label>
+                <textarea
+                  id="subTexto"
+                  class="form-control"
+                  formControlName="subTexto"
+                  rows="3"
+                  placeholder="Ej: Promoviendo el voleibol en la provincia de Jujuy desde sus bases"
+                  maxlength="200"
+                ></textarea>
+                <div class="form-text">
+                  <span class="float-end">{{heroForm.get('subTexto')?.value?.length || 0}}/200</span>
+                  Descripción que aparecerá debajo del eslogan
+                </div>
+              </div>
+
+              <!-- Upload de Imágenes -->
+              <div class="mb-4">
+                <label class="form-label fw-bold">
+                  <i class="fas fa-images me-2 text-primary"></i>
+                  Imágenes del Carousel
+                </label>
+
+                <!-- Drag & Drop Area -->
+                <div
+                  class="image-upload-area"
+                  [class.dragover]="isDragOver"
+                  (drop)="onDrop($event)"
+                  (dragover)="onDragOver($event)"
+                  (dragleave)="onDragLeave($event)"
+                  (click)="fileInput.click()"
+                >
+                  <div class="upload-content">
+                    <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                    <h6>Arrastra y suelta tus imágenes aquí</h6>
+                    <p class="text-muted mb-3">o haz clic para seleccionar archivos</p>
+                    <button type="button" class="btn btn-primary">
+                      <i class="fas fa-plus me-2"></i>Seleccionar Imágenes
+                    </button>
+                  </div>
+                </div>
+
+                <input
+                  #fileInput
+                  type="file"
+                  class="d-none"
+                  multiple
+                  accept="image/*"
+                  (change)="onFileSelect($event)"
+                >
+
+                <div class="form-text mt-2">
+                  <i class="fas fa-info-circle me-1"></i>
+                  Máximo 5 imágenes. Formatos: JPG, PNG, WebP. Tamaño máximo: 5MB por imagen.
+                </div>
+
+                <!-- Errores de validación -->
+                <div *ngIf="validationErrors.length > 0" class="alert alert-danger mt-3">
+                  <ul class="mb-0">
+                    <li *ngFor="let error of validationErrors">{{error}}</li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Current Images with Reorder -->
+              <div *ngIf="currentImages.length > 0" class="mb-4">
+                <label class="form-label fw-bold">
+                  <i class="fas fa-sort me-2 text-primary"></i>
+                  Imágenes Actuales (Arrastra para reordenar)
+                </label>
+
+                <div class="current-images-list">
+                  <div
+                    *ngFor="let image of currentImages; let i = index"
+                    class="image-item"
+                    [class.dragging]="draggedIndex === i"
+                    draggable="true"
+                    (dragstart)="onImageDragStart($event, i)"
+                    (dragend)="onImageDragEnd($event)"
+                    (dragover)="onImageDragOver($event, i)"
+                    (drop)="onImageDrop($event, i)"
+                  >
+                    <div class="image-preview">
+                      <img [src]="image.url" [alt]="image.alt" class="img-thumbnail">
+                    </div>
+                    <div class="image-info">
+                      <p class="mb-1 fw-bold">Imagen {{i + 1}}</p>
+                      <small class="text-muted">{{image.alt}}</small>
+                    </div>
+                    <div class="image-actions">
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-danger"
+                        (click)="removeImage(i)"
+                        title="Eliminar imagen"
+                      >
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Selected Files Preview -->
+              <div *ngIf="selectedFiles.length > 0" class="mb-4">
+                <label class="form-label fw-bold">
+                  <i class="fas fa-file-image me-2 text-success"></i>
+                  Nuevas Imágenes Seleccionadas
+                </label>
+
+                <div class="selected-files-list">
+                  <div *ngFor="let file of selectedFiles; let i = index" class="file-item">
+                    <div class="file-preview">
+                      <img [src]="getFilePreview(file)" [alt]="file.name" class="img-thumbnail">
+                    </div>
+                    <div class="file-info">
+                      <p class="mb-1 fw-bold">{{file.name}}</p>
+                      <small class="text-muted">{{formatFileSize(file.size)}}</small>
+                    </div>
+                    <div class="file-actions">
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-danger"
+                        (click)="removeSelectedFile(i)"
+                        title="Quitar archivo"
+                      >
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Submit Button -->
+              <div class="d-grid">
+                <button
+                  type="submit"
+                  class="btn btn-primary btn-lg"
+                  [disabled]="heroForm.invalid || isSaving || (currentImages.length === 0 && selectedFiles.length === 0)"
+                >
+                  <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  <i *ngIf="!isSaving" class="fas fa-save me-2"></i>
+                  {{isSaving ? 'Guardando...' : 'Guardar Configuración'}}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview Section -->
+      <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-header bg-success text-white">
+            <h5 class="mb-0">
+              <i class="fas fa-eye me-2"></i>
+              Vista Previa
+            </h5>
+          </div>
+          <div class="card-body p-0">
+            <!-- Hero Preview -->
+            <div class="hero-preview">
+              <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+                <!-- Indicadores -->
+                <div class="carousel-indicators" *ngIf="getPreviewImages().length > 1">
+                  <button
+                    *ngFor="let image of getPreviewImages(); let i = index"
+                    type="button"
+                    data-bs-target="#heroCarousel"
+                    [attr.data-bs-slide-to]="i"
+                    [class.active]="i === 0"
+                  ></button>
+                </div>
+
+                <!-- Slides -->
+                <div class="carousel-inner">
+                  <div
+                    *ngFor="let image of getPreviewImages(); let i = index"
+                    class="carousel-item"
+                    [class.active]="i === 0"
+                  >
+                    <img [src]="image.url" [alt]="image.alt" class="d-block w-100 carousel-image">
+                    <div class="carousel-caption d-md-block">
+                      <div class="hero-content">
+                        <h1 class="display-4 fw-bold">
+                          {{heroForm.get('eslogan')?.value || 'Pasión por el Voleibol'}}
+                        </h1>
+                        <p class="lead">
+                          {{heroForm.get('subTexto')?.value || 'Promoviendo el voleibol en la provincia de Jujuy desde sus bases'}}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Controles -->
+                <button
+                  *ngIf="getPreviewImages().length > 1"
+                  class="carousel-control-prev"
+                  type="button"
+                  data-bs-target="#heroCarousel"
+                  data-bs-slide="prev"
+                >
+                  <span class="carousel-control-prev-icon"></span>
+                  <span class="visually-hidden">Anterior</span>
+                </button>
+                <button
+                  *ngIf="getPreviewImages().length > 1"
+                  class="carousel-control-next"
+                  type="button"
+                  data-bs-target="#heroCarousel"
+                  data-bs-slide="next"
+                >
+                  <span class="carousel-control-next-icon"></span>
+                  <span class="visually-hidden">Siguiente</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Preview Info -->
+            <div class="p-3 bg-light">
+              <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">
+                  <i class="fas fa-images me-1"></i>
+                  {{getPreviewImages().length}} imagen(es) en el carousel
+                </small>
+                <small class="text-muted">
+                  <i class="fas fa-clock me-1"></i>
+                  Auto-rotación cada 5 segundos
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show">
+      <i class="fas fa-check-circle me-2"></i>
+      {{successMessage}}
+      <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show">
+      <i class="fas fa-exclamation-triangle me-2"></i>
+      {{errorMessage}}
+      <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+    </div>
+  </div>
+</div>

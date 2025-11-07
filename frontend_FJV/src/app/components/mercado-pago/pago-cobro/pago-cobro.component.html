@@ -1,0 +1,238 @@
+<!-- Modal de Pago con Mercado Pago -->
+<div class="modal-overlay" *ngIf="showModal" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <!-- Header del Modal -->
+    <div class="modal-header">
+      <h3 class="modal-title">
+        <i class="fas fa-credit-card"></i>
+        <span *ngIf="!showQRCode">Pagar con Mercado Pago</span>
+        <span *ngIf="showQRCode">Código QR - Mercado Pago</span>
+      </h3>
+      <button class="close-button" (click)="onClose()" type="button">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Cuerpo del Modal -->
+    <div class="modal-body">
+
+      <!-- Vista del Formulario -->
+      <div *ngIf="!showQRCode">
+        <!-- Información del Cobro -->
+        <div class="payment-info">
+          <h4>Detalles del Cobro</h4>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="label">Concepto:</span>
+              <span class="value">{{ cobro.concepto }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Monto:</span>
+              <span class="value amount">{{ formatCurrency(cobro.monto) }}</span>
+            </div>
+            <div class="info-item" *ngIf="cobro.club">
+              <span class="label">Club:</span>
+              <span class="value">{{ cobro.club.nombre }}</span>
+            </div>
+            <div class="info-item" *ngIf="cobro.fechaVencimiento">
+              <span class="label">Vencimiento:</span>
+              <span class="value">{{ cobro.fechaVencimiento | date:'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulario de Pago -->
+        <div class="payment-form">
+          <h4>Datos del Pagador</h4>
+
+          <!-- Nombre y Apellido -->
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="payerNombre">Nombre *</label>
+              <input
+                type="text"
+                id="payerNombre"
+                class="form-control"
+                [(ngModel)]="datosPagador.nombre"
+                placeholder="Juan"
+                [disabled]="isProcessing || isGeneratingQR"
+                required
+              >
+            </div>
+            <div class="form-group col-md-6">
+              <label for="payerApellido">Apellido *</label>
+              <input
+                type="text"
+                id="payerApellido"
+                class="form-control"
+                [(ngModel)]="datosPagador.apellido"
+                placeholder="Pérez"
+                [disabled]="isProcessing || isGeneratingQR"
+                required
+              >
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div class="form-group">
+            <label for="payerEmail">Email *</label>
+            <input
+              type="email"
+              id="payerEmail"
+              class="form-control"
+              [(ngModel)]="datosPagador.email"
+              placeholder="juan.perez@email.com"
+              [disabled]="isProcessing || isGeneratingQR"
+              required
+            >
+          </div>
+
+          <!-- Tipo de Documento y Número -->
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label for="payerTipoDoc">Tipo de Documento</label>
+              <select
+                id="payerTipoDoc"
+                class="form-control"
+                [(ngModel)]="datosPagador.tipoDocumento"
+                [disabled]="isProcessing || isGeneratingQR"
+              >
+                <option *ngFor="let tipo of tiposDocumento" [value]="tipo.value">
+                  {{ tipo.label }}
+                </option>
+              </select>
+            </div>
+            <div class="form-group col-md-8">
+              <label for="payerDocumento">Número de Documento</label>
+              <input
+                type="text"
+                id="payerDocumento"
+                class="form-control"
+                [(ngModel)]="datosPagador.documento"
+                placeholder="12345678"
+                [disabled]="isProcessing || isGeneratingQR"
+                maxlength="8"
+              >
+              <small class="form-text text-muted">Campo opcional</small>
+            </div>
+          </div>
+
+          <!-- Mensaje de Error -->
+          <div class="error-message" *ngIf="errorMessage">
+            <i class="fas fa-exclamation-triangle"></i>
+            {{ errorMessage }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Vista del Código QR -->
+      <div *ngIf="showQRCode" class="qr-view">
+        <div class="qr-container">
+          <h4>Escanea el código QR para pagar</h4>
+
+          <div class="qr-code-wrapper">
+            <img [src]="qrCodeImage" alt="Código QR para pago" class="qr-code-image">
+          </div>
+
+          <div class="qr-instructions">
+            <h5>¿Cómo pagar?</h5>
+            <ol>
+              <li>Abre la app de <strong>Mercado Pago</strong> en tu celular</li>
+              <li>Toca en <strong>"Pagar con QR"</strong></li>
+              <li>Escanea este código con tu celular</li>
+              <li>Confirma el pago en la app</li>
+            </ol>
+
+            <div class="qr-amount">
+              <strong>Monto a pagar: {{ formatCurrency(cobro.monto) }}</strong>
+            </div>
+          </div>
+
+          <div class="qr-alternative">
+            <p>¿No tienes la app de Mercado Pago?</p>
+            <button
+              type="button"
+              class="btn btn-outline-primary btn-web-pay"
+              (click)="onPayWithLink()"
+              [disabled]="!paymentLink"
+            >
+              <i class="fas fa-globe"></i>
+              Pagar en el navegador
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer del Modal -->
+    <div class="modal-footer">
+
+      <!-- Botones para vista de formulario -->
+      <div *ngIf="!showQRCode" class="footer-form-buttons">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onClose()"
+          [disabled]="isProcessing || isGeneratingQR"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-outline-primary btn-qr"
+          (click)="onGenerateQRCode()"
+          [disabled]="isProcessing || isGeneratingQR"
+        >
+          <span *ngIf="!isGeneratingQR">
+            <i class="fas fa-qrcode"></i>
+            Generar QR
+          </span>
+          <span *ngIf="isGeneratingQR">
+            <i class="fas fa-spinner fa-spin"></i>
+            Generando QR...
+          </span>
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-primary btn-mp"
+          (click)="onPayWithMercadoPago()"
+          [disabled]="isProcessing || isGeneratingQR"
+        >
+          <span *ngIf="!isProcessing">
+            <i class="fas fa-credit-card"></i>
+            Pagar {{ formatCurrency(cobro.monto) }}
+          </span>
+          <span *ngIf="isProcessing">
+            <i class="fas fa-spinner fa-spin"></i>
+            Procesando...
+          </span>
+        </button>
+      </div>
+
+      <!-- Botones para vista de QR -->
+      <div *ngIf="showQRCode" class="footer-qr-buttons">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onBackToForm()"
+        >
+          <i class="fas fa-arrow-left"></i>
+          Volver
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-success"
+          (click)="onClose()"
+        >
+          <i class="fas fa-check"></i>
+          Cerrar
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

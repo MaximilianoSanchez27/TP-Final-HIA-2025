@@ -1,0 +1,186 @@
+.detalle-noticia {
+  background-color: var(--neutral-100);
+  min-height: 100vh;
+  padding-bottom: 3rem;
+}
+
+.category-badge {
+  font-size: 0.9rem;
+  padding: 0.5em 1em;
+}
+
+.noticia-resumen p {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: #4a4a4a;
+}
+
+/* Estilos para bloques de contenido */
+.bloque-texto {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #333;
+}
+
+.bloque-texto p {
+  margin-bottom: 1.5rem;
+}
+
+.bloque-imagen img {
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+/* Etiquetas */
+.etiqueta {
+  padding: 0.5em 1em;
+  border-radius: 20px;
+  font-weight: normal;
+  font-size: 0.85rem;
+  background-color: #f0f0f0;
+  color: #555;
+  transition: all 0.2s;
+}
+
+.etiqueta:hover {
+  background-color: var(--blue-medium);
+  color: white;
+}
+
+/* Botones compartir */
+.social-share {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.social-share:hover {
+  transform: translateY(-3px);
+}
+
+.facebook {
+  background-color: #3b5998;
+}
+
+.twitter {
+  background-color: #1da1f2;
+}
+
+.whatsapp {
+  background-color: #25d366;
+}
+
+.email {
+  background-color: #ea4335;
+}
+
+/* Sidebar */
+.sidebar .card {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.sidebar .card-header {
+  padding: 1rem;
+}
+
+/* Sidebar estático */
+.sticky-sidebar {
+  position: sticky;
+  top: 100px; /* Ajustado para dejar espacio para el menú superior */
+  max-height: calc(100vh - 120px); /* Altura máxima ajustada para evitar desbordamiento */
+  overflow-y: auto; /* Permite scroll dentro del sidebar si es necesario */
+  padding-right: 5px; /* Espacio para la barra de desplazamiento */
+}
+
+/* Estilo para la barra de desplazamiento del sidebar */
+.sticky-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sticky-sidebar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.sticky-sidebar::-webkit-scrollbar-thumb {
+  background: #c0c0c0;
+  border-radius: 4px;
+}
+
+.sticky-sidebar::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0;
+}
+
+/* Estilos para las noticias relacionadas y recientes */
+.list-group-item {
+  transition: background-color 0.2s ease;
+  border-left: none;
+  border-right: none;
+  padding: 0.75rem 1rem;
+}
+
+.list-group-item:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+}
+
+.list-group-item a {
+  position: relative;
+  z-index: 1;
+  display: block;
+  padding: 0.5rem 0;
+  color: inherit;
+  text-decoration: none !important;
+}
+
+.list-group-item a:hover h6 {
+  color: var(--blue-medium);
+}
+
+.list-group-item img {
+  width: 100%;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* Añadir indicador de clic */
+.list-group-item a::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .sticky-top {
+    position: relative;
+    top: 0 !important;
+  }
+
+  .sticky-sidebar {
+    position: relative;
+    top: 0;
+    max-height: none;
+    overflow-y: visible;
+  }
+}
+
+@media (max-width: 576px) {
+  .bloque-texto {
+    font-size: 1rem;
+  }
+
+  .share-buttons .social-share {
+    width: 35px;
+    height: 35px;
+  }
+}

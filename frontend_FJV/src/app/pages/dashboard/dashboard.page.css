@@ -1,0 +1,119 @@
+.dashboard-container {
+  background-color: var(--neutral-200);
+  min-height: calc(100vh - 130px);
+}
+
+.dashboard-header {
+  background: linear-gradient(45deg, var(--blue-dark) 0%, var(--blue-medium) 100%);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(2, 47, 100, 0.15);
+}
+
+/* Tarjetas de estadísticas */
+.stats-card {
+  transition: all 0.3s ease;
+}
+
+.stats-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.1) !important;
+}
+
+.stats-icon {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+}
+
+/* Colores de fondo claros para los iconos */
+.bg-primary-light {
+  background-color: rgba(2, 160, 227, 0.2);
+}
+
+.bg-success-light {
+  background-color: rgba(76, 175, 80, 0.2);
+}
+
+.bg-danger-light {
+  background-color: rgba(244, 67, 54, 0.2);
+}
+
+.bg-info-light {
+  background-color: rgba(33, 150, 243, 0.2);
+}
+
+/* Tarjetas de acciones */
+.action-card {
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.action-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 20px rgba(0,0,0,0.1) !important;
+}
+
+.action-icon-wrapper {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.action-icon {
+  font-size: 1.8rem;
+}
+
+/* Acceso Rápido */
+.quick-access-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.list-group-item {
+  border-left: none;
+  border-right: none;
+  transition: all 0.3s ease;
+}
+
+.list-group-item:first-child {
+  border-top: none;
+}
+
+.list-group-item:last-child {
+  border-bottom: none;
+}
+
+.list-group-item:hover {
+  background-color: var(--neutral-200);
+  transform: translateX(5px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .action-card {
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .stats-card {
+    margin-bottom: 1rem;
+  }
+
+  .dashboard-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .dashboard-header p {
+    font-size: 1rem;
+  }
+}

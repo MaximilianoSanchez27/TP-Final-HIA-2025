@@ -1,0 +1,117 @@
+<div class="payment-result-container">
+  <div class="result-card pending">
+    <!-- Icono de pendiente -->
+    <div class="icon-container">
+      <i class="fas fa-clock pending-icon"></i>
+    </div>
+
+    <!-- Mensaje principal -->
+    <h1 class="result-title">Pago Pendiente</h1>
+    <p class="result-message">
+      Tu pago está siendo procesado. Te notificaremos cuando se complete la transacción.
+    </p>
+
+    <!-- Detalles del pago -->
+    <div class="payment-details" *ngIf="paymentId || merchantOrderId">
+      <h3>Detalles de la Transacción</h3>
+      <div class="detail-item" *ngIf="paymentId">
+        <span class="label">ID de Pago:</span>
+        <span class="value">{{ paymentId }}</span>
+      </div>
+      <div class="detail-item" *ngIf="merchantOrderId">
+        <span class="label">Orden:</span>
+        <span class="value">{{ merchantOrderId }}</span>
+      </div>
+      <div class="detail-item" *ngIf="preferenceId">
+        <span class="label">Referencia:</span>
+        <span class="value">{{ preferenceId }}</span>
+      </div>
+    </div>
+
+    <!-- Estado del proceso -->
+    <div class="process-status">
+      <h3>Estado del Proceso</h3>
+      <div class="status-steps">
+        <div class="step completed">
+          <div class="step-icon">
+            <i class="fas fa-check"></i>
+          </div>
+          <span>Pago Iniciado</span>
+        </div>
+        <div class="step active">
+          <div class="step-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <span>Procesando</span>
+        </div>
+        <div class="step">
+          <div class="step-icon">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <span>Completado</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Información sobre medios de pago -->
+    <div class="info-box">
+      <i class="fas fa-info-circle"></i>
+      <div class="info-content">
+        <p><strong>Tiempo de procesamiento:</strong></p>
+        <ul>
+          <li><strong>Tarjetas:</strong> Inmediato a 2 días hábiles</li>
+          <li><strong>Transferencia:</strong> 1 a 3 días hábiles</li>
+          <li><strong>Efectivo:</strong> 1 a 2 días hábiles después del pago</li>
+          <li><strong>Débito:</strong> Inmediato</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Próximos pasos -->
+    <div class="next-steps">
+      <h3>¿Qué sigue?</h3>
+      <div class="step-list">
+        <div class="next-step">
+          <i class="fas fa-envelope"></i>
+          <span>Te enviaremos un email cuando se procese el pago</span>
+        </div>
+        <div class="next-step">
+          <i class="fas fa-bell"></i>
+          <span>Recibirás una notificación en tu panel</span>
+        </div>
+        <div class="next-step">
+          <i class="fas fa-update"></i>
+          <span>El estado del cobro se actualizará automáticamente</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="action-buttons">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="checkStatus()"
+      >
+        <i class="fas fa-sync"></i>
+        Verificar Estado
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="goToCobros()"
+      >
+        <i class="fas fa-list"></i>
+        Ver Mis Cobros
+      </button>
+      <button
+        type="button"
+        class="btn btn-tertiary"
+        (click)="goToDashboard()"
+      >
+        <i class="fas fa-home"></i>
+        Ir al Dashboard
+      </button>
+    </div>
+  </div>
+</div>

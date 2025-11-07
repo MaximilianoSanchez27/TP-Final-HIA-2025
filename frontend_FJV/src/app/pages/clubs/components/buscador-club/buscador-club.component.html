@@ -1,0 +1,7 @@
+<div class="mb-3">
+  <label for="buscarClub" class="form-label">Buscar Club:</label>
+  <input type="text" id="buscarClub" class="form-control" 
+         placeholder="Buscar por nombre, dirección, email, CUIT..." 
+         [(ngModel)]="searchTerm"
+         (input)="onSearch()">
+</div>

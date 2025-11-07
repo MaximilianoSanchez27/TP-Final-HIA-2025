@@ -1,0 +1,295 @@
+<div class="momentos-destacados-container">
+  <div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h2 class="mb-1">
+              <i class="fas fa-star me-2 text-primary"></i>
+              Momentos Destacados
+            </h2>
+            <p class="text-muted mb-0">Gestiona los momentos destacados de tu sitio web</p>
+          </div>
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="goBack()"
+          >
+            <i class="fas fa-arrow-left me-2"></i>Volver al Dashboard
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <p class="mt-2">Cargando configuración...</p>
+    </div>
+
+    <!-- Main Content -->
+    <div *ngIf="!isLoading" class="row">
+      <!-- Form Section -->
+      <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+              <i class="fas fa-edit me-2"></i>
+              Configuración
+            </h5>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="momentosForm" (ngSubmit)="onSubmit()">
+              <!-- Título -->
+              <div class="mb-3">
+                <label for="titulo" class="form-label fw-bold">
+                  <i class="fas fa-heading me-2 text-primary"></i>
+                  Título Principal
+                </label>
+                <input
+                  type="text"
+                  id="titulo"
+                  class="form-control form-control-lg"
+                  formControlName="titulo"
+                  placeholder="Ej: Momentos Destacados"
+                  maxlength="100"
+                >
+                <div class="form-text">
+                  <span class="float-end">{{momentosForm.get('titulo')?.value?.length || 0}}/100</span>
+                  Título principal de la sección
+                </div>
+              </div>
+
+              <!-- Subtítulo -->
+              <div class="mb-3">
+                <label for="subTitulo" class="form-label fw-bold">
+                  <i class="fas fa-align-left me-2 text-primary"></i>
+                  Subtítulo
+                </label>
+                <textarea
+                  id="subTitulo"
+                  class="form-control"
+                  formControlName="subTitulo"
+                  placeholder="Descripción de los momentos destacados..."
+                  maxlength="300"
+                  rows="3"
+                ></textarea>
+                <div class="form-text">
+                  <span class="float-end">{{momentosForm.get('subTitulo')?.value?.length || 0}}/300</span>
+                  Descripción complementaria
+                </div>
+              </div>
+
+              <!-- Estado activo -->
+              <div class="mb-4">
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="activo"
+                    formControlName="activo"
+                  >
+                  <label class="form-check-label fw-bold" for="activo">
+                    <i class="fas fa-toggle-on me-2 text-success"></i>
+                    Sección activa
+                  </label>
+                </div>
+                <small class="text-muted">La sección será visible en el sitio web</small>
+              </div>
+
+              <!-- Upload de imágenes -->
+              <div class="mb-4">
+                <label class="form-label fw-bold">
+                  <i class="fas fa-images me-2 text-primary"></i>
+                  Agregar Imágenes (máximo 6)
+                </label>
+
+                <!-- Drop Zone -->
+                <div
+                  class="image-upload-area"
+                  [class.dragover]="isDragOver"
+                  (dragover)="onDragOver($event)"
+                  (dragleave)="onDragLeave($event)"
+                  (drop)="onDrop($event)"
+                  (click)="fileInput.click()"
+                >
+                  <div class="upload-content">
+                    <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                    <h6>Arrastra imágenes aquí o haz clic para seleccionar</h6>
+                    <p class="text-muted mb-0">Formatos: JPG, PNG, WebP (máximo 5MB cada una)</p>
+                  </div>
+                </div>
+
+                <input
+                  #fileInput
+                  type="file"
+                  class="d-none"
+                  multiple
+                  accept="image/jpeg,image/png,image/webp"
+                  (change)="onFileSelect($event)"
+                >
+
+                <!-- Errores de validación -->
+                <div *ngIf="validationErrors.length > 0" class="alert alert-danger mt-3">
+                  <ul class="mb-0">
+                    <li *ngFor="let error of validationErrors">{{error}}</li>
+                  </ul>
+                </div>
+
+                <!-- Archivos seleccionados -->
+                <div *ngIf="selectedFiles.length > 0" class="mt-3">
+                  <h6 class="text-success">
+                    <i class="fas fa-check-circle me-2"></i>
+                    Nuevas imágenes seleccionadas ({{selectedFiles.length}})
+                  </h6>
+                  <div class="selected-files-list">
+                    <div *ngFor="let file of selectedFiles; let i = index" class="file-item">
+                      <div class="file-preview">
+                        <img [src]="getFilePreview(file)" [alt]="file.name">
+                      </div>
+                      <div class="file-info">
+                        <p class="fw-bold mb-1">{{file.name}}</p>
+                        <small class="text-muted">{{file.type}} - {{(file.size / 1024 / 1024).toFixed(2)}} MB</small>
+                      </div>
+                      <div class="file-actions">
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-danger"
+                          (click)="removeSelectedFile(i)"
+                        >
+                          <i class="fas fa-times"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Imágenes actuales -->
+              <div *ngIf="currentImages.length > 0" class="mb-4">
+                <h6 class="text-info">
+                  <i class="fas fa-layer-group me-2"></i>
+                  Imágenes actuales ({{currentImages.length}})
+                </h6>
+                <div class="current-images-list">
+                  <div
+                    *ngFor="let image of currentImages; let i = index"
+                    class="image-item"
+                    [class.dragging]="draggedIndex === i"
+                    draggable="true"
+                    (dragstart)="onImageDragStart($event, i)"
+                    (dragover)="$event.preventDefault()"
+                    (drop)="onImageDrop($event, i)"
+                  >
+                    <div class="image-preview">
+                      <img [src]="image.url" [alt]="image.alt">
+                    </div>
+                    <div class="image-info">
+                      <p class="fw-bold mb-1">{{image.titulo}}</p>
+                      <small class="text-muted">Orden: {{image.orden}}</small>
+                    </div>
+                    <div class="image-actions">
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-danger"
+                        (click)="removeImage(i)"
+                        [disabled]="isSaving"
+                      >
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Submit Button -->
+              <div class="d-grid">
+                <button
+                  type="submit"
+                  class="btn btn-primary btn-lg"
+                  [disabled]="momentosForm.invalid || isSaving"
+                >
+                  <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  <i *ngIf="!isSaving" class="fas fa-save me-2"></i>
+                  {{isSaving ? 'Guardando...' : 'Guardar Configuración'}}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview Section -->
+      <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-header bg-success text-white">
+            <h5 class="mb-0">
+              <i class="fas fa-eye me-2"></i>
+              Vista Previa
+            </h5>
+          </div>
+          <div class="card-body p-0">
+            <!-- Momentos Preview -->
+            <div class="momentos-preview">
+              <div class="preview-header p-3 bg-light">
+                <h3 class="mb-2">{{momentosForm.get('titulo')?.value || 'Momentos Destacados'}}</h3>
+                <p class="text-muted mb-0">{{momentosForm.get('subTitulo')?.value || 'Descripción de los momentos destacados...'}}</p>
+              </div>
+
+              <div class="preview-gallery p-3">
+                <div class="row g-2">
+                  <div
+                    *ngFor="let image of getPreviewImages().slice(0, 6); let i = index"
+                    class="col-4"
+                  >
+                    <div class="preview-image-container">
+                      <img
+                        [src]="image.url"
+                        [alt]="image.alt"
+                        class="preview-image"
+                        [style.opacity]="image.activo ? '1' : '0.5'"
+                      >
+                      <div class="image-overlay">
+                        <span class="image-number">{{i + 1}}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Preview Info -->
+            <div class="p-3 bg-light border-top">
+              <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">
+                  <i class="fas fa-images me-1"></i>
+                  {{getPreviewImages().length}} imagen(es) en la galería
+                </small>
+                <small class="text-muted">
+                  <i class="fas fa-{{momentosForm.get('activo')?.value ? 'eye' : 'eye-slash'}} me-1"></i>
+                  {{momentosForm.get('activo')?.value ? 'Visible' : 'Oculto'}}
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show">
+      <i class="fas fa-check-circle me-2"></i>
+      {{successMessage}}
+      <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show">
+      <i class="fas fa-exclamation-triangle me-2"></i>
+      {{errorMessage}}
+      <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+    </div>
+  </div>
+</div>

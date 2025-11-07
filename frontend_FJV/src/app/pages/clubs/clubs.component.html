@@ -1,0 +1,30 @@
+<div class="container-fluid my-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Gestión de Clubes</h2>
+    <button class="btn btn-primary btn-lg" (click)="abrirModalCreacion()">
+      <i class="fas fa-plus me-2"></i>
+      Nuevo Club
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-4">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="mt-2">Cargando clubes...</p>
+  </div>
+
+  <!-- Listado de Clubes con Modal Integrado -->
+  <app-listado-clubes
+    *ngIf="!loading"
+    [clubes]="clubes"
+    (editarClub)="onEditClub($event)"
+    (eliminarClub)="onEliminarClub($event)"
+    (crearClub)="onGuardarClub($event)"
+    [mostrarModalEdicion]="mostrarModalEdicion"
+    [clubParaEditar]="clubParaEditar"
+    (cerrarModal)="cerrarModal()">
+  </app-listado-clubes>
+</div>
+

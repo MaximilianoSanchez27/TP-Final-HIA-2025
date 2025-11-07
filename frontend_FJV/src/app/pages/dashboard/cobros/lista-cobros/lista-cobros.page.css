@@ -1,0 +1,250 @@
+.lista-cobros-container {
+  background-color: var(--neutral-200);
+  min-height: calc(100vh - 130px);
+}
+
+.card {
+  border: none;
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+}
+
+/* Estilos para los botones */
+.btn {
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para la tabla */
+.table th {
+  font-weight: 600;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+/* Estilo para la paginación */
+.pagination {
+  margin-bottom: 0;
+}
+
+.page-link {
+  color: var(--blue-medium);
+}
+
+.page-item.active .page-link {
+  background-color: var(--blue-medium);
+  border-color: var(--blue-medium);
+}
+
+/* Estilos para la lista de cobros */
+.lista-cobros-container {
+  min-height: 100vh;
+}
+
+/* Badge states */
+.bg-warning {
+  background-color: #ffc107 !important;
+}
+
+.bg-success {
+  background-color: #198754 !important;
+}
+
+.bg-danger {
+  background-color: #dc3545 !important;
+}
+
+.bg-secondary {
+  background-color: #6c757d !important;
+}
+
+/* Estados de filas en la tabla */
+.table-warning {
+  background-color: rgba(255, 193, 7, 0.1) !important;
+  transition: background-color 0.3s ease;
+}
+
+.table-success {
+  background-color: rgba(25, 135, 84, 0.1) !important;
+}
+
+/* Hover effects para filas */
+.table-hover tbody tr:hover {
+  background-color: rgba(13, 110, 253, 0.075) !important;
+}
+
+/* Pulse dot animation */
+.pulse-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background-color: #17a2b8;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(23, 162, 184, 0.7);
+  }
+
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 8px rgba(23, 162, 184, 0);
+  }
+
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(23, 162, 184, 0);
+  }
+}
+
+/* Botones extra pequeños */
+.btn-xs {
+  padding: 0.125rem 0.25rem;
+  font-size: 0.6875rem;
+  line-height: 1.2;
+  border-radius: 0.2rem;
+}
+
+/* Mejoras para el panel de control */
+.card-header {
+  background-color: #f8f9fa !important;
+  border-bottom: 1px solid #dee2e6;
+}
+
+/* Estilos para badges con indicadores */
+.badge .fas.small {
+  font-size: 0.6em;
+}
+
+/* Efectos hover para tarjetas */
+.card:hover {
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+  transition: box-shadow 0.15s ease-in-out;
+}
+
+/* Estilos para botones de acción */
+.btn-group .btn {
+  margin: 0 1px;
+}
+
+.btn-group .btn:first-child {
+  margin-left: 0;
+}
+
+.btn-group .btn:last-child {
+  margin-right: 0;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .table-responsive {
+    border: none;
+  }
+
+  .btn-group {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-group .btn {
+    margin: 1px 0;
+    width: 100%;
+  }
+
+  .d-flex.gap-2 {
+    flex-direction: column;
+    gap: 0.5rem !important;
+  }
+
+  .card-body .row {
+    text-align: center;
+  }
+
+  .pulse-dot {
+    width: 4px;
+    height: 4px;
+  }
+}
+
+/* Estilos para el spinner de actualización */
+.fa-sync-alt.fa-spin {
+  animation: fa-spin 1s infinite linear;
+}
+
+/* Indicadores de estado mejorados */
+.badge.bg-info {
+  background-color: #0dcaf0 !important;
+}
+
+/* Mejoras en tooltips */
+[title] {
+  cursor: help;
+}
+
+/* Animaciones suaves para cambios */
+.badge, .btn {
+  transition: all 0.2s ease;
+}
+
+/* Estados específicos para botones de monitoreo */
+.btn-outline-info:hover {
+  background-color: #0dcaf0;
+  border-color: #0dcaf0;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+/* Mejora visual para la información de monitoreo */
+.text-info {
+  color: #0dcaf0 !important;
+}
+
+/* Estilos para el contador de monitoreo */
+.badge.bg-info {
+  background: linear-gradient(45deg, #0dcaf0, #17a2b8) !important;
+}
+
+/* Efectos de entrada suave */
+.card {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Estilos para la paginación */
+.pagination .page-link {
+  color: #0d6efd;
+  border: 1px solid #dee2e6;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.pagination .page-link:hover {
+  color: #0a58ca;
+  background-color: #e9ecef;
+  border-color: #dee2e6;
+}

@@ -1,0 +1,28 @@
+/* Acceso Rápido */
+.quick-access-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.list-group-item {
+  border-left: none;
+  border-right: none;
+  transition: all 0.3s ease;
+}
+
+.list-group-item:first-child {
+  border-top: none;
+}
+
+.list-group-item:last-child {
+  border-bottom: none;
+}
+
+.list-group-item:hover {
+  background-color: var(--neutral-200);
+  transform: translateX(5px);
+}

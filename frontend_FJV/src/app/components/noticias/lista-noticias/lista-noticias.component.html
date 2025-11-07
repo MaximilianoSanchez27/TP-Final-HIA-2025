@@ -1,0 +1,139 @@
+<section class="noticias-section">
+  <div class="container py-5">
+    <!-- Encabezado de sección -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div *ngIf="isAdmin">
+        <a [routerLink]="['/admin/noticias']" class="btn btn-outline-primary me-2">
+          <i class="fas fa-cog me-1"></i> Administrar
+        </a>
+        <a [routerLink]="['/admin/noticias/nueva']" class="btn btn-primary">
+          <i class="fas fa-plus me-1"></i> Nueva Noticia
+        </a>
+      </div>
+    </div>
+
+    <!-- Noticias destacadas (Carousel) -->
+    <div *ngIf="destacadas.length > 0 && filtros.page === 1 && !filtros.categoria" class="mb-5">
+      <h2 class="h4 mb-4 fw-bold">
+        <i class="fas fa-star text-warning me-2"></i>Noticias destacadas
+      </h2>
+
+      <div class="row g-4">
+        <div *ngFor="let noticia of destacadas" class="col-12" [ngClass]="{'col-md-12': destacadas.length === 1, 'col-md-6': destacadas.length === 2, 'col-md-4': destacadas.length >= 3}">
+          <app-noticia-card [noticia]="noticia" vista="destacado"></app-noticia-card>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <div class="row align-items-end">
+          <div class="col-md-4 mb-3 mb-md-0">
+            <label for="categoria" class="form-label">Categoría</label>
+            <select
+              id="categoria"
+              class="form-select"
+              [(ngModel)]="filtros.categoria"
+              (change)="aplicarFiltros()">
+              <option [value]="undefined">Todas las categorías</option>
+              <option *ngFor="let cat of categorias" [value]="cat.valor">
+                {{cat.etiqueta}}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-5 mb-3 mb-md-0">
+            <label for="buscar" class="form-label">Buscar</label>
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                id="buscar"
+                placeholder="Buscar noticias..."
+                [(ngModel)]="filtros.buscar">
+              <button
+                class="btn btn-primary"
+                (click)="aplicarFiltros()">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="col-md-3 d-flex">
+            <button
+              class="btn btn-outline-secondary me-2"
+              (click)="limpiarFiltros()">
+              <i class="fas fa-times me-1"></i>Limpiar
+            </button>
+
+            <div class="btn-group ms-auto">
+              <button
+                type="button"
+                class="btn btn-outline-dark"
+                [class.active]="vistaActual === 'grid'"
+                (click)="cambiarVista('grid')">
+                <i class="fas fa-th-large"></i>
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline-dark"
+                [class.active]="vistaActual === 'lista'"
+                (click)="cambiarVista('lista')">
+                <i class="fas fa-bars"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado de carga -->
+    <div *ngIf="isLoading" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <p class="mt-2">Cargando noticias...</p>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="error" class="alert alert-danger">
+      <i class="fas fa-exclamation-triangle me-2"></i> {{error}}
+    </div>
+
+    <!-- Sin resultados -->
+    <div *ngIf="!isLoading && !error && noticias.length === 0" class="text-center py-5">
+      <i class="fas fa-newspaper fa-3x text-muted mb-3"></i>
+      <h3 class="h4">No hay noticias disponibles</h3>
+      <p class="text-muted">No se encontraron noticias que coincidan con los criterios de búsqueda.</p>
+    </div>
+
+    <!-- Lista de noticias -->
+    <ng-container *ngIf="!isLoading && noticias.length > 0">
+      <!-- Vista de cuadrícula -->
+      <div *ngIf="vistaActual === 'grid'" class="row g-4">
+        <div *ngFor="let noticia of noticias" class="col-md-6 col-lg-4">
+          <app-noticia-card [noticia]="noticia"></app-noticia-card>
+        </div>
+      </div>
+
+      <!-- Vista de lista -->
+      <div *ngIf="vistaActual === 'lista'" class="noticias-lista">
+        <app-noticia-card *ngFor="let noticia of noticias" [noticia]="noticia" vista="lista"></app-noticia-card>
+      </div>
+
+      <!-- Paginación -->
+      <div *ngIf="totalPages > 1" class="d-flex justify-content-center mt-5">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [(page)]="filtros.page!"
+          [pageSize]="filtros.limit!"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="cambiarPagina($event)">
+        </ngb-pagination>
+      </div>
+    </ng-container>
+  </div>
+</section>

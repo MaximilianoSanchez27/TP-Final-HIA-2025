@@ -1,0 +1,281 @@
+<div class="public-payment-container">
+  <div class="container py-4">
+    <!-- Header simple -->
+    <div class="row justify-content-center mb-4">
+      <div class="col-12">
+        <div class="payment-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="logo-section">
+              <h3 class="mb-0 text-primary fw-bold">Federación Jujeña de Voleibol</h3>
+            </div>
+            <div class="back-link">
+              <a href="/" class="text-muted text-decoration-none">
+                <i class="fas fa-arrow-left me-2"></i>Volver al sitio
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stepper/Progress -->
+    <div class="row justify-content-center mb-4">
+      <div class="col-md-8">
+        <div class="payment-steps">
+          <div class="step completed">
+            <div class="step-circle">
+              <i class="fas fa-check"></i>
+            </div>
+            <span>Información del cobro</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step active">
+            <div class="step-circle">2</div>
+            <span>Detalles del pago</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step">
+            <div class="step-circle">3</div>
+            <span>Confirmación</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado de carga -->
+    @if (isLoading) {
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="text-center p-5">
+            <div class="spinner-border text-primary mb-3" role="status">
+              <span class="visually-hidden">Cargando...</span>
+            </div>
+            <h5>Cargando información del pago...</h5>
+            <p class="text-muted">Un momento por favor</p>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Error -->
+    @else if (errorMessage) {
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="alert alert-danger text-center">
+            <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+            <h5>Enlace no válido</h5>
+            <p>{{errorMessage}}</p>
+            <a href="/" class="btn btn-outline-primary">
+              <i class="fas fa-home me-2"></i>Volver al inicio
+            </a>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Contenido principal -->
+    @else if (paymentData) {
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          <!-- Mensaje de estado si existe -->
+          @if (getStatusMessage()) {
+            <div class="alert alert-info text-center mb-4">
+              <strong>{{getStatusMessage()}}</strong>
+            </div>
+          }
+
+          <div class="row">
+            <!-- Columna izquierda - Método de pago -->
+            <div class="col-lg-7 mb-4">
+              <div class="payment-section">
+                <h4 class="section-title">¿Cómo te gustaría pagar?</h4>
+
+                @if (canPay()) {
+                  <!-- Métodos de pago -->
+                  <div class="payment-methods">
+                    <div class="payment-method selected" (click)="openPaymentModal()">
+                      <div class="method-content">
+                        <div class="method-icon">
+                          <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCA0MCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjI0IiByeD0iNCIgZmlsbD0iIzAwOUVEQyIvPgo8cGF0aCBkPSJNMTIgOEgxNlY5SDEyVjhaTTEyIDEwSDE2VjExSDEyVjEwWk0xMiAxMkgxNlYxM0gxMlYxMloiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0yMCA4SDI4VjlIMjBWOFpNMjAgMTBIMjhWMTFIMjBWMTBaTTIwIDEySDI4VjEzSDIwVjEyWiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+" alt="MercadoPago">
+                          <span class="ms-2">MercadoPago</span>
+                        </div>
+                        <div class="method-icons">
+                          <i class="fab fa-cc-visa text-primary"></i>
+                          <i class="fab fa-cc-mastercard text-warning"></i>
+                          <i class="fas fa-university text-info"></i>
+                          <i class="fas fa-money-bill-wave text-success"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Botón de continuar -->
+                  <button class="btn btn-success btn-lg w-100 mt-4" (click)="openPaymentModal()">
+                    Continuar con el pago seguro
+                    @if (isMonitoring) {
+                      <small class="d-block mt-1">Monitoreo automático activo</small>
+                    }
+                  </button>
+
+                  <div class="text-center mt-3">
+                    <button class="btn btn-link text-muted" (click)="cancelPayment()">
+                      Cancelar pago
+                    </button>
+                  </div>
+
+                } @else if (isPaid()) {
+                  <!-- Estado pagado -->
+                  <div class="text-center py-4">
+                    <div class="success-checkmark mb-3">
+                      <i class="fas fa-check-circle fa-4x text-success"></i>
+                    </div>
+                    <h4 class="text-success">¡Pago completado!</h4>
+                    <p class="text-muted">Este cobro ha sido procesado exitosamente el {{paymentData.cobro.fechaCobro | date:'dd/MM/yyyy'}}</p>
+                  </div>
+
+                } @else {
+                  <!-- No disponible -->
+                  <div class="text-center py-4">
+                    <i class="fas fa-ban fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">Pago no disponible</h4>
+                    <p class="text-muted">Este enlace de pago no está activo actualmente</p>
+                  </div>
+                }
+
+                <!-- Información de seguridad -->
+                <div class="security-info mt-4">
+                  <div class="d-flex align-items-center">
+                    <i class="fas fa-shield-alt text-success me-2"></i>
+                    <small class="text-muted">Pago procesado por Ingenico ePayments</small>
+                  </div>
+                  <div class="security-links mt-2">
+                    <a href="#" class="text-muted text-decoration-none me-3">
+                      <small>Acerca de Ingenico</small>
+                    </a>
+                    <a href="#" class="text-muted text-decoration-none me-3">
+                      <small>Política de privacidad</small>
+                    </a>
+                    <a href="#" class="text-muted text-decoration-none">
+                      <small>Seguridad</small>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Columna derecha - Resumen del pedido -->
+            <div class="col-lg-5">
+              <div class="order-summary">
+                <h5 class="summary-title">
+                  Resumen del cobro
+                  <button class="btn btn-link btn-sm p-0 ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#orderDetails">
+                    <i class="fas fa-chevron-down"></i>
+                  </button>
+                </h5>
+
+                <!-- Detalles colapsables -->
+                <div class="collapse show" id="orderDetails">
+                  <div class="order-item">
+                    <div class="item-info">
+                      <div class="item-icon">
+                        <i class="fas fa-file-invoice text-primary"></i>
+                      </div>
+                      <div class="item-details">
+                        <h6 class="item-title">{{paymentData.cobro.concepto}}</h6>
+                        <p class="item-meta">
+                          Cobro #{{paymentData.cobro.idCobro}} × 1
+                        </p>
+                      </div>
+                    </div>
+                    <div class="item-price">
+                      {{ formatCurrency(paymentData.cobro.monto || 0) }}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Detalles adicionales -->
+                <div class="order-details">
+                  <div class="detail-row">
+                    <span>Subtotal</span>
+                    <span>{{ formatCurrency(paymentData.cobro.monto || 0) }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span>Impuestos</span>
+                    <span>Incluidos</span>
+                  </div>
+                  <div class="detail-row">
+                    <span>Procesamiento</span>
+                    <span>Gratis</span>
+                  </div>
+                </div>
+
+                <!-- Total -->
+                <div class="order-total">
+                  <div class="total-row">
+                    <span class="total-label">Total</span>
+                    <span class="total-amount">
+                      {{ formatCurrency(paymentData.cobro.monto || 0) }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Información adicional -->
+                <div class="payment-info">
+                  <div class="info-item">
+                    <i class="fas fa-calendar-alt text-muted me-2"></i>
+                    <span class="text-muted">Emisión: {{paymentData.cobro.fechaCobro | date:'dd/MM/yyyy'}}</span>
+                  </div>
+                  <div class="info-item">
+                    <i class="fas fa-clock text-muted me-2"></i>
+                    <span class="text-muted">Vencimiento: {{paymentData.cobro.fechaVencimiento | date:'dd/MM/yyyy'}}</span>
+                  </div>
+                  <div class="info-item">
+                    <i class="fas fa-building text-muted me-2"></i>
+                    <span class="text-muted">
+                      @if (paymentData.cobro.club?.nombre) {
+                        {{paymentData.cobro.club?.nombre}}
+                      } @else {
+                        Federación Jujeña de Voleibol
+                      }
+                    </span>
+                  </div>
+                  <div class="info-item">
+                    <i class="fas fa-file-alt text-muted me-2"></i>
+                    <span class="text-muted">{{paymentData.cobro.tipoComprobante}}</span>
+                  </div>
+                  <div class="info-item">
+                    <i class="fas fa-eye text-muted me-2"></i>
+                    <span class="text-muted">{{paymentData.paymentLink.accessCount}} visualizaciones</span>
+                  </div>
+                </div>
+
+                <!-- Estado del cobro -->
+                <div class="payment-status">
+                  <span class="status-indicator"
+                        [ngClass]="{
+                          'status-paid': isPaid(),
+                          'status-pending': canPay(),
+                          'status-expired': paymentData.cobro.estado === 'Vencido',
+                          'status-cancelled': paymentData.cobro.estado === 'Anulado'
+                        }">
+                    <i class="fas fa-circle me-1"></i>
+                    {{paymentData.cobro.estado}}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Modal de Pago con Mercado Pago -->
+  <app-pago-cobro
+    *ngIf="paymentData"
+    [cobro]="paymentData.cobro"
+    [showModal]="showPaymentModal"
+    (closeModal)="closePaymentModal()"
+    (paymentInitiated)="onPaymentInitiated()">
+  </app-pago-cobro>
+</div>

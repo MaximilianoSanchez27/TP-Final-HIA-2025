@@ -1,0 +1,108 @@
+<div class="historial-pases">
+  <div class="card" *ngIf="mostrarTitulo || pases.length > 0">
+    <div class="card-header bg-primary text-white" *ngIf="mostrarTitulo">
+      <h6 class="mb-0">
+        <i class="fas fa-exchange-alt me-2"></i>
+        Historial de Pases
+      </h6>
+    </div>
+
+    <div class="card-body">
+      <!-- Loading -->
+      <div *ngIf="isLoading" class="text-center py-3">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mt-2 text-muted">Cargando historial de pases...</p>
+      </div>
+
+      <!-- Error -->
+      <div *ngIf="error" class="alert alert-danger" role="alert">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        {{ error }}
+      </div>
+
+      <!-- Sin pases -->
+      <div *ngIf="!isLoading && !error && pases.length === 0" class="text-center py-3">
+        <i class="fas fa-info-circle text-muted fs-1"></i>
+        <p class="text-muted mt-2">No hay pases registrados para este afiliado</p>
+      </div>
+
+      <!-- Lista de pases -->
+      <div *ngIf="!isLoading && !error && pases.length > 0" class="timeline">
+        <div class="timeline-item" *ngFor="let pase of pases; let i = index">
+          <div class="timeline-marker">
+            <i class="fas fa-exchange-alt"></i>
+          </div>
+
+          <div class="timeline-content">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <div class="flex-grow-1">
+                <div class="d-flex align-items-center mb-1">
+                  <div class="club-origen">
+                    <span class="text-muted me-2">
+                      <i class="fas fa-building me-1"></i>
+                      {{ pase.clubProveniente || 'Sin club anterior' }}
+                    </span>
+                  </div>
+                  <div class="flecha-pase">
+                    <i class="fas fa-arrow-right mx-2 text-primary"></i>
+                  </div>
+                  <div class="club-destino">
+                    <span class="fw-bold text-primary">
+                      <i class="fas fa-building me-1"></i>
+                      {{ pase.clubDestino }}
+                    </span>
+                  </div>
+                </div>
+                <small class="text-muted">
+                  <i class="fas fa-calendar me-1"></i>
+                  {{ formatearFecha(pase.fechaPase) }}
+                </small>
+              </div>
+              <span [class]="getEstadoBadgeClass(pase.habilitacion)" class="badge ms-2">
+                {{ pase.habilitacion }}
+              </span>
+            </div>
+
+            <div *ngIf="pase.motivo" class="mb-2">
+              <small class="text-muted">
+                <i class="fas fa-comment me-1"></i>
+                <strong>Motivo:</strong> {{ pase.motivo }}
+              </small>
+            </div>
+
+            <div *ngIf="pase.observaciones" class="mb-2">
+              <small class="text-muted">
+                <i class="fas fa-sticky-note me-1"></i>
+                <strong>Observaciones:</strong> {{ pase.observaciones }}
+              </small>
+            </div>
+
+            <!-- Datos del afiliado al momento del pase -->
+            <div *ngIf="pase.datosAfiliado" class="mt-2">
+              <small class="text-muted">
+                <i class="fas fa-user me-1"></i>
+                <strong>Datos del pase:</strong>
+                <span *ngIf="pase.datosAfiliado.categoria" class="ms-2">
+                  {{ pase.datosAfiliado.categoria }}
+                </span>
+                <span *ngIf="pase.datosAfiliado.categoriaNivel" class="ms-1">
+                  - {{ pase.datosAfiliado.categoriaNivel }}
+                </span>
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mostrar más pases -->
+      <div *ngIf="pases.length === maxPases" class="text-center mt-3">
+        <small class="text-muted">
+          <i class="fas fa-info-circle me-1"></i>
+          Mostrando los {{ maxPases }} pases más recientes
+        </small>
+      </div>
+    </div>
+  </div>
+</div>

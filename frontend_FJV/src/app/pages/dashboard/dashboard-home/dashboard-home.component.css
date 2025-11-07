@@ -1,0 +1,274 @@
+/* Dashboard Header */
+.dashboard-header {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.feature-icon {
+  width: 45px;
+  height: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  border-radius: 0.375rem;
+}
+
+/* Navegación de pestañas mejorada */
+.nav-pills {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.nav-pills .nav-link {
+  color: #6c757d;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  margin: 0 0.25rem;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.nav-pills .nav-link:hover {
+  background-color: rgba(0, 123, 255, 0.1);
+  color: #007bff;
+  transform: translateY(-1px);
+}
+
+.nav-pills .nav-link.active {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+  border-color: #007bff;
+}
+
+/* Contenido de pestañas */
+.tab-content {
+  min-height: 400px;
+  animation: fadeIn 0.5s ease-in;
+}
+
+.tab-pane {
+  padding: 1rem 0;
+}
+
+/* Cards mejoradas */
+.card {
+  border: 0;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.12) !important;
+}
+
+.card-header {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-bottom: 2px solid #dee2e6;
+  padding: 1rem 1.5rem;
+}
+
+.card-header h5 {
+  font-weight: 600;
+  color: #495057;
+}
+
+.card-header .text-muted {
+  font-size: 0.875rem;
+}
+
+/* Estilos para el indicador de carga de estadísticas */
+.stats-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  z-index: 10;
+  border-radius: 0.75rem;
+  backdrop-filter: blur(3px);
+}
+
+.stats-loading-overlay > div {
+  height: 100%;
+  min-height: 120px;
+}
+
+.stats-loading {
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+/* Estilos para el indicador de carga de métricas de pagos */
+.payment-metrics-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  z-index: 10;
+  border-radius: 0.75rem;
+  backdrop-filter: blur(3px);
+  min-height: 200px;
+}
+
+.payment-metrics-loading-overlay > div {
+  height: 100%;
+  min-height: 200px;
+}
+
+.metrics-loading {
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+/* Botones mejorados */
+.btn-outline-light {
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  transition: all 0.3s ease;
+}
+
+.btn-outline-light:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.9);
+  transform: translateY(-1px);
+}
+
+.btn-outline-light:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fa-sync-alt.fa-spin,
+.fa-chart-bar.fa-spin {
+  animation: fa-spin 1s infinite linear;
+}
+
+/* Espaciado y layout */
+.mb-5 {
+  margin-bottom: 3rem !important;
+}
+
+/* Estados vacíos */
+.text-center.py-5 {
+  padding: 3rem 1rem;
+}
+
+.text-center.py-5 i {
+  opacity: 0.6;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .dashboard-header .d-flex {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .dashboard-header .d-flex > div:last-child {
+    justify-content: center;
+  }
+
+  .nav-pills {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .nav-pills .nav-link {
+    margin: 0.25rem 0;
+    text-align: center;
+  }
+
+  .stats-loading-overlay > div,
+  .payment-metrics-loading-overlay > div {
+    min-height: 80px;
+  }
+
+  .card-header {
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .tab-content {
+    min-height: 300px;
+  }
+}
+
+@media (max-width: 576px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .dashboard-header {
+    padding: 2rem 1.5rem;
+  }
+
+  .nav-pills .nav-link {
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .card-header h5 {
+    font-size: 1rem;
+  }
+
+  .card-header .text-muted {
+    font-size: 0.8rem;
+  }
+}
+
+/* Efectos de hover mejorados */
+.nav-pills .nav-link:not(.active):hover {
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+}
+
+/* Indicadores de estado activo */
+.nav-pills .nav-link.active i {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+/* Mejoras de accesibilidad */
+.nav-pills .nav-link:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+.card:focus-within {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+/* Transiciones suaves para todos los elementos */
+* {
+  transition: color 0.2s ease-in-out,
+             background-color 0.2s ease-in-out,
+             border-color 0.2s ease-in-out,
+             box-shadow 0.2s ease-in-out,
+             transform 0.2s ease-in-out;
+}

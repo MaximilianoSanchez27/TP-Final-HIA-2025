@@ -1,0 +1,176 @@
+<div class="card mb-4">
+  <div class="card-header bg-primary text-white">
+    <h4 class="mb-0">{{ clubParaEditar ? 'Editar Club' : 'Agregar Nuevo Club' }}</h4>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <!-- Sección de Logo -->
+      <div class="col-md-4 col-lg-3">
+        <div class="card h-100">
+          <div class="card-header bg-light">
+            <h6 class="mb-0">
+              <i class="fas fa-image me-2"></i>Logo del Club
+              <span *ngIf="uploadingLogo" class="spinner-border spinner-border-sm ms-2" role="status">
+                <span class="visually-hidden">Subiendo...</span>
+              </span>
+            </h6>
+          </div>
+          <div class="card-body text-center p-3">
+            <!-- Preview del logo -->
+            <div class="logo-preview mb-3">
+              <div *ngIf="logoUrl; else noLogo" class="mb-3">
+                <img [src]="logoUrl"
+                     class="img-fluid rounded border"
+                     style="max-width: 150px; max-height: 150px; object-fit: contain;"
+                     [alt]="clubForm.get('nombre')?.value || 'Logo del club'">
+              </div>
+              <ng-template #noLogo>
+                <div class="logo-placeholder d-flex align-items-center justify-content-center border rounded"
+                     style="width: 150px; height: 150px; margin: 0 auto; background-color: #f8f9fa;">
+                  <i class="fas fa-building fa-3x text-muted"></i>
+                </div>
+              </ng-template>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="d-flex flex-column gap-2">
+              <label for="logoInput" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-upload me-1"></i>
+                {{ logoUrl ? 'Cambiar Logo' : 'Subir Logo' }}
+              </label>
+              <input type="file"
+                     id="logoInput"
+                     class="d-none"
+                     accept="image/*"
+                     (change)="onLogoSelected($event)">
+
+              <button *ngIf="logoUrl"
+                      type="button"
+                      class="btn btn-outline-danger btn-sm"
+                      (click)="onLogoRemoved()">
+                <i class="fas fa-trash me-1"></i>Eliminar
+              </button>
+            </div>
+
+            <!-- Estado de carga y errores -->
+            <div class="mt-3">
+              <div *ngIf="uploadingLogo" class="text-primary small">
+                <i class="fas fa-spinner fa-spin me-1"></i>
+                Procesando imagen...
+              </div>
+
+              <div *ngIf="logoUploadError" class="text-danger small">
+                <i class="fas fa-exclamation-triangle me-1"></i>
+                {{ logoUploadError }}
+              </div>
+
+              <div *ngIf="!uploadingLogo && !logoUploadError" class="text-muted small">
+                <i class="fas fa-info-circle me-1"></i>
+                {{ logoUrl ? 'Logo cargado' : 'Sin logo' }}
+              </div>
+            </div>
+
+            <!-- Información del archivo -->
+            <div *ngIf="logoFile" class="mt-2">
+              <small class="text-muted">
+                <strong>Archivo:</strong> {{ logoFile.name }}<br>
+                <strong>Tamaño:</strong> {{ (logoFile.size / 1024 / 1024).toFixed(2) }} MB
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulario Principal -->
+      <div class="col-md-8 col-lg-9">
+        <form [formGroup]="clubForm" (ngSubmit)="onGuardar()" class="row g-3" novalidate>
+          <input type="hidden" formControlName="idClub">
+
+          <div class="col-md-6">
+            <label for="nombre" class="form-label">Nombre</label>
+            <input id="nombre" formControlName="nombre" class="form-control" required
+                   [ngClass]="{'is-invalid': clubForm.get('nombre')?.invalid && clubForm.get('nombre')?.touched}" />
+            <div *ngIf="clubForm.get('nombre')?.invalid && clubForm.get('nombre')?.touched" class="invalid-feedback">
+              <div *ngIf="clubForm.get('nombre')?.errors?.['required']">El nombre es obligatorio.</div>
+              <div *ngIf="clubForm.get('nombre')?.errors?.['minlength']">El nombre debe tener al menos 3 caracteres.</div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label for="direccion" class="form-label">Dirección</label>
+            <input id="direccion" formControlName="direccion" class="form-control"
+                   [ngClass]="{'is-invalid': clubForm.get('direccion')?.invalid && clubForm.get('direccion')?.touched}" />
+            <div *ngIf="clubForm.get('direccion')?.invalid && clubForm.get('direccion')?.touched" class="invalid-feedback">
+              <div *ngIf="clubForm.get('direccion')?.errors?.['maxlength']">La dirección no puede superar los 255 caracteres.</div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label for="telefono" class="form-label">Teléfono</label>
+            <input id="telefono" formControlName="telefono" class="form-control"
+                   [ngClass]="{'is-invalid': clubForm.get('telefono')?.invalid && clubForm.get('telefono')?.touched}" />
+            <div *ngIf="clubForm.get('telefono')?.invalid && clubForm.get('telefono')?.touched" class="invalid-feedback">
+              <div *ngIf="clubForm.get('telefono')?.errors?.['pattern']">Formato de teléfono inválido. Use solo números y guiones.</div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label for="email" class="form-label">Email</label>
+            <input id="email" type="email" formControlName="email" class="form-control"
+                   [ngClass]="{'is-invalid': clubForm.get('email')?.invalid && clubForm.get('email')?.touched}" />
+            <div *ngIf="clubForm.get('email')?.invalid && clubForm.get('email')?.touched" class="invalid-feedback">
+              <div *ngIf="clubForm.get('email')?.errors?.['required']">El email es obligatorio.</div>
+              <div *ngIf="clubForm.get('email')?.errors?.['email']">Formato de email inválido.</div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label for="cuit" class="form-label">CUIT</label>
+            <input id="cuit" formControlName="cuit" class="form-control" placeholder="XX-XXXXXXXX-X" maxlength="13"
+                   [ngClass]="{'is-invalid': clubForm.get('cuit')?.invalid && clubForm.get('cuit')?.touched}" />
+            <div *ngIf="clubForm.get('cuit')?.invalid && clubForm.get('cuit')?.touched" class="invalid-feedback">
+              <div *ngIf="clubForm.get('cuit')?.errors?.['required']">El CUIT es obligatorio.</div>
+              <div *ngIf="clubForm.get('cuit')?.errors?.['pattern']">El CUIT debe tener el formato XX-XXXXXXXX-X.</div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label for="fechaAfiliacion" class="form-label">Fecha Afiliación</label>
+            <input id="fechaAfiliacion" type="date" formControlName="fechaAfiliacion" class="form-control" required
+                   [ngClass]="{'is-invalid': clubForm.get('fechaAfiliacion')?.invalid && clubForm.get('fechaAfiliacion')?.touched}" />
+            <div *ngIf="clubForm.get('fechaAfiliacion')?.invalid && clubForm.get('fechaAfiliacion')?.touched" class="invalid-feedback">
+              <div *ngIf="clubForm.get('fechaAfiliacion')?.errors?.['required']">La fecha de afiliación es obligatoria.</div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label for="estadoAfiliacion" class="form-label">Estado de Afiliación</label>
+            <select id="estadoAfiliacion" formControlName="estadoAfiliacion" class="form-select" required
+                    [ngClass]="{'is-invalid': clubForm.get('estadoAfiliacion')?.invalid && clubForm.get('estadoAfiliacion')?.touched}">
+              <option *ngFor="let estado of estadoAfiliacionOpciones" [value]="estado">{{ estado }}</option>
+            </select>
+            <div *ngIf="clubForm.get('estadoAfiliacion')?.invalid && clubForm.get('estadoAfiliacion')?.touched" class="invalid-feedback">
+              <div *ngIf="clubForm.get('estadoAfiliacion')?.errors?.['required']">El estado es obligatorio.</div>
+            </div>
+          </div>
+
+          <div class="col-12 text-end">
+            <button type="submit"
+                    class="btn btn-success me-2"
+                    [disabled]="uploadingLogo">
+              <i class="fas fa-save me-2"></i>
+              {{ clubParaEditar ? 'Actualizar Club' : 'Agregar Club' }}
+            </button>
+            <button type="button"
+                    class="btn btn-secondary"
+                    (click)="cancelarEdicion()"
+                    [disabled]="uploadingLogo">
+              <i class="fas fa-times me-2"></i>
+              {{ clubParaEditar ? 'Cancelar Edición' : 'Limpiar Formulario' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

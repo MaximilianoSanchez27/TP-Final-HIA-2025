@@ -1,0 +1,16 @@
+.noticias-recientes-section {
+  background-color: var(--neutral-100);
+}
+
+.section-divider {
+  height: 3px;
+  width: 60px;
+  background-color: var(--blue-medium);
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .section-divider {
+    width: 40px;
+  }
+}

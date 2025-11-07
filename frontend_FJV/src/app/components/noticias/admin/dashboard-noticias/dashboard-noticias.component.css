@@ -1,0 +1,97 @@
+.dashboard-noticias {
+  background-color: var(--neutral-100);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
+.dashboard-noticias .container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.chart-container {
+  position: relative;
+  min-height: 200px;
+  width: 100%;
+}
+
+/* Estilo para tarjetas con borde colorido */
+.border-left-primary {
+  border-left: 4px solid var(--blue-medium) !important;
+}
+
+.border-left-success {
+  border-left: 4px solid #28a745 !important;
+}
+
+.border-left-warning {
+  border-left: 4px solid #ffc107 !important;
+}
+
+.border-left-info {
+  border-left: 4px solid #17a2b8 !important;
+}
+
+/* Estilo para los círculos de íconos */
+.icon-circle {
+  height: 60px;
+  width: 60px;
+  border-radius: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-circle i {
+  font-size: 1.8rem;
+}
+
+.bg-primary {
+  background-color: var(--blue-medium) !important;
+}
+
+.card-header {
+  padding: 0.75rem 1.25rem;
+}
+
+/* Animación al cargar contenido */
+.dashboard-content {
+  animation-duration: 0.5s;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .chart-container {
+    height: 200px;
+  }
+}
+
+.display-5 {
+  font-size: 2rem;
+}
+
+@media (min-width: 992px) {
+  .display-5 {
+    font-size: 2.5rem;
+  }
+}
+
+/* Hacer que las tarjetas tengan un tamaño mínimo consistente */
+.card {
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Mejora del contraste y la legibilidad */
+.text-muted {
+  color: #6c757d !important;
+}
+
+.card-title {
+  font-weight: 600;
+}

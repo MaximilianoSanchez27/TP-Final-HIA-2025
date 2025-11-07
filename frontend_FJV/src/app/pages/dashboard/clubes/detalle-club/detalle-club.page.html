@@ -1,0 +1,258 @@
+<div class="detalle-club-container">
+  <div class="container py-4">
+    <div class="row">
+      <div class="col-12">
+        <!-- Encabezado -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h2 class="mb-1">Detalle del Club</h2>
+            <p class="text-muted">Información detallada del club y sus asociados</p>
+          </div>
+          <button class="btn btn-outline-secondary" (click)="volver()">
+            <i class="fas fa-arrow-left me-2"></i> Volver
+          </button>
+        </div>
+
+        <!-- Estado de carga o error -->
+        @if (isLoading) {
+          <div class="card shadow-sm">
+            <div class="card-body p-4 text-center">
+              <div class="spinner-border text-success" role="status">
+                <span class="visually-hidden">Cargando...</span>
+              </div>
+              <p class="mt-2">Cargando información del club...</p>
+            </div>
+          </div>
+        } @else if (errorMessage) {
+          <div class="alert alert-danger">
+            <i class="fas fa-exclamation-triangle me-2"></i> {{errorMessage}}
+          </div>
+        } @else if (club) {
+          <div class="row">
+            <!-- Información principal del club -->
+            <div class="col-lg-8 mb-4">
+              <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-building me-2"></i> {{club.nombre}}</h5>
+                    <span class="badge {{badgeClasses[club.estadoAfiliacion] || 'bg-secondary'}}">{{club.estadoAfiliacion}}</span>
+                  </div>
+                </div>
+                <div class="card-body p-4">
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <h6 class="text-muted mb-1">CUIT</h6>
+                      <p class="mb-0 fw-bold">{{club.cuit}}</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <h6 class="text-muted mb-1">Fecha de Afiliación</h6>
+                      <p class="mb-0">{{club.fechaAfiliacion | date:'dd/MM/yyyy'}}</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <h6 class="text-muted mb-1">Email</h6>
+                      <p class="mb-0">{{club.email}}</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <h6 class="text-muted mb-1">Teléfono</h6>
+                      <p class="mb-0">{{club.telefono || 'No registrado'}}</p>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                      <h6 class="text-muted mb-1">Dirección</h6>
+                      <p class="mb-0">{{club.direccion}}</p>
+                    </div>
+
+                    <!-- Cobros asociados al club -->
+                    <div class="col-12 mt-4">
+                      <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="border-bottom pb-2 mb-0">Cobros Registrados</h5>
+                        <button class="btn btn-sm btn-success" (click)="mostrarFormularioCobro()">
+                          <i class="fas fa-plus-circle me-2"></i> Nuevo Cobro
+                        </button>
+                      </div>
+
+                      @if (isLoadingCobros) {
+                        <div class="text-center py-3">
+                          <div class="spinner-border spinner-border-sm text-primary" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                          </div>
+                          <span class="ms-2">Cargando cobros...</span>
+                        </div>
+                      } @else if (cobros.length === 0) {
+                        <div class="alert alert-info">
+                          <i class="fas fa-info-circle me-2"></i> No hay cobros registrados para este club o no se pudieron cargar por un problema de conexión.
+                          <button class="btn btn-link p-0 ms-2" (click)="cargarCobrosDelClub()">Reintentar</button>
+                        </div>
+                      } @else {
+                        <div class="table-responsive">
+                          <table class="table table-sm">
+                            <thead>
+                              <tr>
+                                <th>ID</th>
+                                <th>Fecha</th>
+                                <th>Concepto</th>
+                                <th>Monto</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              @for (cobro of cobros; track cobro.idCobro) {
+                                <tr>
+                                  <td>{{cobro.idCobro}}</td>
+                                  <td>{{cobro.fechaCobro || 'N/A' | date:'dd/MM/yyyy'}}</td>
+                                  <td>{{cobro.concepto}}</td>
+                                  <td class="fw-bold">${{cobro.monto}}</td>
+                                  <td>
+                                    <span class="badge {{cobroBadgeClasses[cobro.estado]}}">{{cobro.estado}}</span>
+                                  </td>
+                                  <td>
+                                    <div class="btn-group btn-group-sm">
+                                      <a [routerLink]="['/dashboard/cobros/detalle', cobro.idCobro]" class="btn btn-outline-info">
+                                        <i class="fas fa-eye"></i>
+                                      </a>
+                                      @if (cobro.estado === 'Pendiente') {
+                                        <button class="btn btn-outline-success" (click)="marcarComoPagado(cobro.idCobro!)">
+                                          <i class="fas fa-check"></i>
+                                        </button>
+                                      }
+                                    </div>
+                                  </td>
+                                </tr>
+                              }
+                            </tbody>
+                          </table>
+                        </div>
+                      }
+                    </div>
+
+                    <!-- Equipos asociados -->
+                    @if (club.equipos && club.equipos.length > 0) {
+                      <div class="col-12 mt-3">
+                        <h5 class="border-bottom pb-2">Equipos</h5>
+                        <div class="table-responsive">
+                          <table class="table table-sm">
+                            <thead>
+                              <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Delegado</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              @for (equipo of club.equipos; track equipo.idEquipo) {
+                                <tr>
+                                  <td>{{equipo.idEquipo}}</td>
+                                  <td>{{equipo.nombre}}</td>
+                                  <td>{{equipo.nombreDelegado}}</td>
+                                </tr>
+                              }
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    }
+
+                    <!-- Personas asociadas -->
+                    @if (club.personas && club.personas.length > 0) {
+                      <div class="col-12 mt-3">
+                        <h5 class="border-bottom pb-2">Personas Asociadas</h5>
+                        <div class="table-responsive">
+                          <table class="table table-sm">
+                            <thead>
+                              <tr>
+                                <th>ID</th>
+                                <th>Nombre y Apellido</th>
+                                <th>DNI</th>
+                                <th>Tipo</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              @for (persona of club.personas; track persona.idPersona) {
+                                <tr>
+                                  <td>{{persona.idPersona}}</td>
+                                  <td>{{persona.nombreApellido}}</td>
+                                  <td>{{persona.dni}}</td>
+                                  <td>{{persona.tipo}}</td>
+                                </tr>
+                              }
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="col-lg-4 mb-4">
+              <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                  <h5 class="mb-0"><i class="fas fa-cog me-2"></i> Acciones</h5>
+                </div>
+                <div class="card-body p-4">
+                  <div class="d-grid gap-2">
+                    <a [routerLink]="['/dashboard/clubes/editar', club.idClub]" class="btn btn-primary">
+                      <i class="fas fa-edit me-2"></i> Editar Club
+                    </a>
+                    <button class="btn btn-outline-danger" (click)="eliminarClub()">
+                      <i class="fas fa-trash me-2"></i> Eliminar Club
+                    </button>
+                  </div>
+
+                  <hr class="my-4">
+
+                  <h6 class="mb-3">Acciones relacionadas</h6>
+                  <div class="list-group">
+                    <a [routerLink]="['/dashboard/clubes/miembros', club.idClub]" class="list-group-item list-group-item-action">
+                      <i class="fas fa-users me-2 text-primary"></i> Ver miembros
+                    </a>
+                    <a [routerLink]="['/dashboard/torneos/asignar', club.idClub]" class="list-group-item list-group-item-action">
+                      <i class="fas fa-trophy me-2 text-success"></i> Asignar a torneo
+                    </a>
+                    <button (click)="mostrarFormularioCobro()" class="list-group-item list-group-item-action">
+                      <i class="fas fa-file-invoice-dollar me-2 text-warning"></i> Generar cobro
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Información adicional -->
+              <div class="card shadow-sm mt-3">
+                <div class="card-header bg-light">
+                  <h6 class="mb-0">Información adicional</h6>
+                </div>
+                <div class="card-body">
+                  <p class="small text-muted mb-1">Creado el:</p>
+                  <p class="mb-3">{{club.createdAt | date:'dd/MM/yyyy HH:mm'}}</p>
+
+                  <p class="small text-muted mb-1">Última actualización:</p>
+                  <p class="mb-0">{{club.updatedAt | date:'dd/MM/yyyy HH:mm'}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para Generar Cobro -->
+@if (showCobroModal && club) {
+  <div class="modal fade show" id="cobroModal" tabindex="-1" [ngStyle]="{display: 'block'}" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title"><i class="fas fa-file-invoice-dollar me-2"></i> Generar Cobro para {{club.nombre}}</h5>
+          <button type="button" class="btn-close btn-close-white" (click)="cerrarFormularioCobro()" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <app-generar-cobro [club]="club" (cobroGenerado)="onCobroGenerado($event)"></app-generar-cobro>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop fade show"></div>
+}

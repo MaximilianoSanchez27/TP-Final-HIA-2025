@@ -1,0 +1,67 @@
+<section class="gallery-section py-5">
+  <div class="container">
+    <header class="text-center mb-5 animate__animated animate__fadeInDown">
+      <span class="badge bg-info rounded-pill px-3 py-2 d-inline-block mb-2">
+        <i class="fas fa-camera me-2"></i>Galería
+      </span>
+      <h2 class="display-6 fw-bold mb-3">Momentos Destacados</h2>
+      <div class="section-divider mx-auto"></div>
+    </header>
+
+    <!-- Estado de carga -->
+    @if (isLoading) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary mb-3" role="status">
+          <span class="visually-hidden">Cargando momentos destacados...</span>
+        </div>
+        <p class="text-muted">Cargando momentos destacados...</p>
+      </div>
+    }
+
+    <!-- Galería de fotos -->
+    @if (!isLoading && galleryItems.length > 0) {
+      <div class="photo-grid">
+        @for (item of sortedGalleryItems; track item.id) {
+          <div class="grid-item item-{{item.size}}" (click)="openImage(item)">
+            <div class="photo-card">
+              <img [src]="item.image" [alt]="item.title" loading="lazy" />
+              <div class="photo-overlay">
+                <div class="photo-info">
+                  <span class="photo-category">{{item.category}}</span>
+                  <h3 class="photo-title">{{item.title}}</h3>
+                  <button class="btn-view">
+                    <i class="fas fa-search-plus"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Estado vacío -->
+    @if (!isLoading && galleryItems.length === 0) {
+      <div class="text-center py-5">
+        <i class="fas fa-image fa-4x text-muted mb-3"></i>
+        <h4 class="text-muted">No hay momentos destacados disponibles</h4>
+        <p class="text-muted">Los momentos destacados aparecerán aquí una vez que sean configurados.</p>
+      </div>
+    }
+  </div>
+
+  @if (selectedImage) {
+    <div class="image-modal" (click)="closeImage()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <button class="close-btn" (click)="closeImage()">
+          <i class="fas fa-times"></i>
+        </button>
+        <img [src]="selectedImage.image" [alt]="selectedImage.title" />
+        <div class="modal-caption">
+          <h3>{{selectedImage.title}}</h3>
+          <p>{{selectedImage.category}}</p>
+        </div>
+      </div>
+    </div>
+  }
+</section>

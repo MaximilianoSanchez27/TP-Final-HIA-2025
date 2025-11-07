@@ -1,0 +1,299 @@
+<div class="editar-club-container">
+  <div class="container py-4">
+    <div class="row">
+      <div class="col-12">
+        <!-- Encabezado del formulario -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h2 class="mb-1">Editar Club</h2>
+            <p class="text-muted">Modifique la información del club</p>
+          </div>
+          <button class="btn btn-outline-secondary" (click)="cancelar()">
+            <i class="fas fa-arrow-left me-2"></i> Volver
+          </button>
+        </div>
+
+        <!-- Estado de carga o error -->
+        @if (isLoading) {
+          <div class="card shadow-sm">
+            <div class="card-body p-4 text-center">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando...</span>
+              </div>
+              <p class="mt-2">Cargando información del club...</p>
+            </div>
+          </div>
+        } @else {
+          <!-- Tarjeta del formulario -->
+          <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+              <h5 class="mb-0"><i class="fas fa-edit me-2"></i> Editar información del club</h5>
+            </div>
+            <div class="card-body p-4">
+              <!-- Mensajes de éxito o error -->
+              @if (successMessage) {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                  <i class="fas fa-check-circle me-2"></i> {{ successMessage }}
+                  <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+                </div>
+              }
+
+              @if (errorMessage) {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                  <i class="fas fa-exclamation-triangle me-2"></i> {{ errorMessage }}
+                  <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+                </div>
+              }
+
+              <!-- Formulario de edición -->
+              <form [formGroup]="clubForm" (ngSubmit)="onSubmit()">
+                <div class="row">
+                  <!-- Nombre -->
+                  <div class="col-md-6 mb-3">
+                    <label for="nombre" class="form-label">Nombre <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="fas fa-building"></i></span>
+                      <input
+                        type="text"
+                        formControlName="nombre"
+                        class="form-control"
+                        id="nombre"
+                        placeholder="Nombre del club"
+                        [ngClass]="{'is-invalid': nombreControl?.invalid && nombreControl?.touched}"
+                      >
+                      <div class="invalid-feedback">
+                        @if (nombreControl?.errors?.['required']) {
+                          El nombre es obligatorio
+                        } @else if (nombreControl?.errors?.['minlength']) {
+                          El nombre debe tener al menos 3 caracteres
+                        }
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- CUIT -->
+                  <div class="col-md-6 mb-3">
+                    <label for="cuit" class="form-label">CUIT <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                      <input
+                        type="text"
+                        formControlName="cuit"
+                        class="form-control"
+                        id="cuit"
+                        placeholder="XX-XXXXXXXX-X"
+                        [ngClass]="{'is-invalid': cuitControl?.invalid && cuitControl?.touched}"
+                      >
+                      <div class="invalid-feedback">
+                        @if (cuitControl?.errors?.['required']) {
+                          El CUIT es obligatorio
+                        } @else if (cuitControl?.errors?.['pattern']) {
+                          Formato inválido (XX-XXXXXXXX-X)
+                        }
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Email -->
+                  <div class="col-md-6 mb-3">
+                    <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                      <input
+                        type="email"
+                        formControlName="email"
+                        class="form-control"
+                        id="email"
+                        placeholder="club@ejemplo.com"
+                        [ngClass]="{'is-invalid': emailControl?.invalid && emailControl?.touched}"
+                      >
+                      <div class="invalid-feedback">
+                        @if (emailControl?.errors?.['required']) {
+                          El email es obligatorio
+                        } @else if (emailControl?.errors?.['email']) {
+                          Formato de email inválido
+                        }
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Teléfono -->
+                  <div class="col-md-6 mb-3">
+                    <label for="telefono" class="form-label">Teléfono</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                      <input
+                        type="text"
+                        formControlName="telefono"
+                        class="form-control"
+                        id="telefono"
+                        placeholder="Número de teléfono"
+                        [ngClass]="{'is-invalid': telefonoControl?.invalid && telefonoControl?.touched}"
+                      >
+                      <div class="invalid-feedback">
+                        @if (telefonoControl?.errors?.['pattern']) {
+                          Formato de teléfono inválido
+                        }
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Dirección -->
+                  <div class="col-12 mb-3">
+                    <label for="direccion" class="form-label">Dirección <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                      <input
+                        type="text"
+                        formControlName="direccion"
+                        class="form-control"
+                        id="direccion"
+                        placeholder="Dirección completa"
+                        [ngClass]="{'is-invalid': direccionControl?.invalid && direccionControl?.touched}"
+                      >
+                      <div class="invalid-feedback">
+                        @if (direccionControl?.errors?.['required']) {
+                          La dirección es obligatoria
+                        } @else if (direccionControl?.errors?.['minlength']) {
+                          La dirección debe tener al menos 5 caracteres
+                        }
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Fecha de Afiliación -->
+                  <div class="col-md-6 mb-3">
+                    <label for="fechaAfiliacion" class="form-label">Fecha de Afiliación <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                      <input
+                        type="date"
+                        formControlName="fechaAfiliacion"
+                        class="form-control"
+                        id="fechaAfiliacion"
+                        [ngClass]="{'is-invalid': fechaAfiliacionControl?.invalid && fechaAfiliacionControl?.touched}"
+                      >
+                      <div class="invalid-feedback">
+                        La fecha de afiliación es obligatoria
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Estado de Afiliación -->
+                  <div class="col-md-6 mb-3">
+                    <label for="estadoAfiliacion" class="form-label">Estado de Afiliación <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="fas fa-info-circle"></i></span>
+                      <select
+                        formControlName="estadoAfiliacion"
+                        class="form-select"
+                        id="estadoAfiliacion"
+                        [ngClass]="{'is-invalid': estadoAfiliacionControl?.invalid && estadoAfiliacionControl?.touched}"
+                      >
+                        @for (estado of estadosAfiliacion; track estado) {
+                          <option [value]="estado">{{estado}}</option>
+                        }
+                      </select>
+                      <div class="invalid-feedback">
+                        El estado de afiliación es obligatorio
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Logo del Club -->
+                  <div class="col-12 mb-4">
+                    <label class="form-label">Logo del Club</label>
+                    <div class="logo-upload-container">
+                      <!-- Preview del logo actual -->
+                      @if (logoUrl) {
+                        <div class="logo-preview-section mb-3">
+                          <div class="logo-preview">
+                            <img [src]="logoUrl" alt="Logo del club" class="logo-img">
+                            <button type="button" class="btn btn-sm btn-danger logo-remove-btn" (click)="onLogoRemoved()" title="Eliminar logo">
+                              <i class="fas fa-times"></i>
+                            </button>
+                          </div>
+                          <p class="text-muted small mb-0">Logo actual del club</p>
+                        </div>
+                      }
+
+                      <!-- Área de carga de nuevo logo -->
+                      <div class="logo-upload-area" [class.has-error]="logoUploadError">
+                        <input
+                          type="file"
+                          id="logoInput"
+                          accept="image/*"
+                          (change)="onLogoSelected($event)"
+                          class="d-none"
+                        >
+                        <label for="logoInput" class="logo-upload-label" [class.disabled]="uploadingLogo">
+                          @if (uploadingLogo) {
+                            <div class="upload-loading">
+                              <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                              Subiendo logo...
+                            </div>
+                          } @else {
+                            <div class="upload-content">
+                              <i class="fas fa-cloud-upload-alt fa-2x mb-2"></i>
+                              <p class="mb-1">
+                                @if (logoUrl) {
+                                  Cambiar logo del club
+                                } @else {
+                                  Seleccionar logo del club
+                                }
+                              </p>
+                              <small class="text-muted">JPG, PNG, GIF, WEBP - Máximo 5MB</small>
+                            </div>
+                          }
+                        </label>
+                      </div>
+
+                      <!-- Error de logo -->
+                      @if (logoUploadError) {
+                        <div class="alert alert-danger mt-2 mb-0">
+                          <i class="fas fa-exclamation-triangle me-2"></i>
+                          {{ logoUploadError }}
+                        </div>
+                      }
+
+                      <!-- Información adicional -->
+                      <div class="logo-info mt-2">
+                        <small class="text-muted">
+                          <i class="fas fa-info-circle me-1"></i>
+                          El logo se mostrará en la página pública del club y en documentos oficiales.
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Botones de acción -->
+                <div class="d-flex justify-content-end mt-4 gap-2">
+                  <button type="button" class="btn btn-outline-secondary" (click)="cancelar()">
+                    <i class="fas fa-times me-2"></i> Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    class="btn btn-primary px-4"
+                    [disabled]="isSubmitting || clubForm.invalid || uploadingLogo"
+                  >
+                    @if (isSubmitting || uploadingLogo) {
+                      <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      @if (uploadingLogo) {
+                        Subiendo logo...
+                      } @else {
+                        Guardando...
+                      }
+                    } @else {
+                      <i class="fas fa-save me-2"></i> Guardar Cambios
+                    }
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

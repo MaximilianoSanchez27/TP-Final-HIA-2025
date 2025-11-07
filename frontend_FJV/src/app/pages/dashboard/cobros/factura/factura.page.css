@@ -1,0 +1,48 @@
+.factura-container {
+  background-color: var(--neutral-200);
+  min-height: calc(100vh - 130px);
+}
+
+.invoice-document {
+  border-radius: var(--border-radius-md);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.invoice-logo {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+.invoice-type {
+  font-weight: 700;
+  color: var(--blue-dark);
+}
+
+/* Estilo especial para impresión */
+@media print {
+  .invoice-document {
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  body {
+    background-color: white !important;
+  }
+
+  .container {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+}
+
+/* Estilos para los botones */
+.btn {
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}

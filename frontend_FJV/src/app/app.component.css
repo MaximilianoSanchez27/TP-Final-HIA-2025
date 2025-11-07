@@ -1,0 +1,36 @@
+main {
+  min-height: calc(100vh - 130px);
+}
+
+/* El resto de los estilos ahora vienen de Bootstrap */
+
+.main-footer {
+  background-color: var(--blue-dark);
+  color: var(--white-soft);
+  padding: var(--spacing-md) 0;
+  text-align: center;
+}
+
+/* Estilos para los iconos sociales en el footer */
+.social-link {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2);
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+  color: var(--white-soft);
+  text-decoration: none;
+}
+
+.social-link:hover {
+  background-color: var(--blue-medium);
+  transform: translateY(-3px);
+  color: var(--white-soft);
+}
+
+hr.bg-light {
+  opacity: 0.2;
+}

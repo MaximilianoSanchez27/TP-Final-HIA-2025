@@ -1,0 +1,41 @@
+<div class="admin-noticias-container">
+  <div class="container py-4">
+    <!-- Encabezado -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h1 class="mb-1">Administración de Noticias</h1>
+        <p class="text-muted">Gestione todas las noticias del sitio</p>
+      </div>
+      <div class="btn-group">
+        <a [routerLink]="['/dashboard/noticias']" class="btn btn-outline-primary">
+          <i class="fas fa-chart-pie me-2"></i>Dashboard
+        </a>
+        <a [routerLink]="['/dashboard/noticias/nueva']" class="btn btn-primary">
+          <i class="fas fa-plus me-2"></i>Nueva Noticia
+        </a>
+      </div>
+    </div>
+
+    <!-- Tabla de noticias - Corregir enlaces en botones de acción -->
+    <div *ngIf="!isLoading && noticias.length > 0" class="card shadow-sm">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <tbody>
+            <tr *ngFor="let noticia of noticias">
+              <td>
+                <div class="btn-group">
+                  <a [routerLink]="['/noticias/ver', noticia.idNoticia]" class="btn btn-sm btn-outline-secondary" title="Ver">
+                    <i class="fas fa-eye"></i>
+                  </a>
+                  <a [routerLink]="['/dashboard/noticias/editar', noticia.idNoticia]" class="btn btn-sm btn-outline-primary" title="Editar">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

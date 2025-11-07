@@ -1,0 +1,149 @@
+<div class="visualizador-credencial">
+  <div class="card">
+    <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">
+        <i class="fas fa-id-badge me-2"></i>
+        Credenciales de {{ afiliado.apellidoNombre }}
+      </h5>
+      <span class="badge bg-light text-dark">
+        {{ credenciales.length }} credencial{{ credenciales.length !== 1 ? 'es' : '' }}
+      </span>
+    </div>
+
+    <div class="card-body">
+      <!-- Lista de credenciales -->
+      <div class="credenciales-list mb-4" *ngIf="credenciales.length > 0">
+        <h6 class="text-muted mb-3">Seleccionar Credencial:</h6>
+        <div class="row">
+          <div class="col-md-6 col-lg-4 mb-3" *ngFor="let credencial of credenciales">
+            <div class="card credencial-card"
+                 [class.selected]="credencialSeleccionada?.idCredencial === credencial.idCredencial"
+                 (click)="seleccionarCredencial(credencial)">
+              <div class="card-body p-3">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <h6 class="mb-0 fw-bold">{{ credencial.identificador }}</h6>
+                  <span class="badge" [class]="getEstadoBadgeClass(credencial.estado)">
+                    {{ credencial.estado }}
+                  </span>
+                </div>
+
+                <div class="credencial-info">
+                  <small class="text-muted d-block">
+                    <i class="fas fa-calendar-plus me-1"></i>
+                    Emisión: {{ formatearFecha(credencial.fechaAlta) }}
+                  </small>
+                  <small class="text-muted d-block">
+                    <i class="fas fa-calendar-times me-1"></i>
+                    Vence: {{ formatearFecha(credencial.fechaVencimiento) }}
+                  </small>
+                  <small class="d-block mt-1"
+                         [class]="esCredencialVigente(credencial) ? 'text-success' : 'text-danger'">
+                    <i class="fas fa-clock me-1"></i>
+                    {{ obtenerTiempoRestante(credencial) }}
+                  </small>
+                </div>
+
+                <!-- Indicador de selección -->
+                <div *ngIf="credencialSeleccionada?.idCredencial === credencial.idCredencial"
+                     class="selection-indicator">
+                  <i class="fas fa-check-circle text-primary"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sin credenciales -->
+      <div *ngIf="credenciales.length === 0" class="text-center py-4">
+        <i class="fas fa-id-badge fa-3x text-muted mb-3"></i>
+        <h6 class="text-muted">No hay credenciales registradas</h6>
+        <p class="text-muted">Este afiliado no tiene credenciales asociadas.</p>
+      </div>
+
+      <!-- Acciones para credencial seleccionada -->
+      <div *ngIf="credencialSeleccionada" class="credencial-actions">
+        <hr>
+        <div class="selected-credencial-info mb-3">
+          <h6 class="text-primary">
+            <i class="fas fa-check-circle me-1"></i>
+            Credencial Seleccionada: {{ credencialSeleccionada.identificador }}
+          </h6>
+          <div class="row">
+            <div class="col-md-3">
+              <small class="text-muted">Estado:</small>
+              <span class="badge ms-1" [class]="getEstadoBadgeClass(credencialSeleccionada.estado)">
+                {{ credencialSeleccionada.estado }}
+              </span>
+            </div>
+            <div class="col-md-3">
+              <small class="text-muted">Emisión:</small>
+              <div class="fw-bold">{{ formatearFecha(credencialSeleccionada.fechaAlta) }}</div>
+            </div>
+            <div class="col-md-3">
+              <small class="text-muted">Vencimiento:</small>
+              <div class="fw-bold">{{ formatearFecha(credencialSeleccionada.fechaVencimiento) }}</div>
+            </div>
+            <div class="col-md-3">
+              <small class="text-muted">Validez:</small>
+              <div class="fw-bold" [class]="esCredencialVigente(credencialSeleccionada) ? 'text-success' : 'text-danger'">
+                {{ obtenerTiempoRestante(credencialSeleccionada) }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="d-flex gap-2 justify-content-center">
+          <button type="button"
+                  class="btn btn-primary"
+                  (click)="abrirGenerador()">
+            <i class="fas fa-id-card me-2"></i>
+            Generar Credencial
+          </button>
+
+          <button type="button"
+                  class="btn btn-outline-secondary"
+                  disabled>
+            <i class="fas fa-qrcode me-2"></i>
+            QR de Verificación
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal del generador de credencial -->
+  <div *ngIf="mostrarGenerador && credencialSeleccionada"
+       class="modal fade show d-block"
+       tabindex="-1"
+       style="background: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="fas fa-print me-2"></i>
+            Imprimir Credencial - {{ credencialSeleccionada.identificador }}
+          </h5>
+          <button type="button"
+                  class="btn-close"
+                  (click)="cerrarGenerador()">
+          </button>
+        </div>
+        <div class="modal-body">
+          <app-generador-credencial
+            [afiliado]="afiliado"
+            [credencial]="credencialSeleccionada">
+          </app-generador-credencial>
+        </div>
+        <div class="modal-footer">
+          <button type="button"
+                  class="btn btn-secondary"
+                  (click)="cerrarGenerador()">
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

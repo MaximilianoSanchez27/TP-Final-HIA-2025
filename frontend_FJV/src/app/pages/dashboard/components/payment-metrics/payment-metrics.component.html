@@ -1,0 +1,259 @@
+<div class="payment-metrics" *ngIf="metrics">
+  <!-- Header con título -->
+  <div class="metrics-header mb-4">
+    <h4 class="mb-0">
+      <i class="fas fa-chart-line me-2 text-primary"></i>
+      Métricas de Pagos
+    </h4>
+    <p class="text-muted mb-0">Análisis detallado de cobros y recaudación</p>
+  </div>
+
+  <!-- Tarjetas de resumen financiero -->
+  <div class="row mb-4">
+    <div class="col-md-3 mb-3">
+      <div class="card border-start border-success border-4 shadow-sm">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-muted mb-1">Total Recaudado</h6>
+              <h4 class="mb-0 text-success">{{ formatCurrency(metrics.montos.totalRecaudado) }}</h4>
+            </div>
+            <div class="text-success">
+              <i class="fas fa-dollar-sign fa-2x opacity-75"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+      <div class="card border-start border-info border-4 shadow-sm">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-muted mb-1">Monto Promedio</h6>
+              <h4 class="mb-0 text-info">{{ formatCurrency(metrics.montos.promedioMonto) }}</h4>
+            </div>
+            <div class="text-info">
+              <i class="fas fa-calculator fa-2x opacity-75"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+      <div class="card border-start border-warning border-4 shadow-sm">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-muted mb-1">Monto Mayor</h6>
+              <h4 class="mb-0 text-warning">{{ formatCurrency(metrics.montos.montoMayor) }}</h4>
+            </div>
+            <div class="text-warning">
+              <i class="fas fa-arrow-up fa-2x opacity-75"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+      <div class="card border-start border-secondary border-4 shadow-sm">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-muted mb-1">Monto Menor</h6>
+              <h4 class="mb-0 text-secondary">{{ formatCurrency(metrics.montos.montoMenor) }}</h4>
+            </div>
+            <div class="text-secondary">
+              <i class="fas fa-arrow-down fa-2x opacity-75"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráficos principales -->
+  <div class="row">
+    <!-- Gráfico de estados -->
+    <div class="col-lg-6 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <h5 class="mb-0">
+            <i class="fas fa-chart-pie me-2"></i>
+            Estado de Cobros
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="chart-container">
+            <canvas #statusPieChart></canvas>
+          </div>
+
+          <!-- Lista de estados con porcentajes -->
+          <div class="mt-3">
+            <div class="row text-center">
+              <div class="col-6 col-md-3 mb-2">
+                <div class="status-item">
+                  <span class="status-badge bg-success text-white">{{ metrics.porEstado.pagados }}</span>
+                  <small class="d-block text-muted">Pagados</small>
+                </div>
+              </div>
+              <div class="col-6 col-md-3 mb-2">
+                <div class="status-item">
+                  <span class="status-badge bg-warning text-dark">{{ metrics.porEstado.pendientes }}</span>
+                  <small class="d-block text-muted">Pendientes</small>
+                </div>
+              </div>
+              <div class="col-6 col-md-3 mb-2">
+                <div class="status-item">
+                  <span class="status-badge bg-danger text-white">{{ metrics.porEstado.vencidos }}</span>
+                  <small class="d-block text-muted">Vencidos</small>
+                </div>
+              </div>
+              <div class="col-6 col-md-3 mb-2">
+                <div class="status-item">
+                  <span class="status-badge bg-secondary text-white">{{ metrics.porEstado.anulados }}</span>
+                  <small class="d-block text-muted">Anulados</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gráfico de métodos de pago -->
+    <div class="col-lg-6 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <h5 class="mb-0">
+            <i class="fas fa-credit-card me-2"></i>
+            Métodos de Pago
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="chart-container">
+            <canvas #paymentMethodChart></canvas>
+          </div>
+
+          <!-- Lista de métodos -->
+          <div class="mt-3" *ngIf="metrics.porMetodoPago?.length">
+            <div class="row">
+              <div class="col-12" *ngFor="let metodo of metrics.porMetodoPago">
+                <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                  <span class="fw-medium">{{ metodo.metodo }}</span>
+                  <div class="text-end">
+                    <span class="badge bg-primary">{{ metodo.cantidad }}</span>
+                    <small class="text-muted ms-2">{{ formatCurrency(metodo.monto) }}</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráfico de clubes -->
+  <div class="row" *ngIf="metrics.porClub?.length">
+    <div class="col-12 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <h5 class="mb-0">
+            <i class="fas fa-building me-2"></i>
+            Rendimiento por Club
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="chart-container-large">
+            <canvas #clubBarChart></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráfico de evolución mensual -->
+  <div class="row" *ngIf="metrics.porMes?.length">
+    <div class="col-12 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <h5 class="mb-0">
+            <i class="fas fa-chart-area me-2"></i>
+            Evolución Mensual
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="chart-container-large">
+            <canvas #monthlyLineChart></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla resumen por club -->
+  <div class="row" *ngIf="metrics.porClub?.length">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <h5 class="mb-0">
+            <i class="fas fa-table me-2"></i>
+            Resumen Detallado por Club
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead class="table-light">
+                <tr>
+                  <th>Club</th>
+                  <th class="text-center">Total Cobros</th>
+                  <th class="text-end">Total Recaudado</th>
+                  <th class="text-center">Pendientes</th>
+                  <th class="text-center">Vencidos</th>
+                  <th class="text-center">Efectividad</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let club of metrics.porClub">
+                  <td class="fw-medium">{{ club.club }}</td>
+                  <td class="text-center">
+                    <span class="badge bg-info">{{ club.totalCobros }}</span>
+                  </td>
+                  <td class="text-end">{{ formatCurrency(club.totalRecaudado) }}</td>
+                  <td class="text-center">
+                    <span class="badge bg-warning text-dark" *ngIf="club.pendientes > 0">{{ club.pendientes }}</span>
+                    <span class="text-muted" *ngIf="club.pendientes === 0">0</span>
+                  </td>
+                  <td class="text-center">
+                    <span class="badge bg-danger" *ngIf="club.vencidos > 0">{{ club.vencidos }}</span>
+                    <span class="text-muted" *ngIf="club.vencidos === 0">0</span>
+                  </td>
+                  <td class="text-center">
+                    <span class="badge"
+                          [class]="calculatePercentage(club.totalCobros - club.pendientes - club.vencidos, club.totalCobros) >= 80 ? 'bg-success' :
+                                   calculatePercentage(club.totalCobros - club.pendientes - club.vencidos, club.totalCobros) >= 60 ? 'bg-warning text-dark' : 'bg-danger'">
+                      {{ calculatePercentage(club.totalCobros - club.pendientes - club.vencidos, club.totalCobros) }}%
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Mensaje cuando no hay datos -->
+<div *ngIf="!metrics" class="text-center py-5">
+  <div class="spinner-border text-primary mb-3" role="status">
+    <span class="visually-hidden">Cargando métricas...</span>
+  </div>
+  <p class="text-muted">Cargando métricas de pagos...</p>
+</div>

@@ -1,0 +1,46 @@
+<section class="momentos-destacados" *ngIf="shouldShowSection()">
+  <div class="container">
+    <!-- Header de la sección -->
+    <div class="section-header">
+      <h2 class="section-title">{{ momentosConfig?.titulo }}</h2>
+      <p class="section-subtitle">{{ momentosConfig?.subTitulo }}</p>
+    </div>
+
+    <!-- Grid de imágenes dinámico -->
+    <div class="images-grid" [class]="'grid-' + getActiveImages().length">
+      <div
+        class="image-item"
+        *ngFor="let imagen of getActiveImages(); trackBy: trackByImageId"
+        [style.animation-delay.ms]="imagen.orden * 100">
+
+        <div class="image-wrapper">
+          <img
+            [src]="imagen.url"
+            [alt]="imagen.alt"
+            [title]="imagen.titulo"
+            class="moment-image"
+            loading="lazy"
+            (error)="onImageError($event)">
+
+          <!-- Overlay con información opcional -->
+          <div class="image-overlay" *ngIf="imagen.titulo">
+            <h4 class="image-title">{{ imagen.titulo }}</h4>
+            <p class="image-description" *ngIf="imagen.descripcion">{{ imagen.descripcion }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado de carga -->
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Cargando momentos destacados...</p>
+    </div>
+
+    <!-- Estado de error -->
+    <div class="error-state" *ngIf="error">
+      <i class="fas fa-exclamation-triangle"></i>
+      <p>No se pudieron cargar los momentos destacados en este momento.</p>
+    </div>
+  </div>
+</section>

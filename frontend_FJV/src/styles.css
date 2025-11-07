@@ -1,0 +1,48 @@
+/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+@import './styles/global.css';
+
+/* Variables adicionales para personalizar Bootstrap con colores del voleibol */
+:root {
+  --bs-primary: var(--blue-medium);
+  --bs-primary-rgb: 2, 160, 227;
+  --bs-secondary: var(--blue-dark);
+  --bs-secondary-rgb: 2, 47, 100;
+  --bs-success: var(--success-color);
+  --bs-danger: var(--error-color);
+  --bs-warning: var(--warning-color);
+  --bs-light: var(--neutral-200);
+  --bs-dark: var(--neutral-900);
+}
+
+/* Personalización de elementos Bootstrap */
+.btn-primary {
+  background-color: var(--blue-medium);
+  border-color: var(--blue-medium);
+}
+
+.btn-primary:hover {
+  background-color: var(--blue-light);
+  border-color: var(--blue-light);
+  color: var(--blue-dark);
+}
+
+.btn-outline-light:hover {
+  color: var(--blue-dark);
+}
+
+/* Estilos globales adicionales */
+html, body {
+  height: 100%;
+}
+
+/* Estilos específicos para el tema de voleibol */
+.bg-volleyball {
+  background-color: #ff8c00;
+}
+
+.text-volleyball {
+  color: #ff8c00;
+}

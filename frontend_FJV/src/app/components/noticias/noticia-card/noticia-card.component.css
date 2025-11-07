@@ -1,0 +1,136 @@
+/* Estilos para vista de cuadrícula */
+.noticia-card {
+  height: 100%;
+}
+
+.hover-effect {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-effect:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important;
+}
+
+.noticia-image-container {
+  position: relative;
+  overflow: hidden;
+  height: 200px;
+  display: block;
+}
+
+.noticia-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.hover-effect:hover .noticia-img {
+  transform: scale(1.05);
+}
+
+.categoria-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+}
+
+.destacado-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+}
+
+.noticia-resumen {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #6c757d;
+  font-size: 0.95rem;
+}
+
+/* Nuevos estilos para enlaces de título */
+.titulo-enlace {
+  color: #333;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  display: block;
+  position: relative;
+}
+
+.titulo-enlace:hover {
+  color: var(--blue-medium);
+}
+
+.titulo-enlace-destacado {
+  text-decoration: none;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  position: relative;
+  display: block;
+}
+
+.titulo-enlace-destacado:hover {
+  text-decoration: underline;
+  color: #fff;
+}
+
+/* Estilos para vista destacada */
+.noticia-destacada-card {
+  height: 400px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.featured-img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.featured-overlay {
+  position: relative;
+  height: 100%;
+  display: block;
+}
+
+.overlay-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0.7) 75%,
+    rgba(0, 0, 0, 0.9) 100%);
+  z-index: 1;
+}
+
+.card-img-overlay {
+  z-index: 2;
+}
+
+/* Estilos para vista de lista */
+.noticia-lista .row {
+  transition: transform 0.3s ease;
+}
+
+.noticia-lista .row:hover {
+  transform: translateX(5px);
+}
+
+/* Media queries para responsividad */
+@media (max-width: 767px) {
+  .noticia-destacada-card {
+    height: 300px;
+  }
+
+  .noticia-image-container {
+    height: 180px;
+  }
+}

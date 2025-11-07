@@ -1,0 +1,70 @@
+/* Espaciado general */
+.container {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  padding: 2rem 2.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Títulos */
+h2, h4 {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+/* Formulario */
+form .form-label {
+  font-weight: 500;
+  color: #495057;
+}
+
+form .form-control, form .form-select {
+  border-radius: 8px;
+  min-height: 40px;
+}
+
+form .btn-success {
+  background: #198754;
+  border: none;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+form .btn-secondary {
+  font-weight: 500;
+}
+
+/* Filtro */
+.row.mb-2 {
+  margin-bottom: 1.5rem !important;
+}
+
+input[placeholder="Buscar por nombre"] {
+  border-radius: 8px;
+}
+
+/* Tabla */
+.table-striped > tbody > tr:nth-of-type(odd) {
+  background-color: #f8f9fa;
+}
+
+.table th, .table td {
+  vertical-align: middle;
+  text-align: center;
+}
+
+.table th {
+  background: #e9ecef;
+  color: #495057;
+  font-weight: 600;
+}
+
+.table td button {
+  min-width: 90px;
+}
+
+.btn-primary.me-2 {
+  margin-right: 0.5rem !important;
+}
+

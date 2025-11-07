@@ -1,0 +1,51 @@
+<section class="noticias-recientes-section py-5">
+  <div class="container">
+    <div class="section-header text-center mb-5">
+      <h2 class="fw-bold mb-3">{{titulo}}</h2>
+      <div class="section-divider mx-auto"></div>
+      <p class="text-muted">Mantente informado sobre las últimas novedades</p>
+    </div>
+
+    <!-- Estado de carga -->
+    <div *ngIf="isLoading" class="text-center py-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <p class="mt-2">Cargando noticias...</p>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="error && !isLoading" class="alert alert-danger">
+      <i class="fas fa-exclamation-triangle me-2"></i> {{error}}
+    </div>
+
+    <!-- Sin noticias -->
+    <div *ngIf="!isLoading && !error && noticias.length === 0 && !noticiaDestacada" class="text-center py-4">
+      <i class="fas fa-newspaper fa-3x text-muted mb-3"></i>
+      <h4>No hay noticias disponibles</h4>
+      <p class="text-muted">Próximamente publicaremos información relevante</p>
+    </div>
+
+    <!-- Contenido -->
+    <div *ngIf="!isLoading && (noticias.length > 0 || noticiaDestacada)">
+      <!-- Noticia destacada -->
+      <div *ngIf="noticiaDestacada" class="mb-5">
+        <app-noticia-card [noticia]="noticiaDestacada" vista="destacado"></app-noticia-card>
+      </div>
+
+      <!-- Lista de noticias en grid -->
+      <div class="row g-4">
+        <div *ngFor="let noticia of noticias" class="col-md-6 col-lg-3">
+          <app-noticia-card [noticia]="noticia"></app-noticia-card>
+        </div>
+      </div>
+
+      <!-- Botón ver todas -->
+      <div *ngIf="mostrarTodas" class="text-center mt-5">
+        <a [routerLink]="['/noticias']" class="btn btn-outline-primary">
+          <i class="fas fa-newspaper me-2"></i>Ver todas las noticias
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

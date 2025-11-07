@@ -1,0 +1,145 @@
+<div class="analytics-filters-container">
+
+  <!-- Header del panel de filtros -->
+  <div class="filters-header">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h5 class="mb-1">
+          <i class="fas fa-filter me-2"></i>
+          Filtros Avanzados
+        </h5>
+        <small class="text-muted">Personaliza los datos de las analíticas</small>
+      </div>
+      <div class="filters-actions">
+        <button
+          class="btn btn-outline-secondary btn-sm me-2"
+          (click)="limpiarFiltros()"
+          [disabled]="!filtrosActivos">
+          <i class="fas fa-times me-1"></i>
+          Limpiar
+        </button>
+        <button
+          class="btn btn-primary-custom btn-sm"
+          (click)="aplicarFiltros()">
+          <i class="fas fa-search me-1"></i>
+          Aplicar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulario de filtros -->
+  <form class="filters-form" (ngSubmit)="aplicarFiltros()">
+    <div class="row">
+
+      <!-- Rango de fechas -->
+      <div class="col-lg-6 col-md-12 mb-3">
+        <div class="filter-group">
+          <label class="form-label">Período de análisis</label>
+          <div class="row">
+            <div class="col-6">
+              <input
+                type="date"
+                class="form-control form-control-sm"
+                [(ngModel)]="filtros.fechaDesde"
+                name="fechaDesde"
+                placeholder="Desde">
+            </div>
+            <div class="col-6">
+              <input
+                type="date"
+                class="form-control form-control-sm"
+                [(ngModel)]="filtros.fechaHasta"
+                name="fechaHasta"
+                placeholder="Hasta">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tipo de licencia -->
+      <div class="col-lg-3 col-md-6 mb-3">
+        <div class="filter-group">
+          <label class="form-label">Tipo de Licencia</label>
+          <select
+            class="form-select form-select-sm"
+            [(ngModel)]="filtros.tipoLicencia"
+            name="tipoLicencia">
+            <option *ngFor="let opcion of opcionesTipoLicencia" [value]="opcion.valor">
+              {{ opcion.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Estado de licencia -->
+      <div class="col-lg-3 col-md-6 mb-3">
+        <div class="filter-group">
+          <label class="form-label">Estado</label>
+          <select
+            class="form-select form-select-sm"
+            [(ngModel)]="filtros.estadoLicencia"
+            name="estadoLicencia">
+            <option *ngFor="let opcion of opcionesEstadoLicencia" [value]="opcion.valor">
+              {{ opcion.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Categoría -->
+      <div class="col-lg-3 col-md-6 mb-3">
+        <div class="filter-group">
+          <label class="form-label">Categoría</label>
+          <select
+            class="form-select form-select-sm"
+            [(ngModel)]="filtros.categoria"
+            name="categoria">
+            <option *ngFor="let opcion of opcionesCategorias" [value]="opcion.valor">
+              {{ opcion.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Exportación -->
+      <div class="col-lg-9 col-md-6 mb-3">
+        <div class="filter-group">
+          <label class="form-label">Exportación de datos</label>
+          <div class="export-controls">
+            <button
+              type="button"
+              class="btn btn-export-pdf btn-sm me-2"
+              (click)="exportarPDF()"
+              [disabled]="exportando">
+              <i class="fas fa-file-pdf me-1"></i>
+              Exportar PDF
+            </button>
+            <button
+              type="button"
+              class="btn btn-export-excel btn-sm"
+              (click)="exportarExcel()"
+              [disabled]="exportando">
+              <i class="fas fa-file-excel me-1"></i>
+              Exportar Excel
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </form>
+
+  <!-- Resumen de filtros activos -->
+  <div class="filters-summary" *ngIf="filtrosActivos">
+    <div class="summary-content">
+      <div class="d-flex align-items-center">
+        <i class="fas fa-info-circle text-muted me-2"></i>
+        <small class="text-muted">
+          <strong>Filtros aplicados:</strong> {{ resumenFiltros }}
+        </small>
+      </div>
+    </div>
+  </div>
+
+</div>

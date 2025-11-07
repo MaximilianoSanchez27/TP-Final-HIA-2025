@@ -1,0 +1,296 @@
+@import 'animate.css';
+
+.results-section {
+  background-color: #f8f9fa;
+  padding: 5rem 0;
+  position: relative;
+}
+
+.section-divider {
+  height: 3px;
+  width: 60px;
+  background-color: var(--blue-medium);
+  margin-bottom: 1.5rem;
+  animation: expand 1s ease-out forwards;
+}
+
+@keyframes expand {
+  from { width: 0; }
+  to { width: 60px; }
+}
+
+/* Enlace "Ver todos" en la esquina */
+.all-results-link {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: var(--font-size-sm);
+  color: var(--blue-medium);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  padding: 5px 10px;
+  border-radius: 20px;
+}
+
+.all-results-link:hover {
+  color: var(--blue-dark);
+  background-color: rgba(2, 160, 227, 0.1);
+}
+
+.all-results-link i {
+  transition: transform 0.3s ease;
+  font-size: 10px;
+}
+
+.all-results-link:hover i {
+  transform: translateX(3px);
+}
+
+/* Tarjeta de partido */
+.match-card {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%;
+}
+
+.match-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Cabecera de partido */
+.match-header {
+  background-color: var(--blue-dark);
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tournament-name {
+  font-weight: 600;
+  font-size: 1rem;
+  display: block;
+}
+
+.match-date {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.match-category {
+  background-color: var(--blue-medium);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* Contenido principal del partido */
+.match-content {
+  padding: 25px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 40%;
+  position: relative;
+  padding: 10px;
+  transition: all 0.3s ease;
+}
+
+.team.winner::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 3px;
+  background-color: var(--success-color);
+  border-radius: 2px;
+}
+
+.team-logo {
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.team-logo img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.team-name {
+  font-weight: 600;
+  text-align: center;
+  font-size: 0.95rem;
+  margin-bottom: 5px;
+}
+
+.team-score {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+}
+
+.winner .team-score {
+  color: var(--success-color);
+}
+
+.match-divider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 20%;
+}
+
+.vs {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--neutral-600);
+  position: relative;
+  padding: 0 15px;
+}
+
+.vs::before, .vs::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 15px;
+  height: 1px;
+  background-color: var(--neutral-300);
+}
+
+.vs::before {
+  left: -10px;
+}
+
+.vs::after {
+  right: -10px;
+}
+
+/* Pie de la tarjeta */
+.match-footer {
+  padding: 12px 20px;
+  border-top: 1px solid var(--neutral-200);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.match-location {
+  color: var(--neutral-600);
+  font-size: 0.85rem;
+}
+
+.match-details-link {
+  font-size: var(--font-size-sm);
+  color: var(--blue-medium);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.match-details-link:hover {
+  color: var(--blue-dark);
+}
+
+.match-details-link i {
+  transition: transform 0.3s ease;
+  font-size: 0.7rem;
+  margin-left: 3px;
+}
+
+.match-details-link:hover i {
+  transform: translateX(3px);
+}
+
+/* Botón de calendario */
+.btn-outline-primary {
+  color: var(--blue-medium);
+  border-color: var(--blue-medium);
+  padding: 0.75rem 1.75rem;
+  border-radius: var(--border-radius-sm);
+  font-weight: var(--font-weight-bold);
+  transition: all 0.3s ease;
+  margin-top: 2rem;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--blue-medium);
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .match-content {
+    padding: 20px 15px;
+  }
+
+  .team-logo {
+    width: 60px;
+    height: 60px;
+  }
+
+  .team-score {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .all-results-link {
+    position: static;
+    display: block;
+    margin-top: 10px;
+  }
+
+  .results-section {
+    padding: 4rem 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .team-name {
+    font-size: 0.85rem;
+  }
+
+  .team-logo {
+    width: 50px;
+    height: 50px;
+  }
+
+  .match-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .match-category {
+    margin-top: 8px;
+  }
+
+  .all-results-link {
+    text-align: center;
+  }
+}

@@ -1,0 +1,42 @@
+/* Tarjetas de estadísticas */
+.stats-card {
+  transition: all 0.3s ease;
+}
+
+.stats-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.1) !important;
+}
+
+.stats-icon {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+}
+
+/* Colores de fondo claros para los iconos */
+.bg-primary-light {
+  background-color: rgba(2, 160, 227, 0.2);
+}
+
+.bg-success-light {
+  background-color: rgba(76, 175, 80, 0.2);
+}
+
+.bg-danger-light {
+  background-color: rgba(244, 67, 54, 0.2);
+}
+
+.bg-info-light {
+  background-color: rgba(33, 150, 243, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .stats-card {
+    margin-bottom: 1rem;
+  }
+}

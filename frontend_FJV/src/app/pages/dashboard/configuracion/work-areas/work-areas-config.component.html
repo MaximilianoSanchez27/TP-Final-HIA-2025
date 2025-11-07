@@ -1,0 +1,248 @@
+<div class="work-areas-config-container">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Header -->
+      <div class="col-12">
+        <div class="config-header">
+          <button class="btn-back" (click)="goBack()">
+            <i class="fas fa-arrow-left"></i>
+          </button>
+          <div class="header-content">
+            <h1 class="page-title">
+              <i class="fas fa-briefcase"></i>
+              Configurar Áreas de Trabajo
+            </h1>
+            <p class="page-subtitle">
+              Personaliza las áreas de trabajo que se muestran en la página principal
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="col-12">
+        <div class="loading-container">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+          <p class="mt-3">Cargando configuración...</p>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div *ngIf="!isLoading" class="col-12">
+        <div class="row">
+          <!-- Form Column -->
+          <div class="col-lg-6 col-md-12">
+            <div class="config-form-card">
+              <div class="card-header">
+                <h3>
+                  <i class="fas fa-edit"></i>
+                  Configuración
+                </h3>
+              </div>
+
+              <form [formGroup]="workAreasForm" (ngSubmit)="onSubmit()" class="config-form">
+                <!-- Título de Sección -->
+                <div class="form-group">
+                  <label for="tituloSeccion" class="form-label">
+                    <i class="fas fa-heading"></i>
+                    Título de la Sección
+                  </label>
+                  <input
+                    type="text"
+                    id="tituloSeccion"
+                    formControlName="tituloSeccion"
+                    class="form-control"
+                    placeholder="Ej: Áreas de trabajo"
+                    maxlength="100">
+                  <div class="form-text">Máximo 100 caracteres</div>
+                </div>
+
+                <!-- Áreas de Trabajo -->
+                <div class="areas-section">
+                  <div class="section-header">
+                    <h4>
+                      <i class="fas fa-list"></i>
+                      Áreas de Trabajo
+                    </h4>
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-primary"
+                      (click)="addArea()"
+                      [disabled]="currentAreas.length >= 6">
+                      <i class="fas fa-plus"></i>
+                      Agregar Área
+                    </button>
+                  </div>
+
+                  <!-- Lista de Áreas -->
+                  <div class="areas-list" formArrayName="areas">
+                    <div
+                      *ngFor="let areaControl of areasFormArray.controls; let i = index"
+                      class="area-item"
+                      [formGroupName]="i"
+                      [class.being-edited]="editingIndex === i">
+
+                      <div class="area-header">
+                        <div class="area-icon-preview">
+                          <i [class]="areaControl.get('icono')?.value || 'fas fa-question'"></i>
+                        </div>
+                        <div class="area-title">
+                          {{ areaControl.get('titulo')?.value || 'Sin título' }}
+                        </div>
+                        <div class="area-actions">
+                          <button
+                            type="button"
+                            class="btn-edit"
+                            (click)="toggleEditArea(i)"
+                            [class.active]="editingIndex === i">
+                            <i class="fas fa-edit"></i>
+                          </button>
+                          <button
+                            type="button"
+                            class="btn-delete"
+                            (click)="removeArea(i)"
+                            [disabled]="currentAreas.length <= 1">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+
+                      <!-- Form expandible -->
+                      <div class="area-form" [class.expanded]="editingIndex === i">
+                        <div class="form-row">
+                          <div class="col-md-8">
+                            <div class="form-group">
+                              <label class="form-label">Título</label>
+                              <input
+                                type="text"
+                                formControlName="titulo"
+                                class="form-control"
+                                placeholder="Ej: Torneos Provinciales"
+                                maxlength="100">
+                            </div>
+                          </div>
+                          <div class="col-md-4">
+                            <div class="form-group">
+                              <label class="form-label">Ícono</label>
+                              <select formControlName="icono" class="form-control">
+                                <option value="">Seleccionar ícono</option>
+                                <option
+                                  *ngFor="let iconOption of availableIcons"
+                                  [value]="iconOption.icon">
+                                  {{ iconOption.label }}
+                                </option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <label class="form-label">Descripción</label>
+                          <textarea
+                            formControlName="descripcion"
+                            class="form-control"
+                            rows="3"
+                            placeholder="Describe brevemente esta área de trabajo..."
+                            maxlength="300"></textarea>
+                          <div class="form-text">
+                            {{ areaControl.get('descripcion')?.value?.length || 0 }}/300 caracteres
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Validation Errors -->
+                <div *ngIf="validationErrors.length > 0" class="validation-errors">
+                  <div class="alert alert-danger">
+                    <h6><i class="fas fa-exclamation-triangle"></i> Errores de validación:</h6>
+                    <ul class="mb-0">
+                      <li *ngFor="let error of validationErrors">{{ error }}</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <!-- Error Message -->
+                <div *ngIf="errorMessage" class="alert alert-danger">
+                  <i class="fas fa-exclamation-circle"></i>
+                  {{ errorMessage }}
+                </div>
+
+                <!-- Success Message -->
+                <div *ngIf="successMessage" class="alert alert-success">
+                  <i class="fas fa-check-circle"></i>
+                  {{ successMessage }}
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    (click)="goBack()"
+                    [disabled]="isSaving">
+                    <i class="fas fa-times"></i>
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    [disabled]="workAreasForm.invalid || isSaving">
+                    <div *ngIf="isSaving" class="spinner-border spinner-border-sm me-2" role="status">
+                      <span class="visually-hidden">Guardando...</span>
+                    </div>
+                    <i *ngIf="!isSaving" class="fas fa-save"></i>
+                    {{ isSaving ? 'Guardando...' : 'Guardar Configuración' }}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Preview Column -->
+          <div class="col-lg-6 col-md-12">
+            <div class="preview-card">
+              <div class="card-header">
+                <h3>
+                  <i class="fas fa-eye"></i>
+                  Vista Previa
+                </h3>
+              </div>
+
+              <div class="preview-content">
+                <div class="work-areas-preview">
+                  <div class="container">
+                    <div class="section-header text-center">
+                      <h2 class="section-title">
+                        {{ workAreasForm.get('tituloSeccion')?.value || 'Áreas de trabajo' }}
+                      </h2>
+                    </div>
+
+                    <div class="row">
+                      <div
+                        *ngFor="let area of getPreviewAreas(); let i = index"
+                        class="col-md-4 col-sm-6 mb-4">
+                        <div class="work-area-card">
+                          <div class="area-icon">
+                            <i [class]="area.icono || 'fas fa-question'"></i>
+                          </div>
+                          <h4 class="area-title">{{ area.titulo || 'Sin título' }}</h4>
+                          <p class="area-description">
+                            {{ area.descripcion || 'Sin descripción' }}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,287 @@
+<div class="analytics-container">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary mb-3" role="status">
+      <span class="visually-hidden">Cargando analíticas...</span>
+    </div>
+    <p class="text-muted">Cargando análisis de afiliados...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="alert alert-danger" role="alert">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    {{ error }}
+    <button class="btn btn-sm btn-outline-danger ms-3" (click)="refresh()">
+      <i class="fas fa-redo"></i> Reintentar
+    </button>
+  </div>
+
+  <!-- Filtros Avanzados -->
+  <div *ngIf="!loading && !error">
+    <app-analytics-filters
+      (filtersChanged)="onFiltersChanged($event)"
+      (exportRequested)="onExportRequested($event)">
+    </app-analytics-filters>
+  </div>
+
+  <!-- Charts Container -->
+  <div *ngIf="!loading && !error && metricas && estadisticasCrecimiento" class="charts-container">
+
+    <!-- Header con botones de exportación -->
+    <div class="d-flex justify-content-between align-items-center mb-4 export-header">
+      <div>
+        <h4 class="mb-1">
+          <i class="fas fa-chart-line text-info me-2"></i>
+          Analíticas de Afiliados
+        </h4>
+        <p class="text-muted mb-0 small">
+          Última actualización: {{ metricas.fechaActualizacion | date:'short' }}
+        </p>
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="btn-group export-buttons" role="group">
+        <button
+          class="btn btn-outline-secondary btn-sm me-2"
+          (click)="refresh()"
+          [disabled]="exportingPDF || exportingExcel">
+          <i class="fas fa-sync-alt me-1"></i>
+          Actualizar
+        </button>
+
+        <button
+          class="btn btn-export-pdf btn-sm me-2"
+          (click)="exportToPDF()"
+          [disabled]="exportingPDF || exportingExcel">
+          <span *ngIf="!exportingPDF">
+            <i class="fas fa-file-pdf me-1"></i>
+            Exportar PDF
+          </span>
+          <span *ngIf="exportingPDF">
+            <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+            Generando...
+          </span>
+        </button>
+
+        <button
+          class="btn btn-export-excel btn-sm"
+          (click)="exportToExcel()"
+          [disabled]="exportingPDF || exportingExcel">
+          <span *ngIf="!exportingExcel">
+            <i class="fas fa-file-excel me-1"></i>
+            Exportar Excel
+          </span>
+          <span *ngIf="exportingExcel">
+            <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+            Generando...
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Contenido exportable -->
+    <div id="analytics-content" class="analytics-exportable-content">
+
+      <!-- Métricas principales -->
+      <div class="row mb-4">
+        <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+          <div class="metric-card bg-info text-white">
+            <div class="metric-icon">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="metric-content">
+              <h3 class="metric-value">{{ metricas.resumen.totalAfiliados }}</h3>
+              <p class="metric-label">Total Afiliados</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+          <div class="metric-card bg-primary text-white">
+            <div class="metric-icon">
+              <i class="fas fa-certificate"></i>
+            </div>
+            <div class="metric-content">
+              <h3 class="metric-value">{{ metricas.resumen.totalFJV }}</h3>
+              <p class="metric-label">Licencias FJV</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+          <div class="metric-card bg-success text-white">
+            <div class="metric-icon">
+              <i class="fas fa-id-card"></i>
+            </div>
+            <div class="metric-content">
+              <h3 class="metric-value">{{ metricas.resumen.totalFEVA }}</h3>
+              <p class="metric-label">Licencias FEVA</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+          <div class="metric-card bg-success text-white">
+            <div class="metric-icon">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="metric-content">
+              <h3 class="metric-value">{{ metricas.resumen.activosCount }}</h3>
+              <p class="metric-label">Activos</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+          <div class="metric-card bg-danger text-white">
+            <div class="metric-icon">
+              <i class="fas fa-times-circle"></i>
+            </div>
+            <div class="metric-content">
+              <h3 class="metric-value">{{ metricas.resumen.vencidosCount }}</h3>
+              <p class="metric-label">Vencidos</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+          <div class="metric-card bg-warning text-white">
+            <div class="metric-icon">
+              <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="metric-content">
+              <h3 class="metric-value">{{ metricas.resumen.proxVencimientos }}</h3>
+              <p class="metric-label">Próx. Vencimientos</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráficos Principales -->
+      <div class="row">
+        <!-- Distribución por Licencias -->
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="card chart-card">
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas #licenciasChart></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Estados de Licencias -->
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="card chart-card">
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas #estadosChart></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Distribución por Categorías -->
+        <div class="col-lg-4 col-md-12 mb-4">
+          <div class="card chart-card">
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas #categoriasChart></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Afiliados por Club -->
+        <div class="col-lg-8 mb-4">
+          <div class="card chart-card">
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas #clubesChart></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Crecimiento -->
+        <div class="col-lg-4 mb-4">
+          <div class="card chart-card">
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas #crecimientoChart></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Evolución Mensual -->
+        <div class="col-12 mb-4">
+          <div class="card chart-card">
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas #mensualChart></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla de detalles por club -->
+      <div class="row mt-4" *ngIf="metricas.distribucionPorClub.length > 0">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">
+                <i class="fas fa-table me-2"></i>
+                Detalle por Club
+              </h5>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Club</th>
+                      <th class="text-center">Total</th>
+                      <th class="text-center">FJV</th>
+                      <th class="text-center">FEVA</th>
+                      <th class="text-center">Activos</th>
+                      <th class="text-center">Vencidos</th>
+                      <th class="text-center">% Activos</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let club of metricas.distribucionPorClub.slice(0, 15)">
+                      <td>
+                        <strong>{{ club.nombre }}</strong>
+                      </td>
+                      <td class="text-center">{{ club.total }}</td>
+                      <td class="text-center text-primary">
+                        <strong>{{ club.fjv }}</strong>
+                      </td>
+                      <td class="text-center text-success">
+                        <strong>{{ club.feva }}</strong>
+                      </td>
+                      <td class="text-center text-success">
+                        {{ club.activos }}
+                      </td>
+                      <td class="text-center text-danger">
+                        {{ club.vencidos }}
+                      </td>
+                      <td class="text-center">
+                        <span class="badge"
+                              [ngClass]="{
+                                'bg-success': (club.activos / club.total * 100) >= 80,
+                                'bg-warning': (club.activos / club.total * 100) >= 50 && (club.activos / club.total * 100) < 80,
+                                'bg-danger': (club.activos / club.total * 100) < 50
+                              }">
+                          {{ (club.activos / club.total * 100) | number:'1.1-1' }}%
+                        </span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

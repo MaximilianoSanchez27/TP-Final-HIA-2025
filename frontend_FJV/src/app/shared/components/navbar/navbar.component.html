@@ -1,0 +1,12 @@
+<li class="nav-item">
+  <a class="nav-link" routerLink="/noticias" routerLinkActive="active">
+    <i class="fas fa-newspaper me-1"></i> Noticias
+  </a>
+</li>
+
+<!-- Para administradores, en el menú de administración -->
+<li class="nav-item" *ngIf="isAdmin">
+  <a class="nav-link" routerLink="/admin/noticias" routerLinkActive="active">
+    <i class="fas fa-edit me-1"></i> Administrar Noticias
+  </a>
+</li>

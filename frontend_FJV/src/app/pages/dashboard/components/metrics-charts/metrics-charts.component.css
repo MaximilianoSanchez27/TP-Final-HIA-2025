@@ -1,0 +1,256 @@
+.metrics-container {
+  padding: 0;
+  background: #ffffff;
+  border-radius: 8px;
+}
+
+.metric-card {
+  background: linear-gradient(135deg, var(--bs-primary) 0%, var(--bs-primary-dark, #0056b3) 100%);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 0;
+  height: 100%;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+}
+
+.metric-card.bg-success {
+  background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+}
+
+.metric-card.bg-warning {
+  background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+}
+
+.metric-card.bg-info {
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+}
+
+.metric-icon {
+  font-size: 2.5rem;
+  margin-right: 1rem;
+  opacity: 0.8;
+}
+
+.metric-content {
+  flex: 1;
+}
+
+.metric-value {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.metric-label {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+.chart-container {
+  position: relative;
+  height: 350px;
+  margin: 1rem 0;
+}
+
+.card {
+  border: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.card-header {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-bottom: 1px solid #dee2e6;
+  padding: 1rem 1.25rem;
+  font-weight: 600;
+}
+
+.card-header h5 {
+  margin: 0;
+  color: #495057;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card-body {
+  padding: 1.25rem;
+}
+
+.text-center.py-5 {
+  padding: 3rem 1rem !important;
+  color: #6c757d;
+}
+
+.spinner-border {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.alert {
+  border: 0;
+  border-radius: 0.75rem;
+  border-left: 4px solid;
+}
+
+.alert-danger {
+  border-left-color: #dc3545;
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.charts-container > * {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.fa-spinner.fa-spin {
+  animation: fa-spin 1s infinite linear;
+}
+
+@keyframes fa-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .d-flex.justify-content-between.align-items-center {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .header-actions .btn {
+    flex: 1;
+    min-width: 80px;
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .header-actions .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .metric-card {
+    padding: 1rem;
+    text-align: center;
+    flex-direction: column;
+  }
+
+  .metric-icon {
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+    font-size: 2rem;
+  }
+
+  .metric-value {
+    font-size: 1.5rem;
+  }
+
+  .metric-label {
+    font-size: 0.8rem;
+  }
+
+  .chart-container {
+    height: 250px;
+  }
+}
+
+/* Table styles */
+.table th {
+  font-weight: 600;
+  border-top: none;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 0.375rem 0.75rem;
+}
+
+/* Header con acciones */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.header-actions .btn {
+  white-space: nowrap;
+  min-width: 100px;
+  justify-content: center;
+}
+
+.header-actions .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.header-actions .btn-outline-secondary {
+  color: #6b7280;
+  border-color: #6b7280;
+}
+
+.header-actions .btn-outline-secondary:hover:not(:disabled) {
+  background: #6b7280;
+  color: #ffffff;
+}
+
+.header-actions .btn-outline-success {
+  color: #374151;
+  border-color: #374151;
+}
+
+.header-actions .btn-outline-success:hover:not(:disabled) {
+  background: #374151;
+  color: #ffffff;
+}

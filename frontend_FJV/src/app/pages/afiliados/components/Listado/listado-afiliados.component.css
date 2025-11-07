@@ -1,0 +1,322 @@
+/* === DISEÑO SERIO Y PROFESIONAL PARA LISTADO === */
+
+/* Encabezado de la tabla */
+h3 {
+  font-weight: 600;
+  color: #374151;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Tabla general */
+table.table {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  font-size: 0.875rem;
+  border: 1px solid #e5e7eb;
+}
+
+/* Encabezado */
+.table thead th {
+  vertical-align: middle;
+  text-align: center;
+  background: #f8f9fa !important;
+  color: #374151 !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem;
+  border-bottom: 2px solid #e5e7eb;
+  padding: 1rem 0.75rem;
+}
+
+/* Celdas */
+.table td {
+  vertical-align: middle;
+  text-align: center;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  border-bottom: 1px solid #f1f3f4;
+  color: #374151;
+}
+
+/* Hover y bordes */
+.table-hover tbody tr:hover {
+  background-color: #f9fafb;
+  transition: background-color 0.2s ease;
+}
+
+/* === BOTONES SERIOS === */
+button.btn-sm {
+  border-radius: 4px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Botones de acción en escala de grises */
+.btn-warning {
+  background-color: #6b7280;
+  border: 1px solid #6b7280;
+  color: #ffffff;
+}
+
+.btn-warning:hover {
+  background-color: #4b5563;
+  border-color: #4b5563;
+  color: #ffffff;
+}
+
+.btn-danger {
+  background-color: #9ca3af;
+  border: 1px solid #9ca3af;
+  color: #ffffff;
+}
+
+.btn-danger:hover {
+  background-color: #6b7280;
+  border-color: #6b7280;
+  color: #ffffff;
+}
+
+.btn-group .btn {
+  border-radius: 4px;
+  font-weight: 500;
+  min-width: 80px;
+  white-space: nowrap;
+  border: 1px solid #d1d5db;
+}
+
+.btn-sm {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.8125rem;
+}
+
+/* Botones outline en escala de grises */
+.btn-outline-info {
+  color: #6b7280;
+  border-color: #6b7280;
+  background-color: transparent;
+}
+
+.btn-outline-info:hover {
+  background-color: #6b7280;
+  border-color: #6b7280;
+  color: #ffffff;
+}
+
+.btn-outline-primary {
+  color: #374151;
+  border-color: #374151;
+  background-color: transparent;
+}
+
+.btn-outline-primary:hover {
+  background-color: #374151;
+  border-color: #374151;
+  color: #ffffff;
+}
+
+.btn-outline-danger {
+  color: #9ca3af;
+  border-color: #9ca3af;
+  background-color: transparent;
+}
+
+.btn-outline-danger:hover {
+  background-color: #9ca3af;
+  border-color: #9ca3af;
+  color: #ffffff;
+}
+
+/* Espaciado entre botones */
+.btn-group .btn + .btn {
+  margin-left: 2px;
+}
+
+/* Responsive Scroll */
+@media (max-width: 768px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .table thead th {
+    font-size: 0.8125rem;
+  }
+
+  .table td {
+    font-size: 0.8125rem;
+  }
+}
+
+/* === CARDS SERIOS === */
+.afiliado-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  background-color: #ffffff;
+}
+
+.afiliado-card:hover {
+  border-color: #9ca3af;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
+}
+
+/* Avatar mejorado */
+.avatar-container img {
+  border: 2px solid #e5e7eb;
+  transition: border-color 0.2s ease;
+}
+
+.avatar-container img:hover {
+  border-color: #9ca3af;
+}
+
+.avatar-icon-simple {
+  background: #f9fafb;
+  border: 2px solid #e5e7eb;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.avatar-icon-simple:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+/* === ESTADOS DE LICENCIA - MANTENER COLORES === */
+.badge {
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  font-size: 0.75rem;
+  padding: 0.375rem 0.5rem;
+  border-radius: 4px;
+}
+
+/* Colores específicos para estados de licencia */
+.badge.bg-success {
+  background-color: #059669 !important;
+  color: #ffffff;
+}
+
+.badge.bg-danger {
+  background-color: #dc2626 !important;
+  color: #ffffff;
+}
+
+.badge.bg-warning {
+  background-color: #d97706 !important;
+  color: #ffffff;
+}
+
+.badge.bg-secondary {
+  background-color: #6b7280 !important;
+  color: #ffffff;
+}
+
+.badge.bg-info {
+  background-color: #0891b2 !important;
+  color: #ffffff;
+}
+
+/* Estado vacío */
+.empty-state {
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #6b7280;
+}
+
+/* Animaciones suaves */
+.card, .btn {
+  transition: all 0.2s ease;
+}
+
+/* Responsive específico */
+@media (max-width: 575.98px) {
+  .afiliado-card .card-body {
+    padding: 1rem 0.75rem;
+  }
+
+  .btn-group {
+    display: flex;
+    width: 100%;
+  }
+
+  .btn-group .btn {
+    flex: 1;
+    font-size: 0.75rem;
+    padding: 0.4rem 0.3rem;
+  }
+
+  .btn-group .btn {
+    min-width: auto;
+    padding: 0.4rem 0.6rem;
+  }
+
+  .btn-group .btn .me-1 {
+    margin-right: 0 !important;
+  }
+
+  /* Ocultar texto solo en móviles muy pequeños */
+  .btn-group .btn-text {
+    display: none;
+  }
+}
+
+@media (min-width: 576px) and (max-width: 991.98px) {
+  .row-cols-md-2 > .col {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+/* Responsive adjustments - mantener texto en tablets */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .btn-group .btn {
+    min-width: 70px;
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+  }
+}
+
+/* === MODAL SERIO === */
+.modal-content {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.modal-header {
+  padding: 1rem 1.5rem 0;
+  background-color: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-body {
+  padding: 1.5rem;
+  background-color: #ffffff;
+}
+
+/* Scrollbar personalizado para tabla */
+.table-responsive::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

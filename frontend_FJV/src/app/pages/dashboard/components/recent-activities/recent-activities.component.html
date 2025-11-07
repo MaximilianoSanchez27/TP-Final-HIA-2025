@@ -1,0 +1,31 @@
+<div class="bg-white rounded-3 shadow-sm p-4 h-100">
+  <h4 class="mb-3">Actividades Recientes</h4>
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Acción</th>
+          <th>Club</th>
+          <th>Monto</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (activity of activities; track activity.date) {
+          <tr>
+            <td>{{activity.action}}</td>
+            <td>{{activity.club}}</td>
+            <td>
+              @if (activity.amount !== null) {
+                $ {{activity.amount | number}}
+              } @else {
+                -
+              }
+            </td>
+            <td>{{activity.date}}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,358 @@
+/* ========================================
+   CONFIGURACIÓN DEL HERO
+   ======================================== */
+
+.hero-config-container {
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+/* ========================================
+   UPLOAD AREA
+   ======================================== */
+
+.image-upload-area {
+  border: 2px dashed #dee2e6;
+  border-radius: 8px;
+  padding: 3rem 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background: white;
+}
+
+.image-upload-area:hover {
+  border-color: #0d6efd;
+  background: #f8f9ff;
+}
+
+.image-upload-area.dragover {
+  border-color: #0d6efd;
+  background: #e7f3ff;
+  transform: scale(1.02);
+}
+
+.upload-content {
+  pointer-events: none;
+}
+
+.upload-content i {
+  opacity: 0.7;
+}
+
+/* ========================================
+   CURRENT IMAGES LIST
+   ======================================== */
+
+.current-images-list,
+.selected-files-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.image-item,
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  cursor: grab;
+}
+
+.image-item:hover,
+.file-item:hover {
+  border-color: #0d6efd;
+  box-shadow: 0 2px 8px rgba(13, 110, 253, 0.1);
+}
+
+.image-item.dragging {
+  opacity: 0.5;
+  transform: rotate(2deg);
+  cursor: grabbing;
+}
+
+.image-item.drag-over {
+  border-color: #198754;
+  background: #f8fff9;
+}
+
+/* ========================================
+   IMAGE PREVIEWS
+   ======================================== */
+
+.image-preview img,
+.file-preview img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.image-info,
+.file-info {
+  flex: 1;
+  text-align: left;
+}
+
+.image-info p,
+.file-info p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.image-actions,
+.file-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* ========================================
+   HERO PREVIEW
+   ======================================== */
+
+.hero-preview {
+  position: relative;
+  height: 400px;
+  overflow: hidden;
+}
+
+.carousel-image {
+  height: 400px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.carousel-caption {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 2rem;
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+  width: 90%;
+  max-width: 600px;
+}
+
+.hero-content h1 {
+  font-size: 2.5rem;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  margin-bottom: 1rem;
+}
+
+.hero-content p {
+  font-size: 1.2rem;
+  color: #f8f9fa;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+  margin: 0;
+}
+
+/* ========================================
+   CAROUSEL CONTROLS
+   ======================================== */
+
+.carousel-control-prev,
+.carousel-control-next {
+  width: 5%;
+  color: white;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  padding: 20px;
+}
+
+.carousel-indicators button {
+  background-color: rgba(255, 255, 255, 0.5);
+  border: 2px solid white;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.carousel-indicators button.active {
+  background-color: white;
+}
+
+/* ========================================
+   FORM STYLES
+   ======================================== */
+
+.form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.form-control-lg {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.card-header {
+  border-bottom: none;
+}
+
+.btn-primary {
+  background: linear-gradient(45deg, #0d6efd, #0a58ca);
+  border: none;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(45deg, #0a58ca, #084298);
+  transform: translateY(-1px);
+}
+
+/* ========================================
+   VALIDATION ERRORS
+   ======================================== */
+
+.alert-danger ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.alert-danger li {
+  padding: 0.25rem 0;
+}
+
+.alert-danger li:before {
+  content: "⚠️ ";
+  margin-right: 0.5rem;
+}
+
+/* ========================================
+   DRAG AND DROP STATES
+   ======================================== */
+
+.image-item[draggable="true"] {
+  cursor: grab;
+}
+
+.image-item[draggable="true"]:active {
+  cursor: grabbing;
+}
+
+.image-item.drag-placeholder {
+  border: 2px dashed #0d6efd;
+  background: #f8f9ff;
+  opacity: 0.7;
+}
+
+/* ========================================
+   LOADING STATES
+   ======================================== */
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-config-container > .container {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.image-item,
+.file-item {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+.alert {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+  .image-upload-area {
+    padding: 2rem 1rem;
+  }
+
+  .hero-content h1 {
+    font-size: 1.8rem;
+  }
+
+  .hero-content p {
+    font-size: 1rem;
+  }
+
+  .carousel-caption {
+    padding: 1rem;
+    width: 95%;
+  }
+
+  .image-item,
+  .file-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+
+  .image-preview img,
+  .file-preview img {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero-preview {
+    height: 300px;
+  }
+
+  .carousel-image {
+    height: 300px;
+  }
+
+  .hero-content h1 {
+    font-size: 1.5rem;
+  }
+
+  .hero-content p {
+    font-size: 0.9rem;
+  }
+}
+
+/* ========================================
+   UTILITIES
+   ======================================== */
+
+.text-primary { color: #0d6efd !important; }
+.text-success { color: #198754 !important; }
+.text-danger { color: #dc3545 !important; }
+.text-muted { color: #6c757d !important; }
+
+.bg-light { background-color: #f8f9fa !important; }
+.bg-primary { background-color: #0d6efd !important; }
+.bg-success { background-color: #198754 !important; }

@@ -1,0 +1,135 @@
+<ng-container [ngSwitch]="vista">
+  <!-- Vista de cuadrícula (por defecto) -->
+  <div *ngSwitchCase="'grid'" class="noticia-card">
+    <div class="card h-100 shadow-sm hover-effect border-0">
+      <!-- Imagen con enlace -->
+      <a [routerLink]="getNoticiaUrl()" class="noticia-image-container">
+        <img [src]="noticia.imagenPrincipal || imagenPorDefecto"
+             [alt]="noticia.imagenPrincipalAlt || noticia.titulo"
+             class="card-img-top noticia-img"
+             (error)="handleImageError($event)">
+
+        <div class="categoria-badge">
+          <span class="badge bg-primary">{{noticia.categoria}}</span>
+        </div>
+
+        <div *ngIf="noticia.destacado" class="destacado-badge">
+          <span class="badge bg-warning text-dark">
+            <i class="fas fa-star me-1"></i>Destacado
+          </span>
+        </div>
+      </a>
+
+      <div class="card-body d-flex flex-column">
+        <div class="d-flex align-items-center mb-2 text-muted">
+          <small><i class="far fa-calendar-alt me-1"></i>{{formatearFecha(noticia.fechaPublicacion)}}</small>
+          <small *ngIf="isAdmin" class="ms-auto"><i class="far fa-eye me-1"></i>{{noticia.vistas || 0}}</small>
+        </div>
+
+        <!-- Título como enlace -->
+        <h3 class="card-title h5 mb-3">
+          <a [routerLink]="getNoticiaUrl()" class="titulo-enlace">{{noticia.titulo}}</a>
+        </h3>
+
+        <p class="card-text flex-grow-1 mb-3 noticia-resumen">{{noticia.resumen}}</p>
+
+        <!-- Autor de la noticia (solo para admins) -->
+        <div *ngIf="isAdmin && noticia.autor && !(noticia.autor.nombre === 'Admin' && noticia.autor.apellido === 'Sistema')" class="mt-auto">
+          <small class="text-muted">
+            <i class="far fa-user me-1"></i>{{noticia.autor.nombre}} {{noticia.autor.apellido}}
+          </small>
+        </div>
+
+        <!-- Eliminamos el botón "Leer más" ya que el título ahora es el enlace principal -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Vista de lista -->
+  <div *ngSwitchCase="'lista'" class="noticia-lista mb-4">
+    <div class="row g-0 border-bottom pb-3">
+      <div class="col-md-4 mb-3 mb-md-0">
+        <a [routerLink]="getNoticiaUrl()">
+          <img [src]="noticia.imagenPrincipal || imagenPorDefecto"
+               [alt]="noticia.imagenPrincipalAlt || noticia.titulo"
+               class="img-fluid rounded w-100 h-100 object-fit-cover"
+               style="max-height: 200px;"
+               (error)="handleImageError($event)">
+        </a>
+      </div>
+      <div class="col-md-8">
+        <div class="ms-md-3 h-100 d-flex flex-column">
+          <div class="d-flex flex-wrap gap-2 mb-2">
+            <span class="badge bg-primary">{{noticia.categoria}}</span>
+            <span *ngIf="noticia.destacado" class="badge bg-warning text-dark">
+              <i class="fas fa-star me-1"></i>Destacado
+            </span>
+          </div>
+
+          <!-- Título como enlace -->
+          <h3 class="h4 mb-2">
+            <a [routerLink]="getNoticiaUrl()" class="titulo-enlace">{{noticia.titulo}}</a>
+          </h3>
+
+          <p class="mb-2 text-muted small">
+            <i class="far fa-calendar-alt me-1"></i>{{formatearFecha(noticia.fechaPublicacion)}}
+            <span *ngIf="isAdmin" class="ms-3"><i class="far fa-eye me-1"></i>{{noticia.vistas || 0}} vistas</span>
+          </p>
+          <p class="mb-3 noticia-resumen">{{noticia.resumen}}</p>
+
+          <!-- Autor de la noticia (solo para admins) -->
+          <div *ngIf="isAdmin && noticia.autor && !(noticia.autor.nombre === 'Admin' && noticia.autor.apellido === 'Sistema')" class="mt-auto">
+            <small class="text-muted">
+              <i class="far fa-user me-1"></i>{{noticia.autor.nombre}} {{noticia.autor.apellido}}
+            </small>
+          </div>
+
+          <!-- Eliminamos el botón "Leer más" ya que el título ahora es el enlace principal -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vista destacada -->
+  <div *ngSwitchCase="'destacado'" class="noticia-destacada">
+    <div class="card border-0 shadow noticia-destacada-card">
+      <a [routerLink]="getNoticiaUrl()" class="featured-overlay">
+        <img [src]="noticia.imagenPrincipal || imagenPorDefecto"
+             [alt]="noticia.imagenPrincipalAlt || noticia.titulo"
+             class="card-img featured-img"
+             (error)="handleImageError($event)">
+        <div class="overlay-gradient"></div>
+      </a>
+
+      <div class="card-img-overlay d-flex flex-column justify-content-end">
+        <div class="d-flex flex-wrap gap-2 mb-2">
+          <span class="badge bg-primary">{{noticia.categoria}}</span>
+          <span class="badge bg-warning text-dark">
+            <i class="fas fa-star me-1"></i>Destacado
+          </span>
+        </div>
+
+        <!-- Título como enlace -->
+        <h2 class="card-title fw-bold mb-3">
+          <a [routerLink]="getNoticiaUrl()" class="text-white titulo-enlace-destacado">{{noticia.titulo}}</a>
+        </h2>
+
+        <p class="card-text text-white">{{noticia.resumen}}</p>
+
+        <div class="d-flex justify-content-between align-items-center mt-3">
+          <div class="text-white">
+            <small><i class="far fa-calendar-alt me-1"></i>{{formatearFecha(noticia.fechaPublicacion)}}</small>
+            <small *ngIf="isAdmin" class="ms-3"><i class="far fa-eye me-1"></i>{{noticia.vistas || 0}} vistas</small>
+          </div>
+
+          <!-- Autor de la noticia (solo para admins) -->
+          <div *ngIf="isAdmin && noticia.autor && !(noticia.autor.nombre === 'Admin' && noticia.autor.apellido === 'Sistema')" class="text-white">
+            <small><i class="far fa-user me-1"></i>{{noticia.autor.nombre}} {{noticia.autor.apellido}}</small>
+          </div>
+
+          <!-- Eliminamos el botón "Leer más" ya que el título ahora es el enlace principal -->
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

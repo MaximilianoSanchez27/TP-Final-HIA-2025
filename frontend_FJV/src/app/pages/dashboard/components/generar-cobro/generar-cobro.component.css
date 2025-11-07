@@ -1,0 +1,37 @@
+.form-label {
+  font-weight: 500;
+  color: var(--neutral-900);
+  font-size: 0.9rem;
+}
+
+.form-label span.text-danger {
+  margin-left: 4px;
+  font-weight: bold;
+}
+
+.is-invalid {
+  border-color: var(--error-color);
+}
+
+.input-group-text {
+  background-color: #f8f9fa;
+}
+
+input[type="date"] {
+  min-height: 38px;
+}
+
+.btn {
+  transition: all 0.3s ease;
+}
+
+.btn:hover:not([disabled]) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-control:focus,
+.form-select:focus {
+  box-shadow: 0 0 0 0.25rem rgba(76, 175, 80, 0.25);
+  border-color: var(--success-color);
+}

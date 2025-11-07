@@ -1,0 +1,551 @@
+/* ========================================
+   DISEÑO NORMAL Y MINIMALISTA
+   ======================================== */
+
+.public-payment-container {
+  min-height: 100vh;
+  background: #f8f9fa;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* ========================================
+   HEADER SIMPLE
+   ======================================== */
+
+.payment-header {
+  background: white;
+  border-bottom: 1px solid #e9ecef;
+  padding: 1rem 0;
+  margin-bottom: 0;
+}
+
+.logo-section h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #0d6efd;
+}
+
+.back-link a {
+  font-size: 0.9rem;
+  color: #6c757d;
+  text-decoration: none;
+}
+
+.back-link a:hover {
+  color: #495057;
+}
+
+/* ========================================
+   STEPPER/PROGRESS
+   ======================================== */
+
+.payment-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 0;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  opacity: 0.5;
+}
+
+.step.completed,
+.step.active {
+  opacity: 1;
+}
+
+.step-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  background: #e9ecef;
+  color: #6c757d;
+}
+
+.step.completed .step-circle {
+  background: #198754;
+  color: white;
+}
+
+.step.active .step-circle {
+  background: #0d6efd;
+  color: white;
+}
+
+.step span {
+  font-size: 0.8rem;
+  color: #6c757d;
+  max-width: 100px;
+}
+
+.step.completed span,
+.step.active span {
+  color: #495057;
+  font-weight: 500;
+}
+
+.step-line {
+  width: 60px;
+  height: 2px;
+  background: #e9ecef;
+  margin: 0 1rem;
+  margin-top: -20px;
+}
+
+/* ========================================
+   LOADING Y ERROR
+   ======================================== */
+
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+.alert {
+  border: none;
+  border-radius: 8px;
+}
+
+/* ========================================
+   SECCIÓN DE PAGO
+   ======================================== */
+
+.payment-section {
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 1.5rem;
+}
+
+/* ========================================
+   MÉTODOS DE PAGO
+   ======================================== */
+
+.payment-methods {
+  margin-bottom: 2rem;
+}
+
+.payment-method {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.payment-method:hover {
+  border-color: #0d6efd;
+}
+
+.payment-method.selected {
+  border-color: #0d6efd;
+  background: #f8f9ff;
+}
+
+.method-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.method-icon {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  color: #212529;
+}
+
+.method-icon img {
+  width: 40px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.method-icons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.method-icons i {
+  font-size: 1.5rem;
+}
+
+/* ========================================
+   BOTONES
+   ======================================== */
+
+.btn-lg {
+  padding: 0.75rem 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 8px;
+}
+
+.btn-success {
+  background: #198754;
+  border-color: #198754;
+}
+
+.btn-success:hover {
+  background: #157347;
+  border-color: #146c43;
+}
+
+.btn-link {
+  color: #6c757d;
+  text-decoration: none;
+}
+
+.btn-link:hover {
+  color: #495057;
+}
+
+/* ========================================
+   INFORMACIÓN DE SEGURIDAD
+   ======================================== */
+
+.security-info {
+  border-top: 1px solid #e9ecef;
+  padding-top: 1.5rem;
+}
+
+.security-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.security-links a {
+  font-size: 0.85rem;
+}
+
+/* ========================================
+   RESUMEN DEL PEDIDO
+   ======================================== */
+
+.order-summary {
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 2rem;
+}
+
+.summary-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.summary-title .btn-link {
+  color: #6c757d;
+  padding: 0;
+}
+
+/* ========================================
+   ITEM DEL PEDIDO
+   ======================================== */
+
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.item-info {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.item-icon {
+  width: 50px;
+  height: 50px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+}
+
+.item-icon i {
+  color: #0d6efd;
+  font-size: 1.5rem;
+}
+
+.item-details {
+  flex: 1;
+}
+
+.item-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #212529;
+  margin: 0 0 0.25rem 0;
+  line-height: 1.3;
+}
+
+.item-meta {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin: 0;
+}
+
+.item-price {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #212529;
+}
+
+/* ========================================
+   DETALLES DEL PEDIDO
+   ======================================== */
+
+.order-details {
+  padding: 1rem 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.detail-row:last-child {
+  margin-bottom: 0;
+}
+
+.detail-row span {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+/* ========================================
+   TOTAL
+   ======================================== */
+
+.order-total {
+  padding: 1.5rem 0 1rem 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.total-label {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #212529;
+}
+
+.total-amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #212529;
+}
+
+/* ========================================
+   INFORMACIÓN ADICIONAL
+   ======================================== */
+
+.payment-info {
+  padding: 1.5rem 0 1rem 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.info-item:last-child {
+  margin-bottom: 0;
+}
+
+.info-item i {
+  width: 16px;
+  text-align: center;
+}
+
+/* ========================================
+   ESTADO DEL COBRO
+   ======================================== */
+
+.payment-status {
+  padding-top: 1.5rem;
+  text-align: center;
+}
+
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-paid {
+  background: #d1e7dd;
+  color: #0f5132;
+}
+
+.status-pending {
+  background: #cff4fc;
+  color: #055160;
+}
+
+.status-expired {
+  background: #fff3cd;
+  color: #664d03;
+}
+
+.status-cancelled {
+  background: #f8d7da;
+  color: #58151c;
+}
+
+/* ========================================
+   ESTADOS ESPECIALES
+   ======================================== */
+
+.success-checkmark i {
+  color: #198754;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 992px) {
+  .order-summary {
+    position: static;
+    margin-top: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .payment-steps {
+    padding: 1rem 0;
+  }
+
+  .step span {
+    font-size: 0.7rem;
+    max-width: 80px;
+  }
+
+  .step-line {
+    width: 40px;
+  }
+
+  .payment-section,
+  .order-summary {
+    padding: 1.5rem;
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+  }
+
+  .method-content {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .method-icons {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .container {
+    padding: 0 1rem;
+  }
+
+  .payment-header {
+    padding: 0.75rem 0;
+  }
+
+  .logo-section h3 {
+    font-size: 1.1rem;
+  }
+
+  .back-link {
+    display: none;
+  }
+
+  .payment-section,
+  .order-summary {
+    padding: 1rem;
+  }
+
+  .item-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .item-icon {
+    margin-right: 0;
+  }
+
+  .order-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .item-price {
+    align-self: flex-end;
+    font-size: 1.25rem;
+  }
+}
+
+/* ========================================
+   UTILIDADES
+   ======================================== */
+
+.text-primary { color: #0d6efd !important; }
+.text-success { color: #198754 !important; }
+.text-warning { color: #ffc107 !important; }
+.text-info { color: #0dcaf0 !important; }
+.text-muted { color: #6c757d !important; }
+
+.fw-bold { font-weight: 600 !important; }
+.fw-normal { font-weight: 400 !important; }

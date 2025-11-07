@@ -1,0 +1,208 @@
+<div class="container my-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">
+      <i class="fas fa-users me-2"></i>Gestión de Afiliados
+      <small class="text-muted fs-6 ms-2" *ngIf="totalAfiliados > 0">
+        ({{totalAfiliados}} registros)
+      </small>
+    </h2>
+    <div class="btn-group">
+      <button type="button"
+              class="btn btn-outline-primary"
+              (click)="toggleFiltrosAvanzados()"
+              [class.active]="mostrarFiltrosAvanzados">
+        <i class="fas fa-filter me-2"></i>Filtros Avanzados
+      </button>
+      <a routerLink="/afiliados/nuevo" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Agregar Nuevo Afiliado
+      </a>
+    </div>
+  </div>
+
+  <!-- Estadísticas rápidas -->
+  <div *ngIf="estadisticas" class="row mb-4">
+    <div class="col-md-3">
+      <div class="card stats-card bg-primary text-white">
+        <div class="card-body text-center">
+          <i class="fas fa-users fa-2x mb-2"></i>
+          <h4 class="mb-0">{{estadisticas.totalAfiliados}}</h4>
+          <small>Total Afiliados</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card stats-card bg-success text-white">
+        <div class="card-body text-center">
+          <i class="fas fa-check-circle fa-2x mb-2"></i>
+          <h4 class="mb-0">{{estadisticas.afiliadosActivos}}</h4>
+          <small>Activos ({{estadisticas.porcentajeActivos}}%)</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card stats-card bg-warning text-white">
+        <div class="card-body text-center">
+          <i class="fas fa-times-circle fa-2x mb-2"></i>
+          <h4 class="mb-0">{{estadisticas.afiliadosInactivos}}</h4>
+          <small>Inactivos</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card stats-card bg-info text-white">
+        <div class="card-body text-center">
+          <i class="fas fa-exchange-alt fa-2x mb-2"></i>
+          <h4 class="mb-0">{{estadisticas.totalPases}}</h4>
+          <small>Total Pases</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr />
+
+  <!-- Buscador básico -->
+  <app-buscador-afiliados
+    (buscarAfiliado)="onBuscarAfiliado($event)"
+    (limpiarFiltro)="onBuscarAfiliado({})">
+  </app-buscador-afiliados>
+
+  <!-- Filtros avanzados -->
+  <div *ngIf="mostrarFiltrosAvanzados" class="mb-4">
+    <app-filtros-avanzados
+      [estadisticas]="estadisticas"
+      (filtrosAplicados)="aplicarFiltrosAvanzados($event)"
+      (exportarSolicitado)="exportarExcel($event)">
+    </app-filtros-avanzados>
+  </div>
+
+  <!-- Indicador de filtros activos -->
+  <div *ngIf="hayFiltrosActivos" class="alert alert-info d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <i class="fas fa-filter me-2"></i>
+      <strong>Filtros aplicados:</strong> Se están mostrando resultados filtrados
+    </div>
+    <button type="button" class="btn btn-outline-primary btn-sm" (click)="limpiarTodosFiltros()">
+      <i class="fas fa-times me-1"></i>Limpiar todos los filtros
+    </button>
+  </div>
+
+  <hr />
+
+  <!-- Información de paginación y carga -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <span class="text-muted" *ngIf="!cargandoAfiliados">{{textoPaginacion}}</span>
+      <span class="text-muted" *ngIf="cargandoAfiliados">
+        <i class="fas fa-spinner fa-spin me-1"></i>Cargando afiliados...
+      </span>
+    </div>
+    <div *ngIf="totalPaginas > 1">
+      <nav>
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item" [class.disabled]="paginaActual === 1">
+            <button class="page-link" (click)="cambiarPagina(1)" [disabled]="paginaActual === 1">
+              <i class="fas fa-angle-double-left"></i>
+            </button>
+          </li>
+          <li class="page-item" [class.disabled]="paginaActual === 1">
+            <button class="page-link" (click)="cambiarPagina(paginaActual - 1)" [disabled]="paginaActual === 1">
+              <i class="fas fa-angle-left"></i>
+            </button>
+          </li>
+          <li class="page-item active">
+            <span class="page-link">{{paginaActual}} de {{totalPaginas}}</span>
+          </li>
+          <li class="page-item" [class.disabled]="paginaActual === totalPaginas">
+            <button class="page-link" (click)="cambiarPagina(paginaActual + 1)" [disabled]="paginaActual === totalPaginas">
+              <i class="fas fa-angle-right"></i>
+            </button>
+          </li>
+          <li class="page-item" [class.disabled]="paginaActual === totalPaginas">
+            <button class="page-link" (click)="cambiarPagina(totalPaginas)" [disabled]="paginaActual === totalPaginas">
+              <i class="fas fa-angle-double-right"></i>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Listado de afiliados -->
+  <div *ngIf="!cargandoAfiliados; else loadingTemplate">
+    <app-listado-afiliados
+      [afiliados]="afiliados"
+      [clubes]="clubesNombres"
+      (eliminar)="onEliminarAfiliado($event)"
+      (editar)="onEditarAfiliado($event)"
+      (verDetalle)="onVerDetalleAfiliado($event)">
+    </app-listado-afiliados>
+  </div>
+
+  <!-- Template de carga -->
+  <ng-template #loadingTemplate>
+    <div class="card">
+      <div class="card-body text-center py-5">
+        <div class="spinner-border text-primary mb-3" role="status">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mb-0">Cargando afiliados...</p>
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- Mensaje cuando no hay resultados -->
+  <div *ngIf="!cargandoAfiliados && afiliados.length === 0" class="card">
+    <div class="card-body text-center py-5">
+      <i class="fas fa-search fa-3x text-muted mb-3"></i>
+      <h5 class="text-muted mb-2">No se encontraron afiliados</h5>
+      <p class="text-muted mb-3">
+        <span *ngIf="hayFiltrosActivos">No hay afiliados que coincidan con los filtros aplicados.</span>
+        <span *ngIf="!hayFiltrosActivos">No hay afiliados registrados en el sistema.</span>
+      </p>
+      <button *ngIf="hayFiltrosActivos" type="button" class="btn btn-outline-primary" (click)="limpiarTodosFiltros()">
+        <i class="fas fa-times me-1"></i>Limpiar filtros
+      </button>
+    </div>
+  </div>
+
+  <!-- Paginación inferior -->
+  <div *ngIf="!cargandoAfiliados && afiliados.length > 0 && totalPaginas > 1" class="d-flex justify-content-center mt-4">
+    <nav>
+      <ul class="pagination">
+        <li class="page-item" [class.disabled]="paginaActual === 1">
+          <button class="page-link" (click)="cambiarPagina(1)" [disabled]="paginaActual === 1">
+            Primera
+          </button>
+        </li>
+        <li class="page-item" [class.disabled]="paginaActual === 1">
+          <button class="page-link" (click)="cambiarPagina(paginaActual - 1)" [disabled]="paginaActual === 1">
+            Anterior
+          </button>
+        </li>
+
+        <!-- Páginas numeradas -->
+        <li *ngFor="let pagina of [paginaActual - 2, paginaActual - 1, paginaActual, paginaActual + 1, paginaActual + 2] | slice:0:5"
+            class="page-item"
+            [class.active]="pagina === paginaActual">
+          <ng-container *ngIf="pagina >= 1 && pagina <= totalPaginas">
+            <button class="page-link" (click)="cambiarPagina(pagina)">
+              {{pagina}}
+            </button>
+          </ng-container>
+        </li>
+
+        <li class="page-item" [class.disabled]="paginaActual === totalPaginas">
+          <button class="page-link" (click)="cambiarPagina(paginaActual + 1)" [disabled]="paginaActual === totalPaginas">
+            Siguiente
+          </button>
+        </li>
+        <li class="page-item" [class.disabled]="paginaActual === totalPaginas">
+          <button class="page-link" (click)="cambiarPagina(totalPaginas)" [disabled]="paginaActual === totalPaginas">
+            Última
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>

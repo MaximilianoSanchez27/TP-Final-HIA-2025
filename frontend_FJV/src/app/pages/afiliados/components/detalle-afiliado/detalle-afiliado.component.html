@@ -1,0 +1,383 @@
+<div class="container my-4">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="mt-2">Cargando datos del afiliado...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="alert alert-danger">
+    <i class="fas fa-exclamation-triangle me-2"></i>{{ error }}
+    <div class="mt-2">
+      <button class="btn btn-outline-danger btn-sm" (click)="onVolver()">
+        <i class="fas fa-arrow-left me-1"></i>Volver al listado
+      </button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="afiliado && !loading">
+    <!-- Header Responsive -->
+    <div class="header-section mb-4">
+      <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center gap-3">
+        <div class="header-info">
+          <h2 class="mb-1">
+            <i class="fas fa-user me-2"></i>{{ afiliado.apellidoNombre }}
+          </h2>
+          <p class="text-muted mb-0">
+            <i class="fas fa-id-card me-1"></i>DNI: {{ afiliado.dni }} |
+            <i class="fas fa-birthday-cake me-1 ms-2"></i>{{ calcularEdad() }} años
+          </p>
+        </div>
+
+        <!-- Botones de acción responsive -->
+        <div class="header-actions w-100 w-lg-auto">
+          <div class="d-grid d-lg-flex gap-2">
+            <button class="btn btn-primary" (click)="onEditar()">
+              <i class="fas fa-edit me-1"></i>Editar
+            </button>
+            <button class="btn btn-success" *ngIf="credencial && esCredencialActiva()" (click)="onGenerarCredencial()">
+              <i class="fas fa-id-card me-1"></i>Generar Credencial
+            </button>
+            <button class="btn btn-info" *ngIf="credencial" (click)="onVerCredencial()">
+              <i class="fas fa-id-badge me-1"></i>Ver Credencial
+            </button>
+            <button class="btn btn-outline-success" *ngIf="!credencial && !loading" (click)="onCrearCredencial()">
+              <i class="fas fa-plus me-1"></i>Crear Credencial
+            </button>
+            <button class="btn btn-outline-warning" *ngIf="credencial && esCredencialActiva()" (click)="onRenovarCredencial()">
+              <i class="fas fa-redo me-1"></i>Renovar Credencial
+            </button>
+            <button class="btn btn-secondary" (click)="onVolver()">
+              <i class="fas fa-arrow-left me-1"></i>Volver
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Layout Responsive con máximo ancho -->
+    <div class="row g-4 justify-content-center">
+      <div class="col-12" style="max-width: 1400px;">
+        <div class="row g-4">
+          <!-- Sidebar (foto y resumen) -->
+          <div class="col-12 col-lg-4 col-xl-3">
+            <!-- Foto de perfil -->
+            <div class="card mb-4">
+              <div class="card-header bg-light">
+                <h6 class="mb-0"><i class="fas fa-camera me-2"></i>Foto de Perfil</h6>
+              </div>
+              <div class="card-body text-center">
+                <div *ngIf="getAvatarUrl(); else avatarIcon" class="mb-3">
+                  <img [src]="getAvatarUrl()" class="rounded border profile-image" [alt]="afiliado.apellidoNombre">
+                </div>
+                <ng-template #avatarIcon>
+                  <div class="profile-placeholder mb-3">
+                    <i [class]="getAvatarIcon().icon" [style.color]="getAvatarIcon().color"></i>
+                  </div>
+                </ng-template>
+              </div>
+            </div>
+
+            <!-- Estado actual (mobile-friendly) -->
+            <div class="card mb-4">
+              <div class="card-header bg-light">
+                <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Estado Actual</h6>
+              </div>
+              <div class="card-body">
+                <div class="status-item mb-3">
+                  <strong>Licencia del Afiliado:</strong>
+                  <span class="badge ms-2" [class]="afiliado.estadoLicencia === 'ACTIVO' ? 'bg-success' :
+                               (afiliado.estadoLicencia === 'SUSPENDIDO' ? 'bg-warning text-dark' :
+                               (afiliado.estadoLicencia === 'VENCIDO' ? 'bg-danger' : 'bg-secondary'))">
+                    {{ afiliado.estadoLicencia || 'NO DEFINIDO' }}
+                  </span>
+                  <small class="text-muted d-block mt-1">Estado de la licencia del afiliado</small>
+                </div>
+
+                <div class="status-item mb-3" *ngIf="afiliado.fechaLicenciaBaja">
+                  <strong>Vence:</strong> {{ formatearFecha(afiliado.fechaLicenciaBaja) }}
+                </div>
+
+                <div class="status-item mb-3">
+                  <strong>Credencial:</strong>
+                  <span *ngIf="credencial" class="badge ms-2" [class]="getEstadoBadgeClass(credencial.estado)">
+                    {{ credencial.estado }}
+                  </span>
+                  <span *ngIf="!credencial" class="badge bg-secondary ms-2">Sin credencial</span>
+                  <small class="text-muted d-block mt-1">Estado de la credencial digital</small>
+                </div>
+
+                <div class="status-item" *ngIf="credencial">
+                  <strong>Número de Credencial:</strong> {{ credencial.numeroCredencial || credencial.identificador }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contenido principal -->
+          <div class="col-12 col-lg-8 col-xl-9">
+            <!-- Datos personales -->
+            <div class="card mb-4">
+              <div class="card-header bg-light">
+                <h5 class="mb-0"><i class="fas fa-user me-2"></i>Datos Personales</h5>
+              </div>
+              <div class="card-body">
+                <div class="row g-3">
+                  <div class="col-12 col-md-6">
+                    <label class="form-label text-muted">Apellido y Nombre</label>
+                    <div class="fw-bold">{{ afiliado.apellidoNombre }}</div>
+                  </div>
+                  <div class="col-6 col-md-3">
+                    <label class="form-label text-muted">DNI</label>
+                    <div class="fw-bold">{{ afiliado.dni }}</div>
+                  </div>
+                  <div class="col-6 col-md-3">
+                    <label class="form-label text-muted">Edad</label>
+                    <div class="fw-bold">{{ calcularEdad() }} años</div>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <label class="form-label text-muted">Fecha de Nacimiento</label>
+                    <div>{{ formatearFecha(afiliado.fechaNacimiento) }}</div>
+                  </div>
+                  <div class="col-6 col-md-4">
+                    <label class="form-label text-muted">N° Afiliación</label>
+                    <div>{{ afiliado.numeroAfiliacion || 'No asignado' }}</div>
+                  </div>
+                  <div class="col-6 col-md-4">
+                    <label class="form-label text-muted">Licencia</label>
+                    <div>{{ afiliado.licencia || 'No especificada' }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Datos deportivos y licencia -->
+            <div class="card mb-4">
+              <div class="card-header bg-light">
+                <h5 class="mb-0"><i class="fas fa-volleyball-ball me-2"></i>Datos Deportivos y Licencia</h5>
+              </div>
+              <div class="card-body">
+                <div class="row g-3">
+                  <div class="col-12 col-md-4">
+                    <label class="form-label text-muted">Tipo</label>
+                    <div class="fw-bold">
+                  <ng-container *ngIf="afiliado.tipo && afiliado.tipo.length > 0; else noTipo">
+                    <span *ngFor="let t of afiliado.tipo" class="badge bg-primary me-1 mb-1">{{ t }}</span>
+                  </ng-container>
+                  <ng-template #noTipo>No especificado</ng-template>
+                </div>
+                  </div>
+                  <div class="col-6 col-md-4">
+                    <label class="form-label text-muted">Categoría</label>
+                    <div>{{ afiliado.categoria || 'No especificada' }}</div>
+                  </div>
+                  <div class="col-6 col-md-4">
+                    <label class="form-label text-muted">Nivel</label>
+                    <div>{{ afiliado.categoriaNivel || 'No especificado' }}</div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label class="form-label text-muted">Club Actual</label>
+                    <div class="fw-bold">{{ afiliado.club || 'Sin club' }}</div>
+                  </div>
+
+                  <!-- Estado de licencia responsive -->
+                  <div class="col-12">
+                    <hr class="my-3">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
+                      <h6 class="text-primary mb-2 mb-md-0">
+                        <i class="fas fa-id-card me-2"></i>Estado de Licencia del Afiliado
+                      </h6>
+                      <button class="btn btn-sm btn-outline-primary" (click)="onEditar()">
+                        <i class="fas fa-edit me-1"></i>Editar Estado
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="col-6 col-md-3">
+                    <label class="form-label text-muted">Fecha Licencia</label>
+                    <div>{{ formatearFecha(afiliado.fechaLicencia) }}</div>
+                  </div>
+                  <div class="col-6 col-md-3">
+                    <label class="form-label text-muted">Vencimiento</label>
+                    <div>{{ formatearFecha(afiliado.fechaLicenciaBaja) }}</div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label class="form-label text-muted">Estado Licencia</label>
+                    <div>
+                      <span class="badge" [class]="afiliado.estadoLicencia === 'ACTIVO' ? 'bg-success' :
+                                   (afiliado.estadoLicencia === 'SUSPENDIDO' ? 'bg-warning text-dark' :
+                                   (afiliado.estadoLicencia === 'VENCIDO' ? 'bg-danger' : 'bg-secondary'))">
+                        {{ afiliado.estadoLicencia || 'NO DEFINIDO' }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Nota explicativa -->
+                  <div class="col-12">
+                    <div class="alert alert-info">
+                      <i class="fas fa-info-circle me-2"></i>
+                      <strong>Nota:</strong> El estado de licencia del afiliado es independiente del estado de las credenciales digitales.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Información de pase (si existe) -->
+            <div *ngIf="tienePase()" class="card mb-4">
+              <div class="card-header bg-light">
+                <h5 class="mb-0"><i class="fas fa-exchange-alt me-2"></i>Información de Pase</h5>
+              </div>
+              <div class="card-body">
+                <div class="row g-3">
+                  <div class="col-12 col-md-4">
+                    <label class="form-label text-muted">Tipo de Pase</label>
+                    <div class="fw-bold">{{ afiliado.pase }}</div>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <label class="form-label text-muted">Club Destino</label>
+                    <div>{{ afiliado.clubDestino || 'No especificado' }}</div>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <label class="form-label text-muted">Fecha de Pase</label>
+                    <div>{{ formatearFecha(afiliado.fechaPase) }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Historial de Pases -->
+            <div class="mb-4">
+              <app-historial-pases
+                [idPersona]="afiliado.idPersona || null"
+                [mostrarTitulo]="true"
+                [maxPases]="5">
+              </app-historial-pases>
+            </div>
+
+            <!-- Credencial única -->
+            <div class="card mb-4">
+              <div class="card-header bg-light d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
+                <h5 class="mb-0">
+                  <i class="fas fa-id-badge me-2"></i>Credencial del Afiliado
+                </h5>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge" [class]="credencial ? 'bg-success' : 'bg-secondary'">
+                    {{ credencial ? 'Tiene credencial' : 'Sin credencial' }}
+                  </span>
+                  <button *ngIf="!credencial && !loading" class="btn btn-sm btn-outline-success" (click)="onCrearCredencial()">
+                    <i class="fas fa-plus me-1"></i>Crear
+                  </button>
+                </div>
+              </div>
+              <div class="card-body">
+                <!-- Sin credencial -->
+                <div *ngIf="!credencial" class="text-center py-4">
+                  <i class="fas fa-id-badge fa-3x text-muted mb-3"></i>
+                  <h6 class="text-muted">Este afiliado no tiene credencial</h6>
+                  <p class="text-muted">Es necesaria una credencial para generar documentos oficiales.</p>
+                  <button class="btn btn-success" (click)="onCrearCredencial()">
+                    <i class="fas fa-plus me-2"></i>Crear Credencial
+                  </button>
+                </div>
+
+                <!-- Credencial existente -->
+                <div *ngIf="credencial" class="credencial-info">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label class="form-label text-muted">Identificador</label>
+                      <div class="fw-bold">{{ credencial.identificador }}</div>
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label text-muted">Estado</label>
+                      <div>
+                        <span class="badge" [class]="getEstadoBadgeClass(credencial.estado)">
+                          {{ credencial.estado }}
+                        </span>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label text-muted">Fecha Emisión</label>
+                      <div>{{ formatearFecha(credencial.fechaAlta) }}</div>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label text-muted">Fecha Vencimiento</label>
+                      <div>{{ formatearFecha(credencial.fechaVencimiento) }}</div>
+                    </div>
+                    <div class="col-md-8" *ngIf="credencial.motivoSuspension">
+                      <label class="form-label text-muted">Motivo de Suspensión</label>
+                      <div class="text-warning">{{ credencial.motivoSuspension }}</div>
+                    </div>
+                  </div>
+
+                  <!-- Acciones para la credencial -->
+                  <div class="mt-4">
+                    <h6 class="text-muted mb-3">Acciones Disponibles:</h6>
+                    <div class="btn-group" role="group">
+                      <button *ngIf="esCredencialActiva()" class="btn btn-outline-warning btn-sm" (click)="onRenovarCredencial()">
+                        <i class="fas fa-redo me-1"></i>Renovar
+                      </button>
+                      <button *ngIf="esCredencialActiva()" class="btn btn-outline-danger btn-sm" (click)="onSuspenderCredencial()">
+                        <i class="fas fa-ban me-1"></i>Suspender
+                      </button>
+                      <button *ngIf="esCredencialSuspendida()" class="btn btn-outline-success btn-sm" (click)="onReactivarCredencial()">
+                        <i class="fas fa-check me-1"></i>Reactivar
+                      </button>
+                      <button *ngIf="esCredencialVencida()" class="btn btn-outline-primary btn-sm" (click)="onRenovarCredencial()">
+                        <i class="fas fa-redo me-1"></i>Renovar
+                      </button>
+                      <button class="btn btn-outline-info btn-sm" (click)="onVerCredencial()">
+                        <i class="fas fa-eye me-1"></i>Ver Credencial
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modales -->
+            <div *ngIf="mostrarGeneradorCredencial && afiliado && credencial"
+                 class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+              <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">
+                      <i class="fas fa-id-card me-2"></i>Generar Credencial - {{ afiliado.apellidoNombre }}
+                    </h5>
+                    <button type="button" class="btn-close" (click)="cerrarGeneradorCredencial()"></button>
+                  </div>
+                  <div class="modal-body">
+                    <app-generador-credencial [afiliado]="afiliado" [credencial]="credencial"></app-generador-credencial>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="cerrarGeneradorCredencial()">Cerrar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="mostrarVisualizadorCredencial && afiliado && credencial"
+                 class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+              <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">
+                      <i class="fas fa-id-badge me-2"></i>Credencial - {{ afiliado.apellidoNombre }}
+                    </h5>
+                    <button type="button" class="btn-close" (click)="cerrarVisualizadorCredencial()"></button>
+                  </div>
+                  <div class="modal-body p-0">
+                    <app-visualizador-credencial [afiliado]="afiliado" [credenciales]="[credencial]"></app-visualizador-credencial>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,407 @@
+<div class="lista-clubes-container">
+  <div class="container-fluid px-4">
+    <!-- Vista Desktop -->
+    <div class="table-responsive d-none d-lg-block">
+      <h3 class="mb-3">Listado de Clubes</h3>
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Club</th>
+            <th>Email</th>
+            <th>CUIT</th>
+            <th>Estado</th>
+            <th>Fecha Afiliación</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let club of clubes">
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="me-3">
+                  <div *ngIf="getLogoUrl(club); else clubIcon" class="avatar-container">
+                    <img [src]="getLogoUrl(club)"
+                         class="rounded border"
+                         width="40"
+                         height="40"
+                         style="object-fit: cover;"
+                         [alt]="club.nombre">
+                  </div>
+                  <ng-template #clubIcon>
+                    <div class="avatar-icon-simple d-flex align-items-center justify-content-center"
+                         style="width: 40px; height: 40px;">
+                      <i class="fas fa-building text-primary" style="font-size: 1.5rem;"></i>
+                    </div>
+                  </ng-template>
+                </div>
+                <div>
+                  <div class="fw-bold">{{ club.nombre }}</div>
+                  <small class="text-muted">
+                    ID: {{ club.idClub }}
+                  </small>
+                </div>
+              </div>
+            </td>
+            <td>{{ club.email }}</td>
+            <td>{{ formatearCuit(club.cuit) }}</td>
+            <td>
+              <span class="badge" [class]="getEstadoBadgeClass(club.estadoAfiliacion)">
+                {{ club.estadoAfiliacion || 'Sin estado' }}
+              </span>
+            </td>
+            <td>
+              <div *ngIf="club.fechaAfiliacion; else sinFecha">
+                {{ club.fechaAfiliacion | date:'dd/MM/yyyy' }}
+              </div>
+              <ng-template #sinFecha>
+                <span class="text-muted">Sin fecha</span>
+              </ng-template>
+            </td>
+            <td>
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-info" (click)="onEditar(club)" title="Editar">
+                  <i class="fas fa-edit me-1"></i>Editar
+                </button>
+                <button class="btn btn-outline-danger" (click)="onEliminar(confirmDeleteModal, club)" title="Eliminar">
+                  <i class="fas fa-trash me-1"></i>Eliminar
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Vista Mobile/Tablet (Cards) -->
+    <div class="d-lg-none">
+      <div class="row row-cols-1 row-cols-md-2 g-3">
+        <div class="col" *ngFor="let club of clubes">
+          <div class="card club-card h-100">
+            <div class="card-body">
+              <!-- Header con logo y nombre -->
+              <div class="d-flex align-items-center mb-3">
+                <div class="me-3">
+                  <div *ngIf="getLogoUrl(club); else mobileClubIcon" class="avatar-container">
+                    <img [src]="getLogoUrl(club)"
+                         class="rounded border"
+                         width="50"
+                         height="50"
+                         style="object-fit: cover;"
+                         [alt]="club.nombre">
+                  </div>
+                  <ng-template #mobileClubIcon>
+                    <div class="avatar-icon-simple d-flex align-items-center justify-content-center"
+                         style="width: 50px; height: 50px;">
+                      <i class="fas fa-building text-primary" style="font-size: 1.8rem;"></i>
+                    </div>
+                  </ng-template>
+                </div>
+                <div class="flex-grow-1">
+                  <h6 class="mb-1 fw-bold">{{ club.nombre }}</h6>
+                  <small class="text-muted">ID: {{ club.idClub }}</small>
+                </div>
+              </div>
+
+              <!-- Información principal -->
+              <div class="row g-2 mb-3">
+                <div class="col-6">
+                  <small class="text-muted d-block">CUIT</small>
+                  <span class="fw-bold">{{ formatearCuit(club.cuit) }}</span>
+                </div>
+                <div class="col-6">
+                  <small class="text-muted d-block">Estado</small>
+                  <span class="badge" [class]="getEstadoBadgeClass(club.estadoAfiliacion)">
+                    {{ club.estadoAfiliacion || 'Sin estado' }}
+                  </span>
+                </div>
+                <div class="col-12">
+                  <small class="text-muted d-block">Email</small>
+                  <span class="fw-bold">{{ club.email }}</span>
+                </div>
+                <div class="col-12" *ngIf="club.telefono">
+                  <small class="text-muted d-block">Teléfono</small>
+                  <span>{{ club.telefono }}</span>
+                </div>
+                <div class="col-12">
+                  <small class="text-muted d-block">Dirección</small>
+                  <span class="text-muted">{{ club.direccion }}</span>
+                </div>
+              </div>
+
+              <!-- Fecha de afiliación -->
+              <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center">
+                  <small class="text-muted">Fecha Afiliación</small>
+                  <div class="text-end">
+                    <div *ngIf="club.fechaAfiliacion; else sinFechaMobile" class="fw-bold">
+                      {{ club.fechaAfiliacion | date:'dd/MM/yyyy' }}
+                    </div>
+                    <ng-template #sinFechaMobile>
+                      <span class="text-muted">Sin fecha</span>
+                    </ng-template>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Acciones -->
+              <div class="d-grid gap-2">
+                <div class="btn-group" role="group">
+                  <button type="button" class="btn btn-outline-info btn-sm" (click)="onEditar(club)">
+                    <i class="fas fa-edit me-1"></i>Editar
+                  </button>
+                  <button type="button" class="btn btn-outline-danger btn-sm" (click)="onEliminar(confirmDeleteModal, club)">
+                    <i class="fas fa-trash me-1"></i>Eliminar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado vacío -->
+    <div *ngIf="!clubes || clubes.length === 0" class="empty-state text-center py-5">
+      <i class="fas fa-building fa-3x text-muted mb-3"></i>
+      <h5 class="text-muted">No hay clubes para mostrar</h5>
+      <p class="text-muted">No hay clubes registrados que coincidan con la búsqueda.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de confirmación de eliminación -->
+<div *ngIf="clubParaEliminar" class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h6 class="modal-title">Confirmar eliminación</h6>
+      </div>
+      <div class="modal-body text-center">
+        <i class="fas fa-exclamation-triangle fa-2x text-warning mb-3"></i>
+        <p class="mb-3">¿Eliminar el club <strong>{{ clubParaEliminar.nombre }}</strong>?</p>
+        <div class="d-flex gap-2 justify-content-center">
+          <button class="btn btn-danger" (click)="confirmarEliminacion()">
+            <i class="fas fa-trash me-1"></i>Eliminar
+          </button>
+          <button class="btn btn-secondary" (click)="cancelarEliminacion()">
+            <i class="fas fa-times me-1"></i>Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Edición/Creación de Club -->
+<div *ngIf="mostrarModalEdicion" class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">
+          <i class="fas fa-building me-2"></i>
+          {{ clubParaEditar ? 'Editar Club' : 'Nuevo Club' }}
+        </h5>
+        <button type="button" class="btn-close btn-close-white" (click)="cerrarModalLocal()"></button>
+      </div>
+      <div class="modal-body p-0">
+        <!-- Formulario de Club Integrado -->
+        <div class="p-4">
+          <!-- Mensajes de estado -->
+          <div *ngIf="mensajeExito" class="alert alert-success alert-dismissible fade show">
+            <i class="fas fa-check-circle me-2"></i>{{ mensajeExito }}
+            <button type="button" class="btn-close" (click)="mensajeExito = ''"></button>
+          </div>
+
+          <div *ngIf="mensajeError" class="alert alert-danger alert-dismissible fade show">
+            <i class="fas fa-exclamation-triangle me-2"></i>{{ mensajeError }}
+            <button type="button" class="btn-close" (click)="mensajeError = ''"></button>
+          </div>
+
+          <!-- Formulario -->
+          <form [formGroup]="clubForm" (ngSubmit)="onSubmitModal()">
+            <div class="row">
+              <!-- Nombre -->
+              <div class="col-md-6 mb-3">
+                <label for="nombre" class="form-label">Nombre <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-building"></i></span>
+                  <input
+                    type="text"
+                    formControlName="nombre"
+                    class="form-control"
+                    id="nombre"
+                    placeholder="Nombre del club"
+                    [class.is-invalid]="isFieldInvalid('nombre')">
+                </div>
+                <div class="invalid-feedback" *ngIf="isFieldInvalid('nombre')">
+                  <div *ngIf="clubForm.get('nombre')?.errors?.['required']">El nombre es obligatorio</div>
+                  <div *ngIf="clubForm.get('nombre')?.errors?.['minlength']">Mínimo 3 caracteres</div>
+                </div>
+              </div>
+
+              <!-- CUIT -->
+              <div class="col-md-6 mb-3">
+                <label for="cuit" class="form-label">CUIT <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                  <input
+                    type="text"
+                    formControlName="cuit"
+                    class="form-control"
+                    id="cuit"
+                    placeholder="XX-XXXXXXXX-X"
+                    [class.is-invalid]="isFieldInvalid('cuit')">
+                </div>
+                <div class="invalid-feedback" *ngIf="isFieldInvalid('cuit')">
+                  <div *ngIf="clubForm.get('cuit')?.errors?.['required']">El CUIT es obligatorio</div>
+                  <div *ngIf="clubForm.get('cuit')?.errors?.['pattern']">Formato inválido (XX-XXXXXXXX-X)</div>
+                </div>
+              </div>
+
+              <!-- Email -->
+              <div class="col-md-6 mb-3">
+                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                  <input
+                    type="email"
+                    formControlName="email"
+                    class="form-control"
+                    id="email"
+                    placeholder="club@ejemplo.com"
+                    [class.is-invalid]="isFieldInvalid('email')">
+                </div>
+                <div class="invalid-feedback" *ngIf="isFieldInvalid('email')">
+                  <div *ngIf="clubForm.get('email')?.errors?.['required']">El email es obligatorio</div>
+                  <div *ngIf="clubForm.get('email')?.errors?.['email']">Formato de email inválido</div>
+                </div>
+              </div>
+
+              <!-- Teléfono -->
+              <div class="col-md-6 mb-3">
+                <label for="telefono" class="form-label">Teléfono</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                  <input
+                    type="text"
+                    formControlName="telefono"
+                    class="form-control"
+                    id="telefono"
+                    placeholder="Número de teléfono"
+                    [class.is-invalid]="isFieldInvalid('telefono')">
+                </div>
+                <div class="invalid-feedback" *ngIf="isFieldInvalid('telefono')">
+                  Formato de teléfono inválido
+                </div>
+              </div>
+
+              <!-- Dirección -->
+              <div class="col-12 mb-3">
+                <label for="direccion" class="form-label">Dirección <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                  <input
+                    type="text"
+                    formControlName="direccion"
+                    class="form-control"
+                    id="direccion"
+                    placeholder="Dirección completa"
+                    [class.is-invalid]="isFieldInvalid('direccion')">
+                </div>
+                <div class="invalid-feedback" *ngIf="isFieldInvalid('direccion')">
+                  <div *ngIf="clubForm.get('direccion')?.errors?.['required']">La dirección es obligatoria</div>
+                  <div *ngIf="clubForm.get('direccion')?.errors?.['minlength']">Mínimo 5 caracteres</div>
+                </div>
+              </div>
+
+              <!-- Fecha de Afiliación -->
+              <div class="col-md-6 mb-3">
+                <label for="fechaAfiliacion" class="form-label">Fecha de Afiliación <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                  <input
+                    type="date"
+                    formControlName="fechaAfiliacion"
+                    class="form-control"
+                    id="fechaAfiliacion"
+                    [class.is-invalid]="isFieldInvalid('fechaAfiliacion')">
+                </div>
+                <div class="invalid-feedback" *ngIf="isFieldInvalid('fechaAfiliacion')">
+                  La fecha de afiliación es obligatoria
+                </div>
+              </div>
+
+              <!-- Estado de Afiliación -->
+              <div class="col-md-6 mb-3">
+                <label for="estadoAfiliacion" class="form-label">Estado de Afiliación <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-info-circle"></i></span>
+                  <select
+                    formControlName="estadoAfiliacion"
+                    class="form-select"
+                    id="estadoAfiliacion"
+                    [class.is-invalid]="isFieldInvalid('estadoAfiliacion')">
+                    <option value="">Seleccionar estado</option>
+                    <option value="Activo">Activo</option>
+                    <option value="Inactivo">Inactivo</option>
+                    <option value="Suspendido">Suspendido</option>
+                  </select>
+                </div>
+                <div class="invalid-feedback" *ngIf="isFieldInvalid('estadoAfiliacion')">
+                  El estado de afiliación es obligatorio
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cerrarModalLocal()">
+          <i class="fas fa-times me-2"></i>Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          [disabled]="procesando || clubForm.invalid"
+          (click)="onSubmitModal()">
+          <span *ngIf="procesando" class="spinner-border spinner-border-sm me-2"></span>
+          <i *ngIf="!procesando" class="fas fa-save me-2"></i>
+          {{ procesando ? 'Guardando...' : (clubParaEditar ? 'Actualizar' : 'Crear') }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de confirmación de eliminación -->
+<ng-template #confirmDeleteModal let-modal>
+  <div class="modal-header border-0">
+    <h5 class="modal-title text-danger">
+      <i class="fas fa-exclamation-triangle me-2"></i>
+      Confirmar eliminación
+    </h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body text-center">
+    <div class="mb-3">
+      <i class="fas fa-trash-alt fa-3x text-danger mb-3"></i>
+      <h6>¿Eliminar el club permanentemente?</h6>
+      <p class="mb-3">Se eliminará <strong>"{{ clubParaEliminar?.nombre }}"</strong> del sistema.</p>
+    </div>
+    <div class="alert alert-warning d-flex align-items-center">
+      <i class="fas fa-exclamation-triangle me-2"></i>
+      <div>
+        <strong>¡Atención!</strong> Esta acción no se puede deshacer.
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer border-0 justify-content-center">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">
+      <i class="fas fa-times me-1"></i>Cancelar
+    </button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('confirm')">
+      <i class="fas fa-trash me-1"></i>Sí, eliminar
+    </button>
+  </div>
+</ng-template>

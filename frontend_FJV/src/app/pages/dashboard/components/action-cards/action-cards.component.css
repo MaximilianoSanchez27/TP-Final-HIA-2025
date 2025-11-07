@@ -1,0 +1,33 @@
+/* Tarjetas de acciones */
+.action-card {
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.action-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 20px rgba(0,0,0,0.1) !important;
+}
+
+.action-icon-wrapper {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.action-icon {
+  font-size: 1.8rem;
+}
+
+.card-header {
+  border-bottom: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .action-card {
+    margin-bottom: 1rem;
+  }
+}

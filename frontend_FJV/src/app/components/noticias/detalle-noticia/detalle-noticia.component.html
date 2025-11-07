@@ -1,0 +1,267 @@
+<div class="detalle-noticia">
+  <div class="container py-5">
+    <!-- Encabezado con navegación y acciones -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <button (click)="volver()" class="btn btn-outline-primary">
+        <i class="fas fa-arrow-left me-2"></i> Volver
+      </button>
+
+      <!-- Acciones para admins -->
+      <div *ngIf="isAdmin && noticia" class="d-flex gap-2">
+        <button (click)="irAEditar()" class="btn btn-outline-secondary">
+          <i class="fas fa-edit me-1"></i> Editar
+        </button>
+
+        <div class="dropdown">
+          <button class="btn btn-outline-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-cog me-1"></i> Estado
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <li><button class="dropdown-item" [class.active]="noticia.estado === 'ACTIVO'" (click)="cambiarEstado('ACTIVO')">
+              <i class="fas fa-check-circle me-2 text-success"></i>Activo
+            </button></li>
+            <li><button class="dropdown-item" [class.active]="noticia.estado === 'INACTIVO'" (click)="cambiarEstado('INACTIVO')">
+              <i class="fas fa-times-circle me-2 text-danger"></i>Inactivo
+            </button></li>
+            <li><button class="dropdown-item" [class.active]="noticia.estado === 'BORRADOR'" (click)="cambiarEstado('BORRADOR')">
+              <i class="fas fa-file me-2 text-secondary"></i>Borrador
+            </button></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado de carga -->
+    <div *ngIf="isLoading" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <p class="mt-2">Cargando noticia...</p>
+    </div>
+
+    <!-- Mensaje de error mejorado -->
+    <div *ngIf="error" class="alert alert-danger mb-4">
+      <div class="text-center py-5">
+        <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+        <h3 class="h4 mb-3">¡Ups! Noticia no encontrada</h3>
+        <div [innerHTML]="error" class="mb-4"></div>
+
+        <div class="mt-4">
+          <a [routerLink]="['/noticias']" class="btn btn-outline-primary me-2">
+            <i class="fas fa-newspaper me-2"></i>Ver todas las noticias
+          </a>
+          <a [routerLink]="['/']" class="btn btn-outline-secondary">
+            <i class="fas fa-home me-2"></i>Ir al inicio
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenido de la noticia -->
+    <div *ngIf="!isLoading && !error && noticia" class="row">
+      <div class="col-lg-8">
+        <!-- Estado para admins -->
+        <div *ngIf="isAdmin" class="mb-3">
+          <span class="badge"
+                [ngClass]="{
+                  'bg-success': noticia.estado === 'ACTIVO',
+                  'bg-danger': noticia.estado === 'INACTIVO',
+                  'bg-secondary': noticia.estado === 'BORRADOR'
+                }">
+            {{ noticia.estado }}
+          </span>
+          <span *ngIf="noticia.destacado" class="badge bg-warning text-dark ms-2">
+            <i class="fas fa-star me-1"></i>Destacado
+          </span>
+        </div>
+
+        <!-- Título y metadata -->
+        <div class="mb-4">
+          <span class="badge bg-primary category-badge mb-2">{{noticia.categoria}}</span>
+          <h1 class="display-5 fw-bold">{{noticia.titulo}}</h1>
+
+          <div class="d-flex flex-wrap align-items-center text-muted mt-3">
+            <span class="me-3">
+              <i class="far fa-calendar-alt me-1"></i> {{formatearFecha(noticia.fechaPublicacion)}}
+            </span>
+            <!-- Contador de vistas dinámico SOLO para admin -->
+            <span class="me-3" *ngIf="isAdmin">
+              <app-contador-vistas
+                #contadorVistas
+                [noticiaId]="noticia.idNoticia ?? 0"
+                [vistasNoticia]="noticia.vistas"
+                [actualizarEnTiempoReal]="true"
+                [mostrarInfo]="false">
+              </app-contador-vistas> vistas
+            </span>
+            <!-- Autor de la noticia (solo para admins) -->
+            <span *ngIf="isAdmin && noticia.autor && !(noticia.autor.nombre === 'Admin' && noticia.autor.apellido === 'Sistema')">
+              <i class="far fa-user me-1"></i> {{noticia.autor.nombre}} {{noticia.autor.apellido}}
+            </span>
+          </div>
+        </div>
+
+        <!-- Imagen principal -->
+        <div *ngIf="noticia.imagenPrincipal" class="mb-4">
+          <figure class="figure w-100">
+            <img [src]="noticia.imagenPrincipal"
+                 [alt]="noticia.imagenPrincipalAlt || noticia.titulo"
+                 class="figure-img img-fluid rounded w-100"
+                 (error)="handleImageError($event)">
+            <figcaption *ngIf="noticia.imagenPrincipalAlt" class="figure-caption text-center mt-2">
+              {{noticia.imagenPrincipalAlt}}
+            </figcaption>
+          </figure>
+        </div>
+
+        <!-- Resumen -->
+        <div *ngIf="noticia.resumen" class="noticia-resumen mb-4">
+          <p class="lead">{{noticia.resumen}}</p>
+        </div>
+
+        <!-- Contenido por bloques -->
+        <div class="noticia-contenido">
+          <ng-container *ngFor="let bloque of noticia.bloques">
+            <!-- Bloque de texto -->
+            <div *ngIf="bloque.tipo === 'texto'" class="mb-4 bloque-texto">
+              <div [innerHTML]="getTextoProcesado(bloque.contenido)"></div>
+            </div>
+
+            <!-- Bloque de imagen -->
+            <div *ngIf="bloque.tipo === 'imagen'" class="mb-4 bloque-imagen"
+                 [ngClass]="{'text-center': bloque.alineacion === 'center',
+                            'text-start': bloque.alineacion === 'left',
+                            'text-end': bloque.alineacion === 'right'}">
+              <figure class="figure">
+                <img [src]="bloque.url"
+                     [alt]="bloque.alt"
+                     class="figure-img img-fluid rounded"
+                     [style.max-width]="bloque.ancho"
+                     (error)="handleImageError($event)">
+                <figcaption *ngIf="bloque.caption" class="figure-caption mt-2">
+                  {{bloque.caption}}
+                </figcaption>
+              </figure>
+            </div>
+
+            <!-- Bloque de galería -->
+            <div *ngIf="bloque.tipo === 'galeria'" class="mb-4 bloque-galeria">
+              <div class="row g-3" [ngClass]="{'row-cols-1': bloque.columnas === 1,
+                                              'row-cols-2': bloque.columnas === 2,
+                                              'row-cols-3': bloque.columnas === 3,
+                                              'row-cols-md-2': bloque.columnas !== 1}">
+                <div class="col" *ngFor="let imagen of bloque.imagenes">
+                  <figure class="figure mb-0">
+                    <img [src]="imagen.url"
+                         [alt]="imagen.alt"
+                         class="figure-img img-fluid rounded w-100"
+                         style="max-height: 200px; object-fit: cover;"
+                         (error)="handleImageError($event)">
+                    <figcaption *ngIf="imagen.caption" class="figure-caption mt-1">
+                      {{imagen.caption}}
+                    </figcaption>
+                  </figure>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+
+        <!-- Etiquetas -->
+        <div *ngIf="noticia.etiquetas" class="mt-5 mb-4">
+          <h4 class="h5">Etiquetas:</h4>
+          <div class="d-flex flex-wrap gap-2">
+            <span *ngFor="let etiqueta of noticia.etiquetas.split(',')" class="badge bg-light text-dark etiqueta">
+              #{{etiqueta.trim()}}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar - MODIFICADO PARA QUE SEA ESTÁTICO Y FUNCIONE LA NAVEGACIÓN -->
+      <div class="col-lg-4 mt-5 mt-lg-0">
+        <div class="sidebar sticky-sidebar">
+          <!-- Noticias Relacionadas -->
+          <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+              <h4 class="h5 mb-0">Noticias Relacionadas</h4>
+            </div>
+            <div class="card-body p-0">
+              <ul class="list-group list-group-flush">
+                <li *ngFor="let noticiaItem of noticiasRelacionadas" class="list-group-item">
+                  <a [routerLink]="['/noticias', noticiaItem.categoria.toLowerCase(), noticiaItem.slug || noticiaService.generateSlug(noticiaItem.titulo)]"
+                     (click)="navegarANoticia()"
+                     class="text-decoration-none d-block">
+                    <div class="row g-0">
+                      <div class="col-3">
+                        <img [src]="noticiaItem.imagenPrincipal || imagenPorDefecto"
+                             [alt]="noticiaItem.titulo"
+                             class="img-fluid rounded"
+                             (error)="handleImageError($event)">
+                      </div>
+                      <div class="col-9">
+                        <div class="ms-2">
+                          <h6 class="mb-1 small fw-bold text-truncate">{{noticiaItem.titulo}}</h6>
+                          <small class="text-muted">{{formatearFechaCorta(noticiaItem.fechaPublicacion)}}</small>
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+                <li *ngIf="noticiasRelacionadas.length === 0" class="list-group-item text-center py-3">
+                  <small class="text-muted">No hay noticias relacionadas disponibles</small>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Tarjeta de noticias recientes -->
+          <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-secondary text-white">
+              <h4 class="h5 mb-0">Últimas Noticias</h4>
+            </div>
+            <div class="card-body p-0">
+              <ul class="list-group list-group-flush">
+                <li *ngFor="let noticiaItem of noticiasRecientes" class="list-group-item">
+                  <a [routerLink]="['/noticias', noticiaItem.categoria.toLowerCase(), noticiaItem.slug || noticiaService.generateSlug(noticiaItem.titulo)]"
+                     (click)="navegarANoticia()"
+                     class="text-decoration-none d-block">
+                    <div class="row g-0">
+                      <div class="col-3">
+                        <img [src]="noticiaItem.imagenPrincipal || imagenPorDefecto"
+                             [alt]="noticiaItem.titulo"
+                             class="img-fluid rounded"
+                             (error)="handleImageError($event)">
+                      </div>
+                      <div class="col-9">
+                        <div class="ms-2">
+                          <h6 class="mb-1 small fw-bold text-truncate">{{noticiaItem.titulo}}</h6>
+                          <small class="text-muted">{{formatearFechaCorta(noticiaItem.fechaPublicacion)}}</small>
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div class="card-footer bg-transparent text-center">
+              <a [routerLink]="['/noticias']" class="btn btn-sm btn-outline-primary">
+                <i class="fas fa-newspaper me-1"></i> Ver todas
+              </a>
+            </div>
+          </div>
+
+          <!-- Información de IP (solo para admins) -->
+          <div *ngIf="isAdmin" class="card border-0 shadow-sm mb-4" style="background: #fff; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+            <div class="card-header" style="background: #f4f6fa; color: #222; border-radius: 10px 10px 0 0; border-bottom: 1px solid #ececec;">
+              <h4 class="h5 mb-0">Información de IP</h4>
+            </div>
+            <div class="card-body p-0">
+              <app-info-ip></app-info-ip>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,81 @@
+<!-- Tarjetas resumen -->
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div
+      class="card border-start border-3 border-primary shadow-sm text-center"
+    >
+      <div class="card-body">
+        <h6 class="text-primary fw-bold">Total FJV</h6>
+        <h3>{{ metricas.resumenTotales.totalFJV }}</h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card border-start border-3 border-danger shadow-sm text-center">
+      <div class="card-body">
+        <h6 class="text-danger fw-bold">Total FEVA</h6>
+        <h3>{{ metricas.resumenTotales.totalFEVA }}</h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div
+      class="card border-start border-3 border-success shadow-sm text-center"
+    >
+      <div class="card-body">
+        <h6 class="text-success fw-bold">Total Afiliados</h6>
+        <h3>{{ metricas.resumenTotales.totalAfiliados }}</h3>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- **NUEVO** Gráfico de Torta (Pie Chart): Totales FJV/FEVA -->
+<div class="card mb-4 shadow-sm">
+  <div class="card-header bg-light">
+    <strong>Distribución FJV vs FEVA</strong>
+  </div>
+  <div class="card-body">
+    <div *ngIf="isTotalesAvailable(); else noTotales">
+      <canvas #pieChartCanvas></canvas>
+    </div>
+    <ng-template #noTotales>
+      <p class="text-muted text-center m-0">No hay totales para mostrar.</p>
+    </ng-template>
+  </div>
+</div>
+
+<!-- Gráfico Doughnut: Categorías -->
+<div class="card mb-4 shadow-sm">
+  <div class="card-header bg-light">
+    <strong>Cantidad de Afiliados por Tipo</strong>
+    <!-- Título actualizado -->
+  </div>
+  <div class="card-body">
+    <!-- **CAMBIO CRUCIAL:** Usar isTiposAvailable() -->
+    <div *ngIf="isTiposAvailable(); else noTipos">
+      <canvas #doughnutChartCanvas></canvas>
+    </div>
+    <ng-template #noTipos>
+      <!-- Mensaje actualizado -->
+      <p class="text-muted text-center m-0">No hay tipos para mostrar.</p>
+    </ng-template>
+  </div>
+</div>
+
+<!-- Gráfico de Barras: Afiliados por Club -->
+<div class="card mb-4 shadow-sm">
+  <div class="card-header bg-light">
+    <strong>Afiliados por Club</strong>
+  </div>
+  <div class="card-body">
+    <div *ngIf="isAfiliadosPorClubAvailable(); else noClubes">
+      <canvas #barChartCanvas></canvas>
+    </div>
+    <ng-template #noClubes>
+      <p class="text-muted text-center m-0">
+        No hay datos de clubes para mostrar.
+      </p>
+    </ng-template>
+  </div>
+</div>

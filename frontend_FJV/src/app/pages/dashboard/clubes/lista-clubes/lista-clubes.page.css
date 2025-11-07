@@ -1,0 +1,247 @@
+.lista-clubes-container {
+  background-color: var(--neutral-200);
+  min-height: calc(100vh - 130px);
+}
+
+.card {
+  border: none;
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+}
+
+/* Encabezado de la tabla */
+h3 {
+  font-weight: 700;
+  color: #333;
+}
+
+/* Tabla general */
+table.table {
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+  font-size: 0.95rem;
+}
+
+/* Encabezado */
+.table thead th {
+  vertical-align: middle;
+  text-align: center;
+  background: #f8f9fa !important;
+  color: #212529 !important; /* Negro para mejor legibilidad */
+  font-weight: 700 !important; /* Más bold para destacar */
+  font-size: 0.9rem;
+  border-bottom: 2px solid #dee2e6;
+  padding: 1rem 0.75rem;
+}
+
+/* Celdas */
+.table td {
+  vertical-align: middle;
+  text-align: center;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  border-bottom: 1px solid #f1f3f4;
+}
+
+/* Hover y bordes */
+.table-hover tbody tr:hover {
+  background-color: rgba(0,123,255,0.04);
+  transition: background-color 0.3s ease;
+}
+
+/* Botones */
+.btn {
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+button.btn-sm {
+  border-radius: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.btn-group .btn {
+  border-radius: 0.25rem;
+  font-weight: 500;
+  min-width: 80px; /* Ancho mínimo para que el texto sea legible */
+  white-space: nowrap;
+}
+
+.btn-sm {
+  padding: 0.375rem 0.75rem; /* Aumentar padding para mejor legibilidad */
+  font-size: 0.8rem;
+}
+
+/* Colores específicos para cada acción */
+.btn-outline-info {
+  color: #0dcaf0;
+  border-color: #0dcaf0;
+}
+
+.btn-outline-info:hover {
+  background-color: #0dcaf0;
+  color: white;
+}
+
+.btn-outline-primary {
+  color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.btn-outline-primary:hover {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.btn-outline-danger {
+  color: #dc3545;
+  border-color: #dc3545;
+}
+
+.btn-outline-danger:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* Espaciado entre botones */
+.btn-group .btn + .btn {
+  margin-left: 2px;
+}
+
+/* Responsive Scroll */
+@media (max-width: 768px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .table thead th {
+    font-size: 0.85rem;
+  }
+
+  .table td {
+    font-size: 0.85rem;
+  }
+}
+
+/* Estilos para cards en vista móvil */
+.club-card {
+  border: 1px solid #e9ecef;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.club-card:hover {
+  border-color: #007bff;
+  box-shadow: 0 4px 12px rgba(0,123,255,0.15);
+  transform: translateY(-2px);
+}
+
+/* Avatar mejorado */
+.avatar-container img {
+  border: 2px solid #e9ecef;
+  transition: border-color 0.3s ease;
+}
+
+.avatar-container img:hover {
+  border-color: #007bff;
+}
+
+.avatar-icon-simple {
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.avatar-icon-simple:hover {
+  background: #e9ecef;
+  border-color: #007bff;
+}
+
+/* Estados de afiliación */
+.badge {
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  padding: 0.5em 0.8em;
+}
+
+/* Estado vacío */
+.empty-state {
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Responsive específico */
+@media (max-width: 575.98px) {
+  .club-card .card-body {
+    padding: 1rem 0.75rem;
+  }
+
+  .btn-group {
+    display: flex;
+    width: 100%;
+  }
+
+  .btn-group .btn {
+    flex: 1;
+    font-size: 0.75rem;
+    padding: 0.4rem 0.3rem;
+    min-width: auto;
+  }
+
+  .btn-group .btn .me-1 {
+    margin-right: 0 !important;
+  }
+
+  /* Ocultar texto solo en móviles muy pequeños */
+  .btn-group .btn-text {
+    display: none;
+  }
+}
+
+@media (min-width: 576px) and (max-width: 991.98px) {
+  .row-cols-md-2 > .col {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+/* Responsive adjustments - mantener texto en tablets */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .btn-group .btn {
+    min-width: 70px;
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+  }
+}
+
+/* Scrollbar personalizado para tabla */
+.table-responsive::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

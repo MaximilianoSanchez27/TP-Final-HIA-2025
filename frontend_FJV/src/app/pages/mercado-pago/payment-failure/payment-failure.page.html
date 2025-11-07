@@ -1,0 +1,94 @@
+<div class="payment-result-container">
+  <div class="result-card failure">
+    <!-- Icono de error -->
+    <div class="icon-container">
+      <i class="fas fa-times-circle error-icon"></i>
+    </div>
+
+    <!-- Mensaje principal -->
+    <h1 class="result-title">Pago No Procesado</h1>
+    <p class="result-message">
+      Tu pago no pudo ser procesado en este momento.
+      Por favor, intenta nuevamente o utiliza otro medio de pago.
+    </p>
+
+    <!-- Detalles del intento -->
+    <div class="payment-details" *ngIf="paymentId || merchantOrderId">
+      <h3>Detalles del Intento</h3>
+      <div class="detail-item" *ngIf="paymentId">
+        <span class="label">ID de Intento:</span>
+        <span class="value">{{ paymentId }}</span>
+      </div>
+      <div class="detail-item" *ngIf="merchantOrderId">
+        <span class="label">Orden:</span>
+        <span class="value">{{ merchantOrderId }}</span>
+      </div>
+      <div class="detail-item" *ngIf="preferenceId">
+        <span class="label">Referencia:</span>
+        <span class="value">{{ preferenceId }}</span>
+      </div>
+    </div>
+
+    <!-- Posibles causas -->
+    <div class="info-box">
+      <i class="fas fa-info-circle"></i>
+      <div class="info-content">
+        <p><strong>Posibles causas:</strong></p>
+        <ul>
+          <li>Fondos insuficientes en la tarjeta</li>
+          <li>Datos de tarjeta incorrectos</li>
+          <li>Límite de compra excedido</li>
+          <li>Problemas temporales del banco</li>
+          <li>Conexión interrumpida</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Recomendaciones -->
+    <div class="recommendations">
+      <h3>Te recomendamos:</h3>
+      <div class="recommendation-list">
+        <div class="recommendation-item">
+          <i class="fas fa-credit-card"></i>
+          <span>Verificar los datos de tu tarjeta</span>
+        </div>
+        <div class="recommendation-item">
+          <i class="fas fa-money-bill-alt"></i>
+          <span>Intentar con otro medio de pago</span>
+        </div>
+        <div class="recommendation-item">
+          <i class="fas fa-phone"></i>
+          <span>Contactar a tu banco si persiste el problema</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="action-buttons">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="tryAgain()"
+      >
+        <i class="fas fa-redo"></i>
+        Intentar Nuevamente
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="goToDashboard()"
+      >
+        <i class="fas fa-home"></i>
+        Ir al Dashboard
+      </button>
+      <button
+        type="button"
+        class="btn btn-help"
+        (click)="getHelp()"
+      >
+        <i class="fas fa-question-circle"></i>
+        Obtener Ayuda
+      </button>
+    </div>
+  </div>
+</div>

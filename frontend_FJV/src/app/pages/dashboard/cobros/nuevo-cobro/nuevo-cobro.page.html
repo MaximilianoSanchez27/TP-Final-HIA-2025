@@ -1,0 +1,222 @@
+<div class="nuevo-cobro-container">
+  <div class="container py-4">
+    <div class="row">
+      <div class="col-12">
+        <!-- Encabezado del formulario -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h2 class="mb-1">Nuevo Cobro</h2>
+            <p class="text-muted">Complete el formulario para registrar un nuevo cobro</p>
+          </div>
+          <button class="btn btn-outline-secondary" (click)="cancelar()">
+            <i class="fas fa-arrow-left me-2"></i> Volver
+          </button>
+        </div>
+
+        <!-- Tarjeta del formulario -->
+        <div class="card shadow-sm">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="fas fa-file-invoice-dollar me-2"></i> Formulario de Cobro</h5>
+          </div>
+          <div class="card-body p-4">
+            <!-- Mensajes de éxito o error -->
+            @if (successMessage) {
+              <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i> {{ successMessage }}
+                <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+              </div>
+            }
+
+            @if (errorMessage) {
+              <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i> {{ errorMessage }}
+                <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+              </div>
+            }
+
+            <!-- Formulario de Cobro -->
+            <form [formGroup]="cobroForm" (ngSubmit)="onSubmit()">
+              <div class="row">
+                <!-- Club -->
+                <div class="col-md-6 mb-3">
+                  <label for="idClub" class="form-label">Club <span class="text-danger">*</span></label>
+                  <select
+                    formControlName="idClub"
+                    class="form-select"
+                    id="idClub"
+                    [class.is-invalid]="idClubControl?.invalid && idClubControl?.touched"
+                  >
+                    <option value="" disabled selected>
+                      @if (isLoadingClubes) {
+                        Cargando clubes...
+                      } @else {
+                        Seleccione un club
+                      }
+                    </option>
+                    @if (!isLoadingClubes) {
+                      @for (club of clubes; track club.idClub) {
+                        <option [value]="club.idClub">{{ club.nombre }}</option>
+                      }
+                    }
+                  </select>
+                  @if (idClubControl?.invalid && idClubControl?.touched) {
+                    <div class="invalid-feedback">
+                      Debe seleccionar un club
+                    </div>
+                  }
+                  @if (isLoadingClubes) {
+                    <div class="form-text">
+                      <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                      Cargando lista de clubes...
+                    </div>
+                  }
+                </div>
+
+                <!-- Monto -->
+                <div class="col-md-6 mb-3">
+                  <label for="monto" class="form-label">Monto <span class="text-danger">*</span></label>
+                  <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input
+                      type="number"
+                      formControlName="monto"
+                      class="form-control"
+                      id="monto"
+                      placeholder="0.00"
+                      step="0.01"
+                      min="0"
+                      [class.is-invalid]="montoControl?.invalid && montoControl?.touched"
+                    >
+                    <div class="invalid-feedback">
+                      @if (montoControl?.errors?.['required']) {
+                        El monto es requerido
+                      } @else if (montoControl?.errors?.['min']) {
+                        El monto debe ser mayor a cero
+                      }
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Fecha de emisión -->
+                <div class="col-md-6 mb-3">
+                  <label for="fechaCobro" class="form-label">Fecha de emisión <span class="text-danger">*</span></label>
+                  <input
+                    type="date"
+                    formControlName="fechaCobro"
+                    class="form-control"
+                    id="fechaCobro"
+                    [class.is-invalid]="fechaCobroControl?.invalid && fechaCobroControl?.touched"
+                  >
+                  @if (fechaCobroControl?.invalid && fechaCobroControl?.touched) {
+                    <div class="invalid-feedback">
+                      La fecha de emisión es requerida
+                    </div>
+                  }
+                </div>
+
+                <!-- Fecha de vencimiento -->
+                <div class="col-md-6 mb-3">
+                  <label for="fechaVencimiento" class="form-label">Fecha de vencimiento <span class="text-danger">*</span></label>
+                  <input
+                    type="date"
+                    formControlName="fechaVencimiento"
+                    class="form-control"
+                    id="fechaVencimiento"
+                    [class.is-invalid]="fechaVencimientoControl?.invalid && fechaVencimientoControl?.touched"
+                  >
+                  @if (fechaVencimientoControl?.invalid && fechaVencimientoControl?.touched) {
+                    <div class="invalid-feedback">
+                      La fecha de vencimiento es requerida
+                    </div>
+                  }
+                </div>
+
+                <!-- Estado del cobro -->
+                <div class="col-md-6 mb-3">
+                  <label for="estado" class="form-label">Estado <span class="text-danger">*</span></label>
+                  <select
+                    formControlName="estado"
+                    class="form-select"
+                    id="estado"
+                    [class.is-invalid]="estadoControl?.invalid && estadoControl?.touched"
+                  >
+                    @for (estado of estados; track estado.id) {
+                      <option [value]="estado.id">{{ estado.nombre }}</option>
+                    }
+                  </select>
+                  @if (estadoControl?.invalid && estadoControl?.touched) {
+                    <div class="invalid-feedback">
+                      Debe seleccionar un estado para el cobro
+                    </div>
+                  }
+                </div>
+
+                <!-- Tipo de comprobante -->
+                <div class="col-md-6 mb-3">
+                  <label for="tipoComprobante" class="form-label">Tipo de comprobante <span class="text-danger">*</span></label>
+                  <select
+                    formControlName="tipoComprobante"
+                    class="form-select"
+                    id="tipoComprobante"
+                    [class.is-invalid]="tipoComprobanteControl?.invalid && tipoComprobanteControl?.touched"
+                  >
+                    <option value="" disabled selected>Seleccione un tipo</option>
+                    @for (tipo of tiposComprobante; track tipo.id) {
+                      <option [value]="tipo.id">{{ tipo.nombre }}</option>
+                    }
+                  </select>
+                  @if (tipoComprobanteControl?.invalid && tipoComprobanteControl?.touched) {
+                    <div class="invalid-feedback">
+                      Debe seleccionar un tipo de comprobante
+                    </div>
+                  }
+                </div>
+
+                <!-- Concepto -->
+                <div class="col-12 mb-4">
+                  <label for="concepto" class="form-label">Concepto <span class="text-danger">*</span></label>
+                  <textarea
+                    formControlName="concepto"
+                    class="form-control"
+                    id="concepto"
+                    rows="3"
+                    placeholder="Ingrese el concepto del cobro"
+                    [class.is-invalid]="conceptoControl?.invalid && conceptoControl?.touched"
+                  ></textarea>
+                  @if (conceptoControl?.invalid && conceptoControl?.touched) {
+                    <div class="invalid-feedback">
+                      @if (conceptoControl?.errors?.['required']) {
+                        El concepto es requerido
+                      } @else if (conceptoControl?.errors?.['minlength']) {
+                        El concepto debe tener al menos 5 caracteres
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <!-- Botones de acción -->
+              <div class="d-flex justify-content-end mt-4 gap-2">
+                <button type="button" class="btn btn-outline-secondary" (click)="cancelar()">
+                  <i class="fas fa-times me-2"></i> Cancelar
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-primary px-4"
+                  [disabled]="isSubmitting || cobroForm.invalid || isLoadingClubes"
+                >
+                  @if (isSubmitting) {
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    Guardando...
+                  } @else {
+                    <i class="fas fa-save me-2"></i> Guardar
+                  }
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

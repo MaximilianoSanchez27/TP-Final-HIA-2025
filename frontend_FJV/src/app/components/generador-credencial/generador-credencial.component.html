@@ -1,0 +1,103 @@
+<div class="credencial-generator">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">
+        <i class="fas fa-id-card me-2"></i>
+        Generador de Credencial
+      </h5>
+    </div>
+
+    <div class="card-body">
+      <!-- Vista previa de la credencial -->
+      <div class="credencial-preview mb-4">
+        <h6 class="text-muted mb-3">Vista Previa:</h6>
+        <div class="canvas-container">
+          <canvas #canvas
+                  class="credencial-canvas border shadow-sm"
+                  style="max-width: 100%; height: auto;">
+          </canvas>
+        </div>
+      </div>
+
+      <!-- Canvas oculto para QR -->
+      <canvas #qrCanvas
+              width="150"
+              height="150"
+              style="display: none;">
+      </canvas>
+
+      <!-- Información de la credencial -->
+      <div class="credencial-info mb-4">
+        <div class="row">
+          <div class="col-md-6">
+            <h6 class="text-muted">Datos del Afiliado:</h6>
+            <p class="mb-1"><strong>{{ afiliado.apellidoNombre }}</strong></p>
+            <p class="mb-1">DNI: {{ afiliado.dni }}</p>
+            <p class="mb-1">Club: {{ afiliado.club }}</p>
+          </div>
+          <div class="col-md-6">
+            <h6 class="text-muted">Datos de la Credencial:</h6>
+            <p class="mb-1">ID: {{ credencial.identificador }}</p>
+            <p class="mb-1">Emisión: {{ formatearFecha(credencial.fechaAlta) }}</p>
+            <p class="mb-1">Vencimiento: {{ formatearFecha(credencial.fechaVencimiento) }}</p>
+            <p class="mb-1">
+              Estado:
+              <span class="badge"
+                    [class]="credencial.estado === 'ACTIVO' ? 'bg-success' : 'bg-danger'">
+                {{ credencial.estado }}
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- QR Code preview -->
+      <div class="qr-preview mb-4" *ngIf="qrCodeDataUrl">
+        <h6 class="text-muted">Código QR:</h6>
+        <div class="d-flex align-items-center">
+          <img [src]="qrCodeDataUrl"
+               alt="QR Code"
+               class="border me-3"
+               style="width: 100px; height: 100px;">
+          <div>
+            <p class="mb-1">Escanea este código para ver el perfil completo del afiliado</p>
+            <small class="text-muted">
+              URL: {{ getQRUrl() }}
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="d-flex gap-2 justify-content-center">
+        <button type="button"
+                class="btn btn-primary"
+                (click)="generarCredencial()">
+          <i class="fas fa-sync me-2"></i>
+          Generar Vista Previa
+        </button>
+
+        <button type="button"
+                class="btn btn-success"
+                (click)="descargarCredencial()">
+          <i class="fas fa-download me-2"></i>
+          Descargar PNG
+        </button>
+
+        <button type="button"
+                class="btn btn-info"
+                (click)="imprimirCredencial()">
+          <i class="fas fa-print me-2"></i>
+          Imprimir
+        </button>
+      </div>
+
+      <!-- Nota informativa -->
+      <div class="alert alert-info mt-4">
+        <i class="fas fa-info-circle me-2"></i>
+        <strong>Nota:</strong> La credencial se genera en tamaño estándar (3.375" x 2.125")
+        a 300 DPI para impresión de alta calidad.
+      </div>
+    </div>
+  </div>
+</div>

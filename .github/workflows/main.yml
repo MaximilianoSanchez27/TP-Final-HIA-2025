@@ -1,0 +1,45 @@
+# .github/workflows/main.yml
+
+name: CI - Construir y Subir Imágenes de Docker
+
+# 1. Cuándo debe ejecutarse el "robot"
+on:
+  push:
+    branches:
+      - main  # Se ejecuta CADA VEZ que subes código a la rama "main"
+
+# 2. Qué trabajos (jobs) debe hacer
+jobs:
+  build-and-push:
+    # El robot corre en un servidor de Ubuntu
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Paso 1: Descarga tu código de GitHub
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      # Paso 2: Inicia sesión en tu Docker Hub
+      - name: Iniciar sesión en Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Paso 3: Construye y sube la imagen del BACKEND
+      - name: Construir y subir imagen del Backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend_FJV
+          file: ./backend_FJV/Dockerfile
+          push: true
+          tags: maxisanchez27/hia-backend:latest # Tu usuario/nombre-imagen
+
+      # Paso 4: Construye y sube la imagen del FRONTEND
+      - name: Construir y subir imagen del Frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend_FJV
+          file: ./frontend_FJV/Dockerfile
+          push: true
+          tags: maxisanchez27/hia-frontend:latest # Tu usuario/nombre-imagen
