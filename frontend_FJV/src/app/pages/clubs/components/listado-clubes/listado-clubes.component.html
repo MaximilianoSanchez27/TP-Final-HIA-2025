@@ -192,47 +192,33 @@
   </div>
 </div>
 
-
 <!-- Modal de Edición/Creación de Club -->
 <div *ngIf="mostrarModalEdicion" class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
   <div class="modal-dialog modal-xl modal-dialog-scrollable">
-    
-    <!-- ====================================================================== -->
-    <!-- ARREGLO #1: Añadimos *ngIf="clubForm" -->
-    <!-- Esto previene el error de build de "npm run build" (el robot) -->
-    <!-- ====================================================================== -->
-    <div class="modal-content" *ngIf="clubForm">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">
+          <i class="fas fa-building me-2"></i>
+          {{ clubParaEditar ? 'Editar Club' : 'Nuevo Club' }}
+        </h5>
+        <button type="button" class="btn-close btn-close-white" (click)="cerrarModalLocal()"></button>
+      </div>
+      <div class="modal-body p-0">
+        <!-- Formulario de Club Integrado -->
+        <div class="p-4">
+          <!-- Mensajes de estado -->
+          <div *ngIf="mensajeExito" class="alert alert-success alert-dismissible fade show">
+            <i class="fas fa-check-circle me-2"></i>{{ mensajeExito }}
+            <button type="button" class="btn-close" (click)="mensajeExito = ''"></button>
+          </div>
 
-      <!-- ====================================================================== -->
-      <!-- ARREGLO #2: El <form> AHORA EMPIEZA AQUÍ -->
-      <!-- Movimos la etiqueta <form> para que envuelva el header, body Y footer -->
-      <!-- ====================================================================== -->
-      <form [formGroup]="clubForm" (ngSubmit)="onSubmitModal()">
+          <div *ngIf="mensajeError" class="alert alert-danger alert-dismissible fade show">
+            <i class="fas fa-exclamation-triangle me-2"></i>{{ mensajeError }}
+            <button type="button" class="btn-close" (click)="mensajeError = ''"></button>
+          </div>
 
-        <div class="modal-header bg-primary text-white">
-          <h5 class="modal-title">
-            <i class="fas fa-building me-2"></i>
-            {{ clubParaEditar ? 'Editar Club' : 'Nuevo Club' }}
-          </h5>
-          <button type="button" class="btn-close btn-close-white" (click)="cerrarModalLocal()"></button>
-        </div>
-
-        <div class="modal-body p-0">
-          <!-- Formulario de Club Integrado -->
-          <div class="p-4">
-            <!-- Mensajes de estado -->
-            <div *ngIf="mensajeExito" class="alert alert-success alert-dismissible fade show">
-              <i class="fas fa-check-circle me-2"></i>{{ mensajeExito }}
-              <button type="button" class="btn-close" (click)="mensajeExito = ''"></button>
-            </div>
-
-            <div *ngIf="mensajeError" class="alert alert-danger alert-dismissible fade show">
-              <i class="fas fa-exclamation-triangle me-2"></i>{{ mensajeError }}
-              <button type="button" class="btn-close" (click)="mensajeError = ''"></button>
-            </div>
-
-            <!-- Formulario (Inputs) -->
-            <!-- (El <form> estaba aquí antes, pero lo movimos arriba) -->
+          <!-- Formulario -->
+          <form [formGroup]="clubForm" (ngSubmit)="onSubmitModal()">
             <div class="row">
               <!-- Nombre -->
               <div class="col-md-6 mb-3">
@@ -365,36 +351,24 @@
                   El estado de afiliación es obligatorio
                 </div>
               </div>
-            </div> <!-- Fin del .row -->
-            <!-- (El </form> estaba aquí antes, pero lo movimos abajo) -->
-          </div> <!-- Fin del .p-4 -->
-        </div> <!-- Fin del .modal-body -->
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="cerrarModalLocal()">
-            <i class="fas fa-times me-2"></i>Cancelar
-          </button>
-          <button
-            type="submit"
-            class="btn btn-primary"
-            
-            <!-- ====================================================================== -->
-            <!-- ARREGLO #3: Añadimos '|| !clubForm.dirty' -->
-            <!-- Ahora el botón solo se activa si el formulario es VÁLIDO y está "SUCIO" (cambiado) -->
-            <!-- ====================================================================== -->
-            [disabled]="procesando || clubForm.invalid || !clubForm.dirty">
-            
-            <span *ngIf="procesando" class="spinner-border spinner-border-sm me-2"></span>
-            <i *ngIf="!procesando" class="fas fa-save me-2"></i>
-            {{ procesando ? 'Guardando...' : (clubParaEditar ? 'Actualizar' : 'Crear') }}
-          </button>
+            </div>
+          </form>
         </div>
+      </div>
 
-      </form>
-      <!-- ====================================================================== -->
-      <!-- ARREGLO #2: El </form> AHORA TERMINA AQUÍ -->
-      <!-- ====================================================================== -->
-
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="cerrarModalLocal()">
+        <i class="fas fa-times me-2"></i>Cancelar
+      </button>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="procesando || clubForm.invalid">
+        <span *ngIf="procesando" class="spinner-border spinner-border-sm me-2"></span>
+        <i *ngIf="!procesando" class="fas fa-save me-2"></i>
+       {{ procesando ? 'Guardando...' : (clubParaEditar ? 'Actualizar' : 'Crear') }}
+      </button>
+      </div>
     </div>
   </div>
 </div>
