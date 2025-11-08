@@ -356,18 +356,17 @@
         </div>
       </div>
 
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="cerrarModalLocal()">
-          <i class="fas fa-times me-2"></i>Cancelar
-        </button>
-        <button
-          type="button"
-          class="btn btn-primary"
-          [disabled]="procesando || clubForm.invalid"
-          (click)="onSubmitModal()">
-          <span *ngIf="procesando" class="spinner-border spinner-border-sm me-2"></span>
-          <i *ngIf="!procesando" class="fas fa-save me-2"></i>
-          {{ procesando ? 'Guardando...' : (clubParaEditar ? 'Actualizar' : 'Crear') }}
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="cerrarModalLocal()">
+        <i class="fas fa-times me-2"></i>Cancelar
+      </button>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="procesando || clubForm.invalid">
+        <span *ngIf="procesando" class="spinner-border spinner-border-sm me-2"></span>
+        <i *ngIf="!procesando" class="fas fa-save me-2"></i>
+       {{ procesando ? 'Guardando...' : (clubParaEditar ? 'Actualizar' : 'Crear') }}
         </button>
       </div>
     </div>
