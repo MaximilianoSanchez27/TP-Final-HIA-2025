@@ -27,9 +27,6 @@ router.post("/",
 router.put("/:id", 
     authenticate, 
     authorize('admin'), 
-    extractBase64Fields, 
-    handleUploadErrors, 
-    processUploadedLogo, 
     clubCtrl.editClub
 );
 
