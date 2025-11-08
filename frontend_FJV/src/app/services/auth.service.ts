@@ -124,24 +124,26 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<User> {
-     return this.http.post<LoginResponse>('/api/auth/login', { email, password })
-      .pipe(
-        tap(response => {
-          if (response.success && response.token) {
-            this.storeAuthData(response.token, response.usuario);
-            this.currentUserSubject.next(response.usuario);
-            this.isAuthenticatedSubject.next(true);
-          }
-        }),
-        map(response => response.usuario),
-        catchError(error => {
-          console.error('Error en el login', error);
-          return throwError(() => new Error(
-            error.error?.message || 'Error al iniciar sesión'
-          ));
-        })
-      );
-  }
+  console.log('🔍 URL final de login:', `${this.API_URL}/auth/login`.trim());
+
+  return this.http.post<LoginResponse>(`${this.API_URL}/auth/login`.trim(), { email, password })
+    .pipe(   // 👈 sin el punto y coma antes
+      tap(response => {
+        if (response.success && response.token) {
+          this.storeAuthData(response.token, response.usuario);
+          this.currentUserSubject.next(response.usuario);
+          this.isAuthenticatedSubject.next(true);
+        }
+      }),
+      map(response => response.usuario),
+      catchError(error => {
+        console.error('Error en el login', error);
+        return throwError(() =>
+          new Error(error.error?.message || 'Error al iniciar sesión')
+        );
+      })
+    );
+}
 
   private storeAuthData(token: string, user: User): void {
     // Almacenar el token y el usuario
