@@ -196,11 +196,16 @@
 <!-- Modal de Edición/Creación de Club -->
 <div *ngIf="mostrarModalEdicion" class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
   <div class="modal-dialog modal-xl modal-dialog-scrollable">
-    <div class="modal-content">
+    
+    <!-- ====================================================================== -->
+    <!-- ARREGLO #1: Añadimos *ngIf="clubForm" -->
+    <!-- Esto previene el error de build de "npm run build" (el robot) -->
+    <!-- ====================================================================== -->
+    <div class="modal-content" *ngIf="clubForm">
 
       <!-- ====================================================================== -->
-      <!-- ARREGLO #1: El <form> AHORA EMPIEZA AQUÍ (antes estaba 12 líneas más abajo) -->
-      <!-- Ahora envuelve el header, body, Y footer -->
+      <!-- ARREGLO #2: El <form> AHORA EMPIEZA AQUÍ -->
+      <!-- Movimos la etiqueta <form> para que envuelva el header, body Y footer -->
       <!-- ====================================================================== -->
       <form [formGroup]="clubForm" (ngSubmit)="onSubmitModal()">
 
@@ -374,7 +379,7 @@
             class="btn btn-primary"
             
             <!-- ====================================================================== -->
-            <!-- ARREGLO #2: Añadimos '|| !clubForm.dirty' -->
+            <!-- ARREGLO #3: Añadimos '|| !clubForm.dirty' -->
             <!-- Ahora el botón solo se activa si el formulario es VÁLIDO y está "SUCIO" (cambiado) -->
             <!-- ====================================================================== -->
             [disabled]="procesando || clubForm.invalid || !clubForm.dirty">
@@ -387,7 +392,7 @@
 
       </form>
       <!-- ====================================================================== -->
-      <!-- ARREGLO #1: El </form> AHORA TERMINA AQUÍ, envolviendo el footer -->
+      <!-- ARREGLO #2: El </form> AHORA TERMINA AQUÍ -->
       <!-- ====================================================================== -->
 
     </div>
