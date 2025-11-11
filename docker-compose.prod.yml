@@ -20,7 +20,13 @@ services:
       - NET_ADMIN
     restart: unless-stopped
     networks: [dbnet]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRESQL_USERNAME} -d ${POSTGRESQL_DATABASE} -h localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
     environment:
+      - REPMGR_NODE_ID=1
       - POSTGRESQL_POSTGRES_PASSWORD=${POSTGRESQL_POSTGRES_PASSWORD}
       - POSTGRESQL_USERNAME=${POSTGRESQL_USERNAME}
       - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
@@ -31,6 +37,10 @@ services:
       - REPMGR_NODE_NETWORK_NAME=pg-0
       - REPMGR_PARTNER_NODES=pg-0,pg-1,pg-2
       - POSTGRESQL_CLUSTER_APP_NAME=appcluster
+      - REPMGRD_ENABLED=yes
+      - REPMGRD_FAILOVER=automatic
+      - REPMGRD_PROMOTE_COMMAND=repmgr standby promote -f /opt/bitnami/repmgr/repmgr.conf
+      - REPMGRD_FOLLOW_COMMAND=repmgr standby follow -f /opt/bitnami/repmgr/repmgr.conf
     volumes:
       - pg_0_data:/bitnami/postgresql
     ports:
@@ -44,7 +54,13 @@ services:
       - NET_ADMIN
     restart: unless-stopped
     networks: [dbnet]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRESQL_USERNAME} -d ${POSTGRESQL_DATABASE} -h localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
     environment:
+      - REPMGR_NODE_ID=2
       - POSTGRESQL_POSTGRES_PASSWORD=${POSTGRESQL_POSTGRES_PASSWORD}
       - POSTGRESQL_USERNAME=${POSTGRESQL_USERNAME}
       - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
@@ -55,6 +71,10 @@ services:
       - REPMGR_NODE_NETWORK_NAME=pg-1
       - REPMGR_PARTNER_NODES=pg-0,pg-1,pg-2
       - POSTGRESQL_CLUSTER_APP_NAME=appcluster
+      - REPMGRD_ENABLED=yes
+      - REPMGRD_FAILOVER=automatic
+      - REPMGRD_PROMOTE_COMMAND=repmgr standby promote -f /opt/bitnami/repmgr/repmgr.conf
+      - REPMGRD_FOLLOW_COMMAND=repmgr standby follow -f /opt/bitnami/repmgr/repmgr.conf
     volumes:
       - pg_1_data:/bitnami/postgresql
 
@@ -66,7 +86,13 @@ services:
       - NET_ADMIN
     restart: unless-stopped
     networks: [dbnet]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRESQL_USERNAME} -d ${POSTGRESQL_DATABASE} -h localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
     environment:
+      - REPMGR_NODE_ID=3
       - POSTGRESQL_POSTGRES_PASSWORD=${POSTGRESQL_POSTGRES_PASSWORD}
       - POSTGRESQL_USERNAME=${POSTGRESQL_USERNAME}
       - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
@@ -77,30 +103,86 @@ services:
       - REPMGR_NODE_NETWORK_NAME=pg-2
       - REPMGR_PARTNER_NODES=pg-0,pg-1,pg-2
       - POSTGRESQL_CLUSTER_APP_NAME=appcluster
+      - REPMGRD_ENABLED=yes
+      - REPMGRD_FAILOVER=automatic
+      - REPMGRD_PROMOTE_COMMAND=repmgr standby promote -f /opt/bitnami/repmgr/repmgr.conf
+      - REPMGRD_FOLLOW_COMMAND=repmgr standby follow -f /opt/bitnami/repmgr/repmgr.conf
     volumes:
       - pg_2_data:/bitnami/postgresql
 
-  # BALANCEADOR Y FAILOVER
+# BALANCEADOR Y FAILOVER
   pgpool:
-    image: bitnamilegacy/pgpool:4
+    image: bitnamilegacy/pgpool:4                # Imagen oficial de Pgpool-II con soporte para clustering y failover
     container_name: pgpool
     restart: unless-stopped
     networks: [dbnet]
-    depends_on: [pg-0, pg-1, pg-2]
+    depends_on:
+      pg-0:
+        condition: service_healthy
+      pg-1:
+        condition: service_healthy
+      pg-2:
+        condition: service_healthy
+
     environment:
-      - PGPOOL_BACKEND_NODES=0:pg-0:5432,1:pg-1:5432,2:pg-2:5432
+      # 🗂️ Definición de los nodos backend
+      # Este formato (sin roles) es el correcto para la variable de Bitnami
+      - PGPOOL_BACKEND_NODES=0:pg-0:5432:1:1,1:pg-1:5432:1:1,2:pg-2:5432:1:1
+
+      # Nombres descriptivos de los nodos
+      - PGPOOL_BACKEND_APPLICATION_NAMES=pg-0,pg-1,pg-2
+
+      # 👤 Usuario de chequeo de replicación
       - PGPOOL_SR_CHECK_USER=${PGPOOL_SR_CHECK_USER}
       - PGPOOL_SR_CHECK_PASSWORD=${PGPOOL_SR_CHECK_PASSWORD}
+
+      # 👤 Usuario superadmin de PostgreSQL (postgres)
       - PGPOOL_POSTGRES_USERNAME=postgres
       - PGPOOL_POSTGRES_PASSWORD=${POSTGRESQL_POSTGRES_PASSWORD}
+
+      # 👤 Usuario de aplicación (appuser)
       - POSTGRESQL_USERNAME=${POSTGRESQL_USERNAME}
       - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
       - POSTGRESQL_DATABASE=${POSTGRESQL_DATABASE}
+
+      # ⚙️ Configuraciones de balanceo y failover
       - PGPOOL_ENABLE_LOAD_BALANCING=yes
+      - PGPOOL_FAILOVER_ON_BACKEND_ERROR=yes
+      - PGPOOL_AUTO_FAILBACK=yes
+      
+      # ❗️❗️ CORRECCIÓN DEFINITIVA ❗️❗️
+      # Usamos 'pcpuser' directamente para evitar el error de variable no definida.
+      - PGPOOL_FAILBACK_COMMAND=PCPPASS=${PGPOOL_ADMIN_PASSWORD} pcp_attach_node -h localhost -p 9898 -U admin --node-id=%d
+
+      # 🩺 Parámetros de health check
+      - PGPOOL_HEALTH_CHECK_PERIOD=10
+      - PGPOOL_HEALTH_CHECK_TIMEOUT=8
+      - PGPOOL_HEALTH_CHECK_MAX_RETRIES=5
+      - PGPOOL_HEALTH_CHECK_RETRY_DELAY=5
+      - PGPOOL_CONNECT_TIMEOUT=15 
+      - PGPOOL_DETACH_STRICT_MODE=no
+      - PGPOOL_DEADLOCK_TIMEOUT=30
+
+      # 🔐 Credenciales de administración
       - PGPOOL_ADMIN_USERNAME=admin
       - PGPOOL_ADMIN_PASSWORD=${PGPOOL_ADMIN_PASSWORD}
+      - PGPOOL_PCP_USER=pcpuser                   # Esta variable es para el 'pcp.conf'
+      - PGPOOL_PCP_PASSWORD=pcppass               # Esta variable es para el 'pcp.conf'
+      - PGPOOL_PCP_PORT=9898
+      # ❗️ CORRECCIÓN 2: LA VARIABLE QUE FALTABA
+      # Esto obliga a Bitnami a escribir "pcp_authentication_method = 'md5'" en el .conf
+      - PGPOOL_PCP_AUTHENTICATION_METHOD=md5
+
+      # 🧠 Ajustes de logs y rendimiento
+      - PGPOOL_LOG_CONNECTIONS=yes
+      - PGPOOL_LOG_STATEMENT=no
+      - PGPOOL_LOG_PER_NODE_STATEMENT=no
+      - PGPOOL_MAX_POOL=4
+      - PGPOOL_NUM_INIT_CHILDREN=32
+
     ports:
       - "5432:5432"
+      - "9898:9898"
 
   # CLIENTE WEB
   pgadmin:
@@ -190,14 +272,20 @@ services:
     env_file:
       - ./backend_FJV/.env  # Inyecta todos los secretos de este archivo
     environment:
-      # --- Conexión a PGPOOL usando tus variables ---
-      - DB_HOST=pgpool
-      - DB_PORT=5432
-      - DB_NAME=${POSTGRESQL_DATABASE}
-      - DB_USER=${POSTGRESQL_USERNAME}   # Usuario de la APP
-      - DB_PASSWORD=${POSTGRESQL_PASSWORD} # Clave del usuario de la APP
-      - DB_LOGGING=false
-      # (Añade aquí cualquier otra variable que tu back necesite)
+        # --- Conexión a PGPOOL usando tus variables ---
+        - DB_HOST=pgpool
+        - DB_PORT=5432
+        - DB_NAME=${POSTGRESQL_DATABASE} # Esto está bien (usa 'appdb')
+        - DB_LOGGING=false
+        
+        # ❗️❗️ CORRECCIÓN AQUÍ ❗️❗️
+        # Pgpool NO acepta 'appuser'. Debe conectarse como 'postgres'.
+        - DB_USER=postgres
+
+        # ❗️❗️ Y CORRECCIÓN AQUÍ ❗️❗️
+        # Debe usar la contraseña del superusuario 'postgres', no la de 'appuser'.
+        # (POSTGRESQL_POSTGRES_PASSWORD es 'postgrespass' en tu .env principal)
+        - DB_PASSWORD=${POSTGRESQL_POSTGRES_PASSWORD}
 
   # APLICACIÓN WEB - FRONTEND
   frontend-app: # <--- Nombre de servicio para el frontend
