@@ -41,22 +41,71 @@ Comportamiento y notas de seguridad
 
 Ejemplos
 
-PowerShell — prueba pequeña (igual que el ejemplo anterior):
+Ejemplos y métodos recomendados
+
+1) Ejecución local rápida (recomendada para pruebas y cargas grandes)
+- Requisito: el puerto del primario Postgres (`pg-0`) está mapeado en el host (por ejemplo `5433`).
+- Ventaja: evita iniciar un contenedor Node cada vez y es mucho más rápido.
+
+PowerShell (desde la raíz del repo):
 ```powershell
-$env:POPULATE_TOTAL_CATEGORIAS=2; $env:POPULATE_TOTAL_CLUBS=5; $env:POPULATE_TOTAL_PERSONAS=10; node .\backend_FJV\scripts\populate_db.js
+$env:DB_HOST='localhost'
+$env:DB_PORT='5433'
+$env:DB_USER='postgres'
+$env:DB_PASS='postgrespass'
+$env:DB_NAME='appdb'
+$env:POPULATE_TOTAL_CATEGORIAS=100
+$env:POPULATE_TOTAL_CLUBS=10000
+$env:POPULATE_TOTAL_PERSONAS=10000
+# Opcional: forzar recreación de tablas (DESTRUCTIVO)
+$env:POPULATE_FORCE='true'
+node .\backend_FJV\scripts\populate_db.js
 ```
 
-PowerShell — carga mayor controlada (no destructiva):
+2) Ejecutar dentro de Docker (usa la red `hia-prod_dbnet`) — útil cuando el servicio DB solo es accesible desde la red compose
+- Este método asegura que el script resuelva `pgpool` y se conecte a la BD levantada por `docker-compose`.
+- Usa una imagen `node` temporal que instala dependencias y ejecuta el script.
+
+PowerShell (desde la raíz del repo):
 ```powershell
-$env:POPULATE_TOTAL_CLUBS=5000; $env:POPULATE_TOTAL_PERSONAS=20000; $env:POPULATE_BATCH_SIZE=2000; node .\backend_FJV\scripts\populate_db.js
+docker run --rm -it `
+  --network hia-prod_dbnet `
+  --env-file ./backend_FJV/.env `
+  -e POPULATE_TOTAL_CATEGORIAS=2 `
+  -e POPULATE_TOTAL_CLUBS=5 `
+  -e POPULATE_TOTAL_PERSONAS=10 `
+  -v ${PWD}/backend_FJV:/app `
+  -w /app `
+  node:20-slim `
+  bash -lc "npm ci --no-audit --no-fund && node scripts/populate_db.js"
 ```
 
-PowerShell — destructiva (eliminará tablas):
+3) Ejecutar localmente (si ya instalaste dependencias)
+
+PowerShell:
 ```powershell
-$env:POPULATE_FORCE='true'; node .\backend_FJV\scripts\populate_db.js
-# o
-node .\backend_FJV\scripts\populate_db.js --force
+cd backend_FJV
+npm install            # si no lo hiciste ya
+$env:POPULATE_TOTAL_CATEGORIAS=2; $env:POPULATE_TOTAL_CLUBS=5; $env:POPULATE_TOTAL_PERSONAS=10; node .\scripts\populate_db.js
 ```
+
+Notas sobre operaciones destructivas
+- `POPULATE_FORCE=true` o pasar `--force` hace `sync({ force: true })` y RECREA las tablas — perderás datos actuales.
+- Haz un backup (por ejemplo `pg_dump`) si necesitas conservar datos antes de ejecutar con `POPULATE_FORCE`.
+
+Consejos de rendimiento y seguridad
+- Para cargas muy grandes (>=100k filas) considera generar CSV y usar `COPY` de PostgreSQL o reducir `POPULATE_BATCH_SIZE` (por ejemplo 1000 o 2000) para bajar memoria usada por `bulkCreate`.
+- Ejecutar contra el primario por `localhost:5433` fue más rápido en mi entorno que ejecutar cada vez en un contenedor Node que instala dependencias.
+
+Resolución de problemas
+- Timeout o ETIMEDOUT: ejecuta el script con `--network hia-prod_dbnet` (Docker) o conecta a `localhost:5433` si el primario está mapeado.
+- Autenticación fallida con `pgpool`: si usas `pgpool` (puerto 5432), usa las credenciales que `pgpool` espera (revisa `PGPOOL_*` en `docker-compose.prod.yml` y variables en `.env`).
+- Errores por arrays vacíos: el script ya incluye defensas para no llamar a `faker.helpers.arrayElement` con arrays vacíos (fallback a `null`).
+
+Opciones adicionales
+Si quieres, puedo también:
+- Añadir una opción `--dry-run` que solo muestre los conteos y ejemplos sin insertar nada en la BD.
+- Generar CSVs y un script auxiliar que haga `COPY` para cargas masivas (máximo rendimiento).
 
 Resolución de problemas
 - Problemas de autenticación: el script carga el `.env` en la raíz del repositorio si existe y mapea variables comunes de docker-compose (`POSTGRESQL_*`) a las esperadas por la configuración del proyecto (`DB_*`). Asegúrate de que `.env` contiene los valores correctos o define `DATABASE_URL`.

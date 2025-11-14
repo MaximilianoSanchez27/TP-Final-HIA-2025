@@ -294,7 +294,10 @@ async function popularDatos() {
 
    
     const personaGenerator = () => {
-      const randomClubPk = faker.helpers.arrayElement(clubIds);
+      // Protegemos contra clubIds vacío: si no hay IDs disponibles, usar null
+      const randomClubPk = (Array.isArray(clubIds) && clubIds.length > 0)
+        ? faker.helpers.arrayElement(clubIds)
+        : null;
 
       if (personaUsesSpanish) {
         
