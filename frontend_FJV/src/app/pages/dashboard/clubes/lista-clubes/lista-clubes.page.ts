@@ -21,6 +21,12 @@ export class ListaClubesPage implements OnInit {
   errorMessage = '';
   filterParams: ClubFilter = {};
 
+  // Paginación
+  currentPage = 1;
+  itemsPerPage = 10;
+  totalItems = 0;
+  totalPages = 0;
+
   // Estados de afiliación para el filtro select
   estadosAfiliacion = ['Activo', 'Inactivo', 'Suspendido'];
 
@@ -32,10 +38,12 @@ export class ListaClubesPage implements OnInit {
 
   cargarClubes(): void {
     this.isLoading = true;
-    this.clubService.getClubes().subscribe({
-      next: (data) => {
-        this.clubes = data;
-        this.filteredClubes = data;
+    this.clubService.getClubes(this.currentPage, this.itemsPerPage).subscribe({
+      next: (response) => {
+        this.clubes = response.data;
+        this.filteredClubes = response.data;
+        this.totalItems = response.total;
+        this.totalPages = response.totalPages;
         this.isLoading = false;
       },
       error: (error) => {
@@ -47,9 +55,12 @@ export class ListaClubesPage implements OnInit {
 
   aplicarFiltros(): void {
     this.isLoading = true;
-    this.clubService.filterClubes(this.filterParams).subscribe({
-      next: (data) => {
-        this.filteredClubes = data;
+    this.currentPage = 1; // Resetear a primera página al filtrar
+    this.clubService.filterClubes(this.filterParams, this.currentPage, this.itemsPerPage).subscribe({
+      next: (response) => {
+        this.filteredClubes = response.data;
+        this.totalItems = response.total;
+        this.totalPages = response.totalPages;
         this.isLoading = false;
       },
       error: (error) => {
@@ -61,7 +72,32 @@ export class ListaClubesPage implements OnInit {
 
   limpiarFiltros(): void {
     this.filterParams = {};
-    this.filteredClubes = this.clubes;
+    this.currentPage = 1;
+    this.cargarClubes();
+  }
+
+  cambiarPagina(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      if (Object.keys(this.filterParams).length > 0) {
+          // Si hay filtros activos, usar filterClubes
+          this.clubService.filterClubes(this.filterParams, this.currentPage, this.itemsPerPage).subscribe({
+              next: (response) => {
+                  this.filteredClubes = response.data;
+                  this.totalItems = response.total;
+                  this.totalPages = response.totalPages;
+                  this.isLoading = false;
+              },
+              error: (error) => {
+                  this.errorMessage = `Error al cambiar página: ${error.message}`;
+                  this.isLoading = false;
+              }
+          });
+      } else {
+          // Si no, usar cargarClubes normal
+          this.cargarClubes();
+      }
+    }
   }
 
   eliminarClub(id: number): void {

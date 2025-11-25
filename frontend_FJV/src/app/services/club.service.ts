@@ -28,14 +28,31 @@ export class ClubService {
 
   constructor(private http: HttpClient) { }
 
-  // Obtener todos los clubes
-  getClubes(): Observable<Club[]> {
-    return this.http.get<Club[]>(this.API_URL);
+  // Obtener todos los clubes con paginación
+  getClubes(page: number = 1, limit: number = 10): Observable<any> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('limit', limit.toString());
+
+    return this.http.get<any>(this.API_URL, { params }).pipe(
+      map(response => {
+        if (response.data && Array.isArray(response.data)) {
+            return response;
+        }
+        // Fallback si el backend devuelve array directo (aunque ya lo cambiamos)
+        return {
+            data: Array.isArray(response) ? response : [],
+            total: Array.isArray(response) ? response.length : 0,
+            page: 1,
+            limit: response.length,
+            totalPages: 1
+        };
+      })
+    );
   }
 
   // Obtener un club por ID
   getClub(id: number): Observable<Club> {
-    // ARREGLADO: Usamos this.API_URL
     return this.http.get<Club>(`${this.API_URL}/${id}`);
   }
 
@@ -77,7 +94,6 @@ export class ClubService {
 
   // Actualizar un club existente
   updateClub(id: number, club: Club): Observable<ClubResponse> {
-    // ARREGLADO: Usamos this.API_URL
     return this.http.put<ClubResponse>(`${this.API_URL}/${id}`, club);
   }
 
@@ -96,7 +112,6 @@ export class ClubService {
       // Agregar el archivo de logo
       formData.append('logo', logoFile);
 
-      // ARREGLADO: Usamos this.API_URL
       return this.http.put<any>(`${this.API_URL}/${idClub}`, formData).pipe(
         map((response) => {
           return response.club || response.data || response;
@@ -115,13 +130,14 @@ export class ClubService {
 
   // Eliminar un club
   deleteClub(id: number): Observable<ClubResponse> {
-    // ARREGLADO: Usamos this.API_URL
     return this.http.delete<ClubResponse>(`${this.API_URL}/${id}`);
   }
 
-  // Filtrar clubes
-  filterClubes(filters: ClubFilter): Observable<Club[]> {
-    let params = new HttpParams();
+  // Filtrar clubes con paginación
+  filterClubes(filters: ClubFilter, page: number = 1, limit: number = 10): Observable<any> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('limit', limit.toString());
 
     if (filters.nombre) params = params.set('nombre', filters.nombre);
     if (filters.cuit) params = params.set('cuit', filters.cuit);
@@ -129,8 +145,20 @@ export class ClubService {
     if (filters.fechaAfiliacionDesde) params = params.set('fechaAfiliacionDesde', filters.fechaAfiliacionDesde);
     if (filters.fechaAfiliacionHasta) params = params.set('fechaAfiliacionHasta', filters.fechaAfiliacionHasta);
 
-    // ARREGLADO: Usamos this.API_URL y /filter
-    return this.http.get<Club[]>(`${this.API_URL}/filter`, { params });
+    return this.http.get<any>(`${this.API_URL}/filter`, { params }).pipe(
+      map(response => {
+        if (response.data && Array.isArray(response.data)) {
+            return response;
+        }
+        return {
+            data: Array.isArray(response) ? response : [],
+            total: Array.isArray(response) ? response.length : 0,
+            page: 1,
+            limit: response.length,
+            totalPages: 1
+        };
+      })
+    );
   }
 
   // Obtener la URL del logo de un club

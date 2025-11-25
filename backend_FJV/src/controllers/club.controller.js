@@ -9,10 +9,14 @@ clubCtrl.getClubs = async (req, res) => {
     /*
     #swagger.tags = ['Clubes']
     #swagger.summary = 'Obtener todos los Clubes'
-    #swagger.description = 'Retorna una lista de todos los clubes registrados, incluyendo sus personas y equipos asociados.'
+    #swagger.description = 'Retorna una lista de todos los clubes registrados, incluyendo sus personas y equipos asociados. Soporta paginación.'
     */
     try {
-        const clubs = await Club.findAll({
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const offset = (page - 1) * limit;
+
+        const { count, rows } = await Club.findAndCountAll({
             include: [
                 {
                     model: Persona,
@@ -24,9 +28,19 @@ clubCtrl.getClubs = async (req, res) => {
                     as: 'equipos', 
                     attributes: ['idEquipo', 'nombre', 'nombreDelegado']
                 }
-            ]
+            ],
+            limit: limit,
+            offset: offset,
+            order: [['nombre', 'ASC']]
         });
-        res.status(200).json(clubs);
+
+        res.status(200).json({
+            data: rows,
+            total: count,
+            page: page,
+            limit: limit,
+            totalPages: Math.ceil(count / limit)
+        });
     } catch (error) {
         console.error("Error en getClubs:", error);
         res.status(500).json({
@@ -256,15 +270,15 @@ clubCtrl.getClubFiltro = async (req, res) => {
     /*
     #swagger.tags = ['Clubes']
     #swagger.summary = 'Filtrar Clubes'
-    #swagger.description = 'Retorna clubes que coinciden con los criterios de filtro (nombre, cuit, estadoAfiliacion, fechaAfiliacionDesde, fechaAfiliacionHasta).'
-    #swagger.parameters['nombre'] = { in: 'query', description: 'Filtra por nombre del club.', type: 'string' }
-    #swagger.parameters['cuit'] = { in: 'query', description: 'Filtra por CUIT del club.', type: 'string' }
-    #swagger.parameters['estadoAfiliacion'] = { in: 'query', description: 'Filtra por estado de afiliación.', type: 'string' }
-    #swagger.parameters['fechaAfiliacionDesde'] = { in: 'query', description: 'Filtra por fecha de afiliación desde (YYYY-MM-DD).', type: 'string' }
-    #swagger.parameters['fechaAfiliacionHasta'] = { in: 'query', description: 'Filtra por fecha de afiliación hasta (YYYY-MM-DD).', type: 'string' }
+    #swagger.description = 'Retorna clubes que coinciden con los criterios de filtro. Soporta paginación.'
     */
     const query = req.query;
     const criteria = {};
+
+    // Paginación
+    const page = parseInt(query.page) || 1;
+    const limit = parseInt(query.limit) || 10;
+    const offset = (page - 1) * limit;
 
     if (query.nombre) {
         criteria.nombre = { [Op.iLike]: `%${query.nombre}%` };
@@ -287,14 +301,24 @@ clubCtrl.getClubFiltro = async (req, res) => {
     }
 
     try {
-        const clubs = await Club.findAll({
+        const { count, rows } = await Club.findAndCountAll({
             where: criteria,
             include: [
                 { model: Persona, as: 'personas', attributes: ['idPersona', 'nombreApellido'] },
                 { model: Equipo, as: 'equipos', attributes: ['idEquipo', 'nombre'] }
-            ]
+            ],
+            limit: limit,
+            offset: offset,
+            order: [['nombre', 'ASC']]
         });
-        res.status(200).json(clubs);
+
+        res.status(200).json({
+            data: rows,
+            total: count,
+            page: page,
+            limit: limit,
+            totalPages: Math.ceil(count / limit)
+        });
     } catch (error) {
         console.error("Error en getClubFiltro:", error);
         res.status(500).json({

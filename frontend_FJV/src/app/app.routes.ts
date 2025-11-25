@@ -114,8 +114,29 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/dashboard/configuracion/momentos-destacados/momentos-destacados.component').then(m => m.MomentosDestacadosComponent)
       },
       {
-        path: 'configuracion/areas-trabajo',
         loadComponent: () => import('./pages/dashboard/configuracion/work-areas/work-areas-config.component').then(m => m.WorkAreasConfigComponent)
+      },
+      {
+        path: 'clubes',
+        children: [
+          { path: '', redirectTo: 'lista', pathMatch: 'full' },
+          {
+            path: 'lista',
+            loadComponent: () => import('./pages/dashboard/clubes/lista-clubes/lista-clubes.page').then(m => m.ListaClubesPage)
+          },
+          {
+            path: 'nuevo',
+            loadComponent: () => import('./pages/dashboard/clubes/nuevo-club/nuevo-club.page').then(m => m.NuevoClubPage)
+          },
+          {
+            path: 'editar/:id',
+            loadComponent: () => import('./pages/dashboard/clubes/editar-club/editar-club.page').then(m => m.EditarClubPage)
+          },
+          {
+            path: 'detalle/:id',
+            loadComponent: () => import('./pages/dashboard/clubes/detalle-club/detalle-club.page').then(m => m.DetalleClubPage)
+          }
+        ]
       }
     ]
   },
@@ -124,25 +145,6 @@ export const routes: Routes = [
     loadChildren: () => Promise.resolve(adminNoticiasRoutes),
     canActivate: [authGuard],
     data: { roles: ['admin'] }
-  },
-  {
-    path: 'clubs',
-    canActivate: [authGuard],
-    children: [
-      { path: '', redirectTo: 'listado', pathMatch: 'full' },
-      {
-        path: 'listado',
-        loadComponent: () => import('./pages/clubs/clubs.component').then(m => m.ClubsComponent)
-      },
-      {
-        path: 'nuevo',
-        loadComponent: () => import('./pages/clubs/nuevo-club/nuevo-club.page').then(m => m.NuevoClubPage)
-      },
-      {
-        path: 'editar/:id',
-        loadComponent: () => import('./pages/clubs/nuevo-club/nuevo-club.page').then(m => m.NuevoClubPage)
-      }
-    ]
   },
   {
     path: 'categorias',
