@@ -163,21 +163,22 @@ export class FiltrosAvanzadosService {
    */
   private obtenerClubesConEstadisticas(): Observable<ClubConEstadisticas[]> {
     return combineLatest([
-      this.clubService.getClubes(),
+      this.clubService.getClubes(1, 1000), // Obtener todos los clubes (o un número grande)
       this.afiliadoService.obtenerAfiliados(),
       this.cobroService.getCobros()
     ]).pipe(
-      map(([clubes, afiliados, cobros]) => {
-        return clubes.map(club => {
+      map(([responseClubes, afiliados, cobros]) => {
+        const clubes = responseClubes.data || [];
+        return clubes.map((club: any) => {
           // Asegurar que idClub esté definido
           const clubId = club.idClub || 0;
 
           // Contar afiliados por club
-          const afiliadosDelClub = afiliados.filter(a => a.idClub === clubId);
+          const afiliadosDelClub = afiliados.filter((a: any) => a.idClub === clubId);
 
           // Contar cobros por club
-          const cobrosDelClub = cobros.filter(c => c.idClub === clubId);
-          const cobrosPendientes = cobrosDelClub.filter(c => c.estado === 'Pendiente').length;
+          const cobrosDelClub = cobros.filter((c: any) => c.idClub === clubId);
+          const cobrosPendientes = cobrosDelClub.filter((c: any) => c.estado === 'Pendiente').length;
 
           return {
             idClub: clubId,
