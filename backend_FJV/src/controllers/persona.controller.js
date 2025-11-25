@@ -324,10 +324,18 @@ personaCtrl.getPersonaFiltro = async (req, res) => {
   /*
     #swagger.tags = ['Personas']
     #swagger.summary = 'Filtrar Personas'
-    #swagger.description = 'Retorna personas que coinciden con los criterios de filtro (nombreApellido, dni, tipo, categoria, fechaNacimiento, fechaLicencia, idClub).'
+    #swagger.description = 'Retorna personas que coinciden con los criterios de filtro (nombreApellido, dni, tipo, categoria, fechaNacimiento, fechaLicencia, idClub). Soporta paginación.'
     */
   const query = req.query;
   const criteria = {};
+
+  // Paginación
+  const page = parseInt(query.page) || 1;
+  const limit = parseInt(query.limit) || 20; // Default a 20 si no se especifica
+  const offset = (page - 1) * limit;
+  
+  // Flag para saber si se solicitó paginación explícita (aunque ahora siempre paginamos por defecto si no se pide "all")
+  const usePagination = query.page !== undefined || query.limit !== undefined;
 
   // Corregir el filtro por nombre/apellido
   if (query.nombreApellido || query.apellidoNombre) {
@@ -516,17 +524,32 @@ personaCtrl.getPersonaFiltro = async (req, res) => {
     if (query.sortBy) {
       const direction = (query.sortOrder && query.sortOrder.toUpperCase() === 'DESC') ? 'DESC' : 'ASC';
       orderOptions.push([query.sortBy, direction]);
+    } else {
+      // Orden por defecto
+      orderOptions.push(['apellidoNombre', 'ASC']);
     }
 
-    const personas = await Persona.findAll({
+    // Usar findAndCountAll para paginación
+    const { count, rows } = await Persona.findAndCountAll({
       where: criteria,
       include: includeOptions, // Usar el array de includes que puede tener credenciales
-      order: orderOptions.length > 0 ? orderOptions : undefined,
-      distinct: true // Para evitar duplicados cuando hay joins
+      order: orderOptions,
+      distinct: true, // Para evitar duplicados cuando hay joins
+      limit: limit,
+      offset: offset
     });
     
-    console.log(`Encontrados ${personas.length} resultados con los filtros aplicados`);
-    res.status(200).json(personas);
+    console.log(`Encontrados ${count} resultados totales. Devolviendo página ${page} (${rows.length} registros)`);
+    
+    // Devolver estructura paginada
+    res.status(200).json({
+      data: rows,
+      total: count,
+      page: page,
+      limit: limit,
+      totalPages: Math.ceil(count / limit)
+    });
+
   } catch (error) {
     console.error("Error en getPersonaFiltro:", error);
     res.status(500).json({

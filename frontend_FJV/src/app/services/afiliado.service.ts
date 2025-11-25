@@ -466,6 +466,10 @@ export class AfiliadoService {
   obtenerAfiliadosConFiltros(filtros: FiltrosAvanzados): Observable<ResultadoFiltrosAvanzados> {
     let params = new HttpParams();
 
+    // Configuración de paginación por defecto
+    const page = filtros.page || 1;
+    const limit = filtros.limit || 20;
+
     // Agregar todos los filtros como parámetros
     Object.keys(filtros).forEach(key => {
       const value = (filtros as any)[key];
@@ -473,7 +477,6 @@ export class AfiliadoService {
         if (Array.isArray(value)) {
           // Para arrays, enviar como valores separados por comas
           if (value.length > 0) {
-            // Para el campo tipo, enviarlo como una sola cadena separada por comas
             params = params.set(key, value.join(','));
           }
         } else {
@@ -481,17 +484,15 @@ export class AfiliadoService {
           if (typeof value === 'boolean') {
             params = params.set(key, value ? 'true' : 'false');
           } else {
-            if (key === 'tieneCredencial') {
-              console.log('🔍 Enviando filtro de credencial:', value);
-            }
-            if (key === 'estadoCredencial') {
-              console.log('🔍 Enviando filtro de estado de credencial:', value);
-            }
             params = params.set(key, value.toString());
           }
         }
       }
     });
+
+    // Asegurar que page y limit estén en los params si no se agregaron por el loop anterior
+    if (!params.has('page')) params = params.set('page', page.toString());
+    if (!params.has('limit')) params = params.set('limit', limit.toString());
 
     console.log('🔍 Enviando filtros al backend:', filtros);
     console.log('🔍 Parámetros HTTP finales:', params.toString());
@@ -499,14 +500,31 @@ export class AfiliadoService {
     return this.http.get<any>(`${this.apiUrl}/personas/filtro/buscar`, { params })
       .pipe(
         map(response => {
-          console.log(`✅ Respuesta del backend: ${response.length} registros`);
+          let afiliadosRaw: any[] = [];
+          let totalRegistros = 0;
+
+          // Determinar si la respuesta es paginada o un array simple
+          if (Array.isArray(response)) {
+            console.log(`⚠️ Backend devolvió array simple (${response.length} registros). Aplicando paginación en cliente.`);
+            // Fallback: Paginación en cliente si el backend devuelve todo
+            totalRegistros = response.length;
+            const start = (page - 1) * limit;
+            const end = start + limit;
+            afiliadosRaw = response.slice(start, end);
+          } else {
+            // Respuesta paginada del backend
+            console.log(`✅ Backend devolvió respuesta paginada.`);
+            afiliadosRaw = response.data || response.afiliados || [];
+            totalRegistros = response.total || response.totalRegistros || response.count || 0;
+          }
+
           return {
-            afiliados: Array.isArray(response) ? response.map((p: any) => this.mapPersonaToAfiliado(p)) : [],
-            totalRegistros: Array.isArray(response) ? response.length : 0,
-            paginaActual: 1,
-            totalPaginas: 1,
-            registrosPorPagina: Array.isArray(response) ? response.length : 0,
-            estadisticas: null
+            afiliados: afiliadosRaw.map((p: any) => this.mapPersonaToAfiliado(p)),
+            totalRegistros: totalRegistros,
+            paginaActual: page,
+            totalPaginas: Math.ceil(totalRegistros / limit),
+            registrosPorPagina: limit,
+            estadisticas: response.estadisticas || null
           };
         }),
         catchError(error => {

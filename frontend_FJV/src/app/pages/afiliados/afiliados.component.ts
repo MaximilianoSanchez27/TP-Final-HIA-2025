@@ -59,7 +59,11 @@ export class AfiliadosComponent implements OnInit {
     // Método para cargar afiliados iniciales (sin filtros)
     private cargarAfiliadosIniciales(): void {
         this.cargandoAfiliados = true;
-        this.afiliadoService.obtenerAfiliadosConFiltros({}).subscribe({
+        // Establecer filtros iniciales con paginación por defecto
+        const filtrosIniciales: FiltrosAvanzados = { page: 1, limit: 20 };
+        this.filtrosActivos = filtrosIniciales;
+        
+        this.afiliadoService.obtenerAfiliadosConFiltros(filtrosIniciales).subscribe({
             next: (resultado) => {
                 this.resultadoFiltros = resultado;
                 this.afiliados = resultado.afiliados;
