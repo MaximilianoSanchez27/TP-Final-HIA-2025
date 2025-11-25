@@ -526,7 +526,7 @@ personaCtrl.getPersonaFiltro = async (req, res) => {
       orderOptions.push([query.sortBy, direction]);
     } else {
       // Orden por defecto
-      orderOptions.push(['apellidoNombre', 'ASC']);
+      orderOptions.push(['nombreApellido', 'ASC']);
     }
 
     // Usar findAndCountAll para paginación
