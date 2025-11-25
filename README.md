@@ -31,64 +31,22 @@ El proyecto está construido utilizando una arquitectura moderna de **MEAN Stack
 
 ```
 TP-Final-HIA-2025/
-├── backend_FJV/        # Código fuente del servidor (API REST)
+├── backend_FJV/          # Código fuente del servidor (API REST)
 │   ├── src/
-│   │   ├── controllers/# Lógica de negocio
-│   │   ├── models/     # Modelos de base de datos (Sequelize)
-│   │   ├── routes/     # Definición de endpoints
+│   │   ├── controllers/  # Lógica de negocio
+│   │   ├── models/       # Modelos de base de datos (Sequelize)
+│   │   ├── routes/       # Definición de endpoints
 │   │   └── ...
-├── frontend_FJV/       # Código fuente de la aplicación cliente (Angular)
-# Sistema de Gestión de Federación de Voley (TP Final HIA 2025)
-
-Este repositorio contiene el código fuente del Trabajo Práctico Final para la materia Herramientas de Inteligencia Artificial (HIA) 2025. Es una aplicación web completa para la gestión de una Federación de Voley, incluyendo clubes, afiliados, cobros, pases y credenciales.
-
-## 🚀 Tecnologías Utilizadas
-
-El proyecto está construido utilizando una arquitectura moderna de **MEAN Stack** (modificada con PostgreSQL):
-
-### Frontend (`frontend_FJV`)
-
-- **Framework:** Angular 19
-- **Estilos:** Bootstrap 5, FontAwesome, Animate.css
-- **Gráficos:** Chart.js
-- **Utilidades:** ExcelJS, jsPDF, html2canvas, QRCode
-- **Lenguaje:** TypeScript
-
-### Backend (`backend_FJV`)
-
-- **Runtime:** Node.js
-- **Framework:** Express.js 5
-- **Base de Datos:** PostgreSQL (usando Sequelize ORM)
-- **Autenticación:** JWT (JSON Web Tokens), Passport.js (Google, LinkedIn OAuth)
-- **Seguridad:** Bcryptjs, CORS
-- **Otros:** Multer (subida de archivos), MercadoPago SDK, Swagger (documentación API)
-
-### Infraestructura
-
-- **Contenedores:** Docker, Docker Compose
-
-## 📂 Estructura del Proyecto
-
-```
-
-TP-Final-HIA-2025/
-├── backend_FJV/ # Código fuente del servidor (API REST)
-│ ├── src/
-│ │ ├── controllers/# Lógica de negocio
-│ │ ├── models/ # Modelos de base de datos (Sequelize)
-│ │ ├── routes/ # Definición de endpoints
-│ │ └── ...
-├── frontend_FJV/ # Código fuente de la aplicación cliente (Angular)
-│ ├── src/
-│ │ ├── app/
-│ │ │ ├── pages/ # Vistas y componentes principales
-│ │ │ ├── services/# Comunicación con el backend
-│ │ │ └── ...
-├── config/ # Archivos de configuración
+├── frontend_FJV/         # Código fuente de la aplicación cliente (Angular)
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── pages/    # Vistas y componentes principales
+│   │   │   ├── services/ # Comunicación con el backend
+│   │   │   └── ...
+├── config/               # Archivos de configuración
 ├── docker-compose.prod.yml # Orquestación de contenedores (Producción)
-└── README.md # Este archivo
-
-````
+└── README.md             # Este archivo
+```
 
 ## 🛠️ Instalación y Configuración (Local)
 
@@ -165,4 +123,3 @@ Si prefieres usar Docker para levantar todo el entorno (Frontend + Backend + Bas
 ---
 
 © 2025 Federación de Voley - TP Final HIA
-````
