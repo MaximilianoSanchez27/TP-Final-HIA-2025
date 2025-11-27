@@ -1,127 +1,5 @@
 # Sistema de Gestión de Federación de Voley (TP Final HIA 2025)
 
-Este proyecto despliega una aplicación web completa para la gestión de una Federación de Voley bajo una arquitectura de **microservicios contenerizada diseñada para Alta Disponibilidad (HA)**. El sistema integra seguridad perimetral, escalabilidad, clúster de bases de datos y automatización de mantenimiento.
-
----
-
-## 🏗️ Arquitectura del Sistema
-
-El sistema se compone de los siguientes estratos interconectados mediante una red interna aislada (`dbnet`):
-
-1.  **Capa de Acceso (Gateway):** Proxy Inverso **Nginx** con terminación SSL/TLS y mitigación Anti-DDoS.
-2.  **Capa de Aplicación:** Frontend (Angular) y Backend (Node.js).
-3.  **Capa de Datos:** Clúster **PostgreSQL** (1 Maestro + 2 Réplicas) gestionado por `repmgr` y balanceado por `Pgpool-II`.
-4.  **Capa de Mantenimiento:** Backups automáticos y optimización de índices.
-5.  **Capa de Observabilidad:** Stack de monitoreo (Prometheus, Grafana, cAdvisor).
-
----
-
-## 🚀 Tecnologías Utilizadas
-
-El proyecto utiliza un **MEAN Stack** modificado para entornos empresariales:
-
-### Frontend (`frontend_FJV`)
-
-- **Framework:** Angular 19
-- **Estilos:** Bootstrap 5, FontAwesome, Animate.css
-- **Utilidades:** ExcelJS, jsPDF, QRCode, Chart.js
-
-### Backend (`backend_FJV`)
-
-- **Runtime:** Node.js + Express.js 5
-- **Base de Datos:** PostgreSQL (Sequelize ORM) con soporte de replicación
-- **Autenticación:** JWT, Passport.js (OAuth), Bcryptjs
-- **Integraciones:** MercadoPago SDK, Swagger, Multer
-
-### Infraestructura y DevOps
-
-- **Orquestación:** Docker & Docker Compose
-- **Gateway:** Nginx (Proxy Inverso + Seguridad)
-- **Database HA:** Bitnami PostgreSQL-Repmgr + Pgpool-II
-- **Monitoreo:** Prometheus + Grafana + cAdvisor + Watchtower
-
----
-
-## 🛠️ Guía de Instalación y Despliegue (Entorno Productivo)
-
-### Requisitos Previos
-
-- Docker Engine v20.10+
-- Docker Compose v2.0+
-- Puertos libres: `8888` (HTTP), `443` (HTTPS).
-
-### 1. Configuración de Variables de Entorno
-
-Crea un archivo llamado `.env` en la raíz del proyecto.
-
-> **IMPORTANTE:** Nunca subas este archivo al repositorio. A continuación se muestra una plantilla de ejemplo:
-
-# Sistema de Gestión de Federación de Voley (TP Final HIA 2025)
-
-Este proyecto despliega una aplicación web completa para la gestión de una Federación de Voley bajo una arquitectura de **microservicios contenerizada diseñada para Alta Disponibilidad (HA)**. El sistema integra seguridad perimetral, escalabilidad, clúster de bases de datos y automatización de mantenimiento.
-
----
-
-## 🏗️ Arquitectura del Sistema
-
-El sistema se compone de los siguientes estratos interconectados mediante una red interna aislada (`dbnet`):
-
-1.  **Capa de Acceso (Gateway):** Proxy Inverso **Nginx** con terminación SSL/TLS y mitigación Anti-DDoS.
-2.  **Capa de Aplicación:** Frontend (Angular) y Backend (Node.js).
-3.  **Capa de Datos:** Clúster **PostgreSQL** (1 Maestro + 2 Réplicas) gestionado por `repmgr` y balanceado por `Pgpool-II`.
-4.  **Capa de Mantenimiento:** Backups automáticos y optimización de índices.
-5.  **Capa de Observabilidad:** Stack de monitoreo (Prometheus, Grafana, cAdvisor).
-
----
-
-## 🚀 Tecnologías Utilizadas
-
-El proyecto utiliza un **MEAN Stack** modificado para entornos empresariales:
-
-### Frontend (`frontend_FJV`)
-
-- **Framework:** Angular 19
-- **Estilos:** Bootstrap 5, FontAwesome, Animate.css
-- **Utilidades:** ExcelJS, jsPDF, QRCode, Chart.js
-
-### Backend (`backend_FJV`)
-
-- **Runtime:** Node.js + Express.js 5
-- **Base de Datos:** PostgreSQL (Sequelize ORM) con soporte de replicación
-- **Autenticación:** JWT, Passport.js (OAuth), Bcryptjs
-- **Integraciones:** MercadoPago SDK, Swagger, Multer
-
-### Infraestructura y DevOps
-
-- **Orquestación:** Docker & Docker Compose
-- **Gateway:** Nginx (Proxy Inverso + Seguridad)
-- **Database HA:** Bitnami PostgreSQL-Repmgr + Pgpool-II
-- **Monitoreo:** Prometheus + Grafana + cAdvisor + Watchtower
-
----
-
-## 🛠️ Guía de Instalación y Despliegue (Entorno Productivo)
-
-### Requisitos Previos
-
-- Docker Engine v20.10+
-- Docker Compose v2.0+
-- Puertos libres: `8888` (HTTP), `443` (HTTPS).
-
-### 1. Configuración de Variables de Entorno
-
-Crea un archivo llamado `.env` en la raíz del proyecto.
-
-> **IMPORTANTE:** Nunca subas este archivo al repositorio. A continuación se muestra una plantilla de ejemplo:
-
-````dotenv
-# --- Credenciales del Clúster PostgreSQL ---
-POSTGRESQL_USERNAME=appuser
-POSTGRESQL_PASSWORD=cambiar_por_contraseña_segura
-POSTGRESQL_DATABASE=appdb
-POSTGRESQL_POSTGRES_PASSWORD=cambiar_por_contraseña_admin
-# 🏐# 🏐 Sistema de Gestión de Federación de Voley (TP Final HIA 2025)
-
 ![Estado del Proyecto](https://img.shields.io/badge/Estado-Terminado-success?style=for-the-badge)
 ![Arquitectura](https://img.shields.io/badge/Arquitectura-Microservicios%20HA-orange?style=for-the-badge)
 ![Licencia](https://img.shields.io/badge/Licencia-MIT-blue?style=for-the-badge)
@@ -137,9 +15,9 @@ El sistema integra seguridad perimetral, escalabilidad horizontal, clúster de b
 
 - [🏗️ Arquitectura del Sistema](#️-arquitectura-del-sistema)
 - [🚀 Tecnologías Utilizadas](#-tecnologías-utilizadas)
-- [�️ Guía de Despliegue (Producción)](#️-guía-de-despliegue-entorno-productivo)
+- [🛠️ Guía de Despliegue (Producción)](#️-guía-de-despliegue-entorno-productivo)
 - [🌐 Puntos de Acceso](#-puntos-de-acceso-seguros)
-- [�️ Seguridad Implementada](#️-seguridad-implementada)
+- [🛡️ Seguridad Implementada](#️-seguridad-implementada)
 - [✨ Funcionalidades](#-funcionalidades-del-sistema)
 - [👥 Equipo](#-autores)
 
@@ -162,34 +40,38 @@ El sistema se compone de estratos interconectados mediante una red interna aisla
 El proyecto utiliza un **MEAN Stack** modificado y robustecido para entornos empresariales:
 
 ### 🎨 Frontend (`frontend_FJV`)
-| Tecnología | Descripción |
-|------------|-------------|
-| **Angular 19** | Framework SPA de última generación. |
-| **Bootstrap 5** | Diseño responsivo y componentes UI. |
-| **Chart.js** | Visualización de métricas y estadísticas. |
-| **Utilidades** | `ExcelJS`, `jsPDF`, `QRCode`, `Animate.css`. |
+
+| Tecnología      | Descripción                                  |
+| --------------- | -------------------------------------------- |
+| **Angular 19**  | Framework SPA de última generación.          |
+| **Bootstrap 5** | Diseño responsivo y componentes UI.          |
+| **Chart.js**    | Visualización de métricas y estadísticas.    |
+| **Utilidades**  | `ExcelJS`, `jsPDF`, `QRCode`, `Animate.css`. |
 
 ### ⚙️ Backend (`backend_FJV`)
-| Tecnología | Descripción |
-|------------|-------------|
-| **Node.js + Express 5** | API RESTful escalable. |
-| **PostgreSQL** | Base de datos relacional con `Sequelize ORM`. |
-| **Seguridad** | `JWT`, `Passport.js` (OAuth), `Bcryptjs`. |
-| **Integraciones** | `MercadoPago SDK`, `Swagger` (Docs), `Multer`. |
+
+| Tecnología              | Descripción                                    |
+| ----------------------- | ---------------------------------------------- |
+| **Node.js + Express 5** | API RESTful escalable.                         |
+| **PostgreSQL**          | Base de datos relacional con `Sequelize ORM`.  |
+| **Seguridad**           | `JWT`, `Passport.js` (OAuth), `Bcryptjs`.      |
+| **Integraciones**       | `MercadoPago SDK`, `Swagger` (Docs), `Multer`. |
 
 ### 🏗️ Infraestructura y DevOps
-| Componente | Tecnología |
-|------------|------------|
-| **Orquestación** | Docker & Docker Compose |
-| **Gateway** | Nginx (Proxy Inverso + Seguridad) |
-| **Database HA** | Bitnami PostgreSQL-Repmgr + Pgpool-II |
-| **Monitoreo** | Prometheus + Grafana + cAdvisor + Watchtower |
+
+| Componente       | Tecnología                                   |
+| ---------------- | -------------------------------------------- |
+| **Orquestación** | Docker & Docker Compose                      |
+| **Gateway**      | Nginx (Proxy Inverso + Seguridad)            |
+| **Database HA**  | Bitnami PostgreSQL-Repmgr + Pgpool-II        |
+| **Monitoreo**    | Prometheus + Grafana + cAdvisor + Watchtower |
 
 ---
 
-## �️ Guía de Despliegue (Entorno Productivo)
+## 🛠️ Guía de Despliegue (Entorno Productivo)
 
 ### Requisitos Previos
+
 - **Docker Engine** v20.10+
 - **Docker Compose** v2.0+
 - **Puertos libres**: `8888` (HTTP), `443` (HTTPS).
@@ -212,7 +94,7 @@ REPMGR_PASSWORD=cambiar_por_secreto_replicacion
 PGPOOL_SR_CHECK_USER=repmgr
 PGPOOL_SR_CHECK_PASSWORD=cambiar_por_secreto_replicacion
 PGPOOL_ADMIN_PASSWORD=cambiar_por_admin_pool
-````
+```
 
 ### 2️⃣ Certificados SSL
 
@@ -246,7 +128,7 @@ Debido a la implementación de seguridad, el acceso directo a los puertos de los
 
 ---
 
-## �️ Seguridad Implementada
+## 🛡️ Seguridad Implementada
 
 - **🧱 Aislamiento de Red:** Los servicios backend y bases de datos no exponen puertos al host (`expose` en lugar de `ports`), siendo inaccesibles desde internet.
 - **🔒 Cifrado SSL/TLS:** Nginx fuerza el uso de HTTPS con protocolos modernos (TLSv1.2/1.3) y cifrados fuertes.
@@ -274,7 +156,3 @@ _Desarrollo Inicial y Mantenimiento_
 ---
 
 © 2025 Federación de Voley - TP Final HIA
-
-```
-
-```
