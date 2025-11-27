@@ -8,7 +8,7 @@ volumes:
   pg_1_data:
   pg_2_data:
   pg_logs:
- # pgbadger_data:
+  # pgbadger_data:
   grafana-data:
 
 services:
@@ -21,7 +21,11 @@ services:
     restart: unless-stopped
     networks: [dbnet]
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRESQL_USERNAME} -d ${POSTGRESQL_DATABASE} -h localhost"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRESQL_USERNAME} -d ${POSTGRESQL_DATABASE} -h localhost",
+        ]
       interval: 10s
       timeout: 5s
       retries: 12
@@ -55,7 +59,11 @@ services:
     restart: unless-stopped
     networks: [dbnet]
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRESQL_USERNAME} -d ${POSTGRESQL_DATABASE} -h localhost"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRESQL_USERNAME} -d ${POSTGRESQL_DATABASE} -h localhost",
+        ]
       interval: 10s
       timeout: 5s
       retries: 12
@@ -87,7 +95,11 @@ services:
     restart: unless-stopped
     networks: [dbnet]
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRESQL_USERNAME} -d ${POSTGRESQL_DATABASE} -h localhost"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRESQL_USERNAME} -d ${POSTGRESQL_DATABASE} -h localhost",
+        ]
       interval: 10s
       timeout: 5s
       retries: 12
@@ -110,9 +122,9 @@ services:
     volumes:
       - pg_2_data:/bitnami/postgresql
 
-# BALANCEADOR Y FAILOVER
+  # BALANCEADOR Y FAILOVER
   pgpool:
-    image: bitnamilegacy/pgpool:4                # Imagen oficial de Pgpool-II con soporte para clustering y failover
+    image: bitnamilegacy/pgpool:4 # Imagen oficial de Pgpool-II con soporte para clustering y failover
     container_name: pgpool
     restart: unless-stopped
     networks: [dbnet]
@@ -149,7 +161,7 @@ services:
       - PGPOOL_ENABLE_LOAD_BALANCING=yes
       - PGPOOL_FAILOVER_ON_BACKEND_ERROR=yes
       - PGPOOL_AUTO_FAILBACK=yes
-      
+
       # ❗️❗️ CORRECCIÓN DEFINITIVA ❗️❗️
       # Usamos 'pcpuser' directamente para evitar el error de variable no definida.
       - PGPOOL_FAILBACK_COMMAND=PCPPASS=${PGPOOL_ADMIN_PASSWORD} pcp_attach_node -h localhost -p 9898 -U admin --node-id=%d
@@ -159,15 +171,15 @@ services:
       - PGPOOL_HEALTH_CHECK_TIMEOUT=8
       - PGPOOL_HEALTH_CHECK_MAX_RETRIES=5
       - PGPOOL_HEALTH_CHECK_RETRY_DELAY=5
-      - PGPOOL_CONNECT_TIMEOUT=15 
+      - PGPOOL_CONNECT_TIMEOUT=15
       - PGPOOL_DETACH_STRICT_MODE=no
       - PGPOOL_DEADLOCK_TIMEOUT=30
 
       # 🔐 Credenciales de administración
       - PGPOOL_ADMIN_USERNAME=admin
       - PGPOOL_ADMIN_PASSWORD=${PGPOOL_ADMIN_PASSWORD}
-      - PGPOOL_PCP_USER=pcpuser                   # Esta variable es para el 'pcp.conf'
-      - PGPOOL_PCP_PASSWORD=pcppass               # Esta variable es para el 'pcp.conf'
+      - PGPOOL_PCP_USER=pcpuser # Esta variable es para el 'pcp.conf'
+      - PGPOOL_PCP_PASSWORD=pcppass # Esta variable es para el 'pcp.conf'
       - PGPOOL_PCP_PORT=9898
       # ❗️ CORRECCIÓN 2: LA VARIABLE QUE FALTABA
       # Esto obliga a Bitnami a escribir "pcp_authentication_method = 'md5'" en el .conf
@@ -192,8 +204,11 @@ services:
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@admin.com
       - PGADMIN_DEFAULT_PASSWORD=admin
-    ports:
-      - "8080:80"
+      # ESTAS DOS LÍNEAS SON VITALES PARA QUE FUNCIONE TRAS NGINX:
+      - PGADMIN_CONFIG_SERVER_MODE=True
+      - SCRIPT_NAME=/pgadmin
+    expose:
+      - "80"
     networks:
       - dbnet
 
@@ -221,28 +236,28 @@ services:
     networks: [dbnet]
     depends_on:
       - pgpool
-    
+
     environment:
       - PGPASSWORD=${POSTGRESQL_POSTGRES_PASSWORD}
       - PGUSER=postgres
       - PGDATABASE=${POSTGRESQL_DATABASE}
       - PGHOST=pgpool
-    
+
     volumes:
       - ./scripts/maintenance:/scripts
-      
-    command: |  # <--- ¡ESTE ES EL CAMBIO! (De '>' a '|')
+
+    command: | # <--- ¡ESTE ES EL CAMBIO! (De '>' a '|')
       bash -c "
       echo '🔄 Iniciando optimizador de base de datos...';
-      
+
       echo '⏳ Esperando a que pgpool esté listo...';
       while ! pg_isready -h pgpool -U postgres -d ${POSTGRESQL_DATABASE} -q; do
         echo 'pgpool no está listo, reintentando en 10 segundos...';
         sleep 10;
       done;
-      
+
       echo '✅ pgpool está listo. Iniciando ciclo de mantenimiento.';
-      
+
       while true; do
         echo '🧹 Ejecutando VACUUM ANALYZE...';
         psql -c 'VACUUM (VERBOSE, ANALYZE);';
@@ -253,48 +268,36 @@ services:
         echo '✅ Mantenimiento completado. Esperando 24 horas...';
         sleep 86400;
       done"
-  # ... (tus otros servicios: pg-2, pgpool, pgadmin, pgbackups, etc.)
 
   # APLICACIÓN WEB - BACKEND
   backend-app: # <--- Le damos un nombre de servicio simple
     image: maxisanchez27/hia-backend:latest # <-- AÑADIMOS ESTA
     container_name: backend-app
     restart: unless-stopped
-    ports:
-      # Expone el puerto 3000 de tu app al puerto 3000 de tu PC
-      # Cambia "3000" si tu app corre en otro puerto
-      - "3000:3000"
+    expose:
+      - "3000"
     networks:
       - dbnet
     depends_on:
       - pgpool # Se asegura de que pgpool inicie primero
-    # --- ¡ESTA ES LA LÍNEA MÁGICA! ---
     env_file:
-      - ./backend_FJV/.env  # Inyecta todos los secretos de este archivo
+      - ./backend_FJV/.env # Inyecta todos los secretos de este archivo
     environment:
-        # --- Conexión a PGPOOL usando tus variables ---
-        - DB_HOST=pgpool
-        - DB_PORT=5432
-        - DB_NAME=${POSTGRESQL_DATABASE} # Esto está bien (usa 'appdb')
-        - DB_LOGGING=false
-        
-        # ❗️❗️ CORRECCIÓN AQUÍ ❗️❗️
-        # Pgpool NO acepta 'appuser'. Debe conectarse como 'postgres'.
-        - DB_USER=postgres
-
-        # ❗️❗️ Y CORRECCIÓN AQUÍ ❗️❗️
-        # Debe usar la contraseña del superusuario 'postgres', no la de 'appuser'.
-        # (POSTGRESQL_POSTGRES_PASSWORD es 'postgrespass' en tu .env principal)
-        - DB_PASSWORD=${POSTGRESQL_POSTGRES_PASSWORD}
+      # --- Conexión a PGPOOL usando tus variables ---
+      - DB_HOST=pgpool
+      - DB_PORT=5432
+      - DB_NAME=${POSTGRESQL_DATABASE}
+      - DB_LOGGING=false
+      - DB_USER=postgres
+      - DB_PASSWORD=${POSTGRESQL_POSTGRES_PASSWORD}
 
   # APLICACIÓN WEB - FRONTEND
   frontend-app: # <--- Nombre de servicio para el frontend
     image: maxisanchez27/hia-frontend:latest # <-- AÑADIMOS ESTA
     container_name: frontend-app
     restart: unless-stopped
-    ports:
-      # Expone el frontend en el puerto 80 (HTTP) de tu PC
-      - "80:80"
+    expose:
+      - "80"
     networks:
       - dbnet # Lo ponemos en la misma red
     depends_on:
@@ -323,8 +326,6 @@ services:
       - grafana-data:/var/lib/grafana
     profiles: ["monitoring"] # <-- PERFIL
 
-  # ... (justo después de grafana)
-
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.47.2
     container_name: cadvisor
@@ -335,9 +336,6 @@ services:
       - /:/rootfs:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro # <-- Usamos el "socket" de Docker
       - /sys:/sys:ro
-      # Quitamos las líneas que daban error en Windows
-      # - /var/lib/docker/:/var/lib/docker:ro
-      # - /dev/disk/:/dev/disk:ro
     profiles: ["monitoring"]
 
   pg_exporter:
@@ -363,3 +361,23 @@ services:
     # y monitorea *solo* backend-app y frontend-app
     command: --interval 30 --cleanup backend-app frontend-app
     profiles: ["monitoring"] # Lo añadimos al perfil de monitoreo
+
+  # --- GATEWAY DE SEGURIDAD (NGINX) ---
+  nginx:
+    image: nginx:alpine
+    container_name: gateway_seguro
+    restart: unless-stopped
+    ports:
+      - "8888:80" # Puerto HTTP (Redirección)
+      - "443:443" # Puerto HTTPS (Seguro)
+    volumes:
+      # Carga tu configuración personalizada
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      # Carga los certificados que generaste
+      - ./certs:/etc/nginx/certs:ro
+    networks:
+      - dbnet
+    depends_on:
+      - frontend-app
+      - backend-app
+      - pgadmin
