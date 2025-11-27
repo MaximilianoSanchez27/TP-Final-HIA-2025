@@ -5,31 +5,20 @@ Este archivo explica cómo usar el script `populate_db.js` para poblar la base d
 > [!WARNING]
 > Este script puede ser destructivo si se ejecuta con `POPULATE_FORCE=true` (puede eliminar tablas). Úsalo con cuidado y nunca contra bases de datos productivas.
 
-## Requisitos
+## Ejecución del Script (Docker - Recomendado)
 
-- Node.js (se recomienda v16 o superior)
-- PostgreSQL accesible con la configuración de `.env` del repositorio
-- Dependencias instaladas en `backend_FJV`
+La forma más sencilla de ejecutar el script es usando el contenedor `backend-app` que ya tiene todas las dependencias instaladas:
 
 ```powershell
-cd backend_FJV
-npm install
-```
-
-## Ejecución del Script (PowerShell)
-
-Para ejecutar el script y poblar la base de datos, usa el siguiente comando desde la raíz del proyecto:
-
-```powershell
-$env:DB_HOST='localhost'; $env:DB_PORT='5433'; $env:DB_USER='postgres'; $env:DB_PASS='postgrespass'; $env:POPULATE_FORCE='true'; $env:POPULATE_TOTAL_CATEGORIAS=2; $env:POPULATE_TOTAL_CLUBS=5; $env:POPULATE_TOTAL_PERSONAS=10; node .\backend_FJV\scripts\populate_db.js
+docker exec -it -e POPULATE_FORCE='true' -e POPULATE_TOTAL_CATEGORIAS=2 -e POPULATE_TOTAL_CLUBS=5 -e POPULATE_TOTAL_PERSONAS=10 backend-app node /usr/src/app/scripts/populate_db.js
 ```
 
 Este comando:
 
-- Configura la conexión a la base de datos (`DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASS`)
+- Ejecuta el script dentro del contenedor `backend-app` (sin necesidad de instalar dependencias localmente)
 - Activa `POPULATE_FORCE='true'` para recrear las tablas ⚠️ **DESTRUCTIVO** - elimina datos existentes
 - Define cuántos registros crear: 2 categorías, 5 clubes, 10 personas
-- Ejecuta el script de población
+- Se conecta automáticamente a la base de datos usando las variables de entorno del contenedor
 
 ### Ajustar la cantidad de datos
 
@@ -37,7 +26,15 @@ Modifica los valores según tus necesidades:
 
 ```powershell
 # Ejemplo: más datos para pruebas más exhaustivas
-$env:DB_HOST='localhost'; $env:DB_PORT='5433'; $env:DB_USER='postgres'; $env:DB_PASS='postgrespass'; $env:POPULATE_FORCE='true'; $env:POPULATE_TOTAL_CATEGORIAS=10; $env:POPULATE_TOTAL_CLUBS=50; $env:POPULATE_TOTAL_PERSONAS=100; node .\backend_FJV\scripts\populate_db.js
+docker exec -it -e POPULATE_FORCE='true' -e POPULATE_TOTAL_CATEGORIAS=10 -e POPULATE_TOTAL_CLUBS=50 -e POPULATE_TOTAL_PERSONAS=100 backend-app node /usr/src/app/scripts/populate_db.js
+```
+
+### Ejecutar sin recrear las tablas
+
+Si solo quieres agregar datos sin borrar los existentes, omite `POPULATE_FORCE`:
+
+```powershell
+docker exec -it -e POPULATE_TOTAL_CATEGORIAS=5 -e POPULATE_TOTAL_CLUBS=10 -e POPULATE_TOTAL_PERSONAS=20 backend-app node /usr/src/app/scripts/populate_db.js
 ```
 
 ## Configuración (Variables de Entorno)
@@ -67,26 +64,33 @@ $env:DB_HOST='localhost'; $env:DB_PORT='5433'; $env:DB_USER='postgres'; $env:DB_
 
 ## Métodos Alternativos de Ejecución
 
-### 1) Ejecución local con configuración extendida
+### 1) Ejecución local (requiere npm install)
 
-Si necesitas más control sobre la configuración:
+Si prefieres ejecutar el script localmente en tu máquina en lugar de usar Docker:
+
+**Primero, instala las dependencias:**
 
 ```powershell
-$env:DB_HOST='localhost'
-$env:DB_PORT='5433'
-$env:DB_USER='postgres'
-$env:DB_PASS='postgrespass'
-$env:DB_NAME='appdb'
-$env:POPULATE_TOTAL_CATEGORIAS=100
-$env:POPULATE_TOTAL_CLUBS=10000
-$env:POPULATE_TOTAL_PERSONAS=10000
-$env:POPULATE_FORCE='true'  # DESTRUCTIVO - Recrea las tablas
-node .\backend_FJV\scripts\populate_db.js
+cd backend_FJV
+npm install
 ```
 
-### 2) Ejecutar dentro de Docker
+**Luego ejecuta el script desde la raíz del proyecto:**
 
-Útil cuando el servicio DB solo es accesible desde la red compose:
+```powershell
+$env:DB_HOST='localhost'; $env:DB_PORT='5433'; $env:DB_USER='postgres'; $env:DB_PASS='postgrespass'; $env:POPULATE_FORCE='true'; $env:POPULATE_TOTAL_CATEGORIAS=2; $env:POPULATE_TOTAL_CLUBS=5; $env:POPULATE_TOTAL_PERSONAS=10; node .\backend_FJV\scripts\populate_db.js
+```
+
+**O desde el directorio backend:**
+
+```powershell
+cd backend_FJV
+$env:DB_HOST='localhost'; $env:DB_PORT='5433'; $env:DB_USER='postgres'; $env:DB_PASS='postgrespass'; $env:POPULATE_TOTAL_CATEGORIAS=2; $env:POPULATE_TOTAL_CLUBS=5; $env:POPULATE_TOTAL_PERSONAS=10; node .\scripts\populate_db.js
+```
+
+### 2) Ejecutar con contenedor temporal de Node
+
+Útil cuando el servicio DB solo es accesible desde la red compose y no quieres usar el contenedor backend-app:
 
 ```powershell
 docker run --rm -it `
@@ -99,14 +103,6 @@ docker run --rm -it `
   -w /app `
   node:20-slim `
   bash -lc "npm ci --no-audit --no-fund && node scripts/populate_db.js"
-```
-
-### 3) Ejecutar desde el directorio backend
-
-```powershell
-cd backend_FJV
-npm install  # si no lo hiciste ya
-$env:DB_HOST='localhost'; $env:DB_PORT='5433'; $env:DB_USER='postgres'; $env:DB_PASS='postgrespass'; $env:POPULATE_TOTAL_CATEGORIAS=2; $env:POPULATE_TOTAL_CLUBS=5; $env:POPULATE_TOTAL_PERSONAS=10; node .\scripts\populate_db.js
 ```
 
 ## Notas sobre Operaciones Destructivas
