@@ -11,6 +11,12 @@ volumes:
   # pgbadger_data:
   grafana-data:
 
+  # VOLÚMENES PARA NEXTCLOUD
+  nextcloud-data:
+  nextcloud-apps:
+  nextcloud-config:
+  nextcloud-docs: 
+
 services:
   # NODO PRINCIPAL
   pg-0:
@@ -362,22 +368,31 @@ services:
     command: --interval 30 --cleanup backend-app frontend-app
     profiles: ["monitoring"] # Lo añadimos al perfil de monitoreo
 
-  # --- GATEWAY DE SEGURIDAD (NGINX) ---
-  nginx:
-    image: nginx:alpine
-    container_name: gateway_seguro
+
+  # NEXTCLOUD - Gestión Documental
+  nextcloud:
+    image: nextcloud:latest
+    container_name: nextcloud-fjv
     restart: unless-stopped
     ports:
-      - "8888:80" # Puerto HTTP (Redirección)
-      - "443:443" # Puerto HTTPS (Seguro)
+      - "8082:80"
+    environment:
+      # NextCloud necesita conectarse a una base de datos.
+      # Usaremos tu clúster de PostgreSQL (a través de pgpool para lectura/escritura segura).
+      - POSTGRES_HOST=pgpool # <--- ¡IMPORTANTE! Lo conectamos a tu pgpool
+      - POSTGRES_DB=nextcloud_db # Nombre de la BD de NextCloud
+      - POSTGRES_USER=admin # Usuario para crear/manejar la BD de NextCloud
+      - POSTGRES_PASSWORD=secure123 # Clave del usuario 'admin' (debes crear este usuario si no existe, o usar uno que sí exista)
+      # Credenciales del administrador de NextCloud
+      - NEXTCLOUD_ADMIN_USER=admin
+      - NEXTCLOUD_ADMIN_PASSWORD=Admin123!
+      - NEXTCLOUD_TRUSTED_DOMAINS=localhost nextcloud-fjv
     volumes:
-      # Carga tu configuración personalizada
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      # Carga los certificados que generaste
-      - ./certs:/etc/nginx/certs:ro
-    networks:
-      - dbnet
+      - nextcloud-data:/var/www/html
+      - nextcloud-apps:/var/www/html/custom_apps
+      - nextcloud-config:/var/www/html/config
+      - nextcloud-docs:/var/www/html/data # Carpeta de documentos
     depends_on:
-      - frontend-app
-      - backend-app
-      - pgadmin
+      - pgpool # Dependerá del pgpool para la conexión a la base de datos
+    networks:
+      - dbnet # <--- ¡IMPORTANTE! Usamos tu red existente 'dbnet'
