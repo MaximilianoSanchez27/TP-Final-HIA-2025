@@ -383,3 +383,30 @@ services:
       - pgadmin
 
 #testing mi rama
+# NEXTCLOUD - Gestión Documental
+  nextcloud:
+    image: nextcloud:latest
+    container_name: nextcloud-fjv
+    restart: unless-stopped
+    ports:
+      - "8082:80"
+    environment:
+      # NextCloud necesita conectarse a una base de datos.
+      # Usaremos tu clúster de PostgreSQL (a través de pgpool para lectura/escritura segura).
+      - POSTGRES_HOST=pgpool # <--- ¡IMPORTANTE! Lo conectamos a tu pgpool
+      - POSTGRES_DB=nextcloud_db # Nombre de la BD de NextCloud
+      - POSTGRES_USER=admin # Usuario para crear/manejar la BD de NextCloud
+      - POSTGRES_PASSWORD=secure123 # Clave del usuario 'admin' (debes crear este usuario si no existe, o usar uno que sí exista)
+      # Credenciales del administrador de NextCloud
+      - NEXTCLOUD_ADMIN_USER=admin
+      - NEXTCLOUD_ADMIN_PASSWORD=Admin123!
+      - NEXTCLOUD_TRUSTED_DOMAINS=localhost nextcloud-fjv
+    volumes:
+      - nextcloud-data:/var/www/html
+      - nextcloud-apps:/var/www/html/custom_apps
+      - nextcloud-config:/var/www/html/config
+      - nextcloud-docs:/var/www/html/data # Carpeta de documentos
+    depends_on:
+      - pgpool # Dependerá del pgpool para la conexión a la base de datos
+    networks:
+      - dbnet # <--- ¡IMPORTANTE! Usamos tu red existente 'dbnet'
