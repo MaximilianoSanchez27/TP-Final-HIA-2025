@@ -10,6 +10,11 @@ volumes:
   pg_logs:
   # pgbadger_data:
   grafana-data:
+  # VOLÚMENES PARA NEXTCLOUD
+  nextcloud-data:
+  nextcloud-apps:
+  nextcloud-config:
+  nextcloud-docs:
 
 services:
   # NODO PRINCIPAL
